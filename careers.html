@@ -1,257 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Careers - Syndrax LLC</title>
-    <meta name="description" content="Join the Syndrax team. We're looking for talented engineers, security professionals, and IT specialists to help build enterprise technology solutions.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Careers — Syndrax LLC</title>
+  <meta name="description" content="Join the Syndrax team. We're looking for talented engineers, security professionals, and IT specialists to help build enterprise technology solutions.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%233b82f6'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,sans-serif' font-weight='800' font-size='20' fill='white'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">SYNDRAX</a>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="services.html">Services</a></li>
-                <li><a href="solutions.html">Solutions</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="careers.html" class="active">Careers</a></li>
-                <li><a href="contact.html" class="nav-cta">Contact</a></li>
-            </ul>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="assets/images/logo.png" alt="Syndrax" class="nav-logo-img">
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links">
+      <a href="/services">Services</a>
+      <a href="/solutions">Solutions</a>
+      <div class="nav-dropdown">
+        <a href="/products">Products</a>
+        <div class="nav-dropdown-menu">
+          <a href="/products">All Products</a>
+          <a href="/gridwatch">Gridwatch</a>
         </div>
-    </nav>
+      </div>
+      <a href="/about">About</a>
+      <a href="/careers" class="active">Careers</a>
+      <a href="/contact" class="nav-cta">Get in Touch</a>
+    </div>
+  </div>
+</nav>
 
-    <!-- Hero Banner -->
-    <section class="page-hero">
-        <div class="container">
-            <h1 class="page-title">Build With Us</h1>
-            <p class="page-subtitle">Join a team that's shaping the future of enterprise technology.</p>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/services">Services</a>
+  <a href="/solutions">Solutions</a>
+  <a href="/products">Products</a>
+  <a href="/gridwatch">Gridwatch</a>
+  <a href="/about">About</a>
+  <a href="/careers">Careers</a>
+  <a href="/contact" style="text-align:center;border-radius:8px;background:var(--green);color:white;padding:11px 0;">Get in Touch</a>
+</div>
+
+<section class="page-hero">
+  <div class="page-hero-glow"></div>
+  <div class="page-hero-content">
+    <div class="section-badge">Careers</div>
+    <h1>Build With <span class="accent">Us</span></h1>
+    <p>Join a team that's shaping the future of enterprise technology from the ground up.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="mission-card fade-up" style="max-width:800px;margin:0 auto 64px;">
+      <h2>We're Building Our Team</h2>
+      <p>We are assembling a team of engineers, security professionals, and IT specialists who are passionate about building excellent technology. At Syndrax, we're building our core team through collaborative remote work.</p>
+      <p>We value initiative, continuous learning, and the ability to work independently while contributing to a shared vision. If you're looking to grow your skills, work on challenging projects, and be part of something from the ground up, we'd love to hear from you.</p>
+      <div class="careers-note">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <p><strong>Note:</strong> Current positions are volunteer/contract opportunities designed to help build experience and grow together. As we scale, these roles will transition to compensated positions.</p>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <div class="section-badge">Open Roles</div>
+      <h2 class="section-title">Open Positions</h2>
+      <p class="section-sub" style="margin-bottom:0;">Explore current opportunities to join our team.</p>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:48px;">
+      <div class="role-card fade-up">
+        <div class="role-header">
+          <h3>Cloud Engineer</h3>
+          <span class="role-tag">Remote</span>
         </div>
-    </section>
-
-    <!-- Careers Intro Section -->
-    <section class="section careers-intro">
-        <div class="container">
-            <div class="careers-intro-content glass-card fade-in">
-                <h2>We're Building Our Team</h2>
-                <p>We are assembling a team of engineers, security professionals, and IT specialists who are passionate about building excellent technology. At Syndrax, we're currently building our core team through collaborative remote work.</p>
-                <p>We value initiative, continuous learning, and the ability to work independently while contributing to a shared vision. If you're looking to grow your skills, work on challenging projects, and be part of something from the ground up, we'd love to hear from you.</p>
-                <div class="careers-note">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="16" x2="12" y2="12"/>
-                        <line x1="12" y1="8" x2="12.01" y2="8"/>
-                    </svg>
-                    <p><strong>Note:</strong> Current positions are volunteer/contract opportunities designed to help build experience and grow together as a team. As we scale, these roles will transition to compensated positions.</p>
-                </div>
-            </div>
+        <p class="role-desc">Design and implement cloud infrastructure solutions across AWS, Azure, and GCP. Work with containerization, Infrastructure as Code, and modern DevOps practices to build scalable, reliable systems.</p>
+        <div class="role-skills">
+          <span class="skill-pill">AWS / Azure / GCP</span>
+          <span class="skill-pill">Terraform</span>
+          <span class="skill-pill">Kubernetes</span>
+          <span class="skill-pill">Docker</span>
         </div>
-    </section>
+        <a href="/contact" class="btn btn-outline btn-sm" style="align-self:flex-start;">Express Interest</a>
+      </div>
 
-    <!-- Open Roles Section -->
-    <section class="section careers-roles">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Open Positions</h2>
-                <p class="section-subtitle">Explore current opportunities to join our team.</p>
-            </div>
-            <div class="roles-grid">
-                <!-- Cloud Engineer -->
-                <div class="role-card glass-card fade-in">
-                    <div class="role-header">
-                        <h3>Cloud Engineer</h3>
-                        <span class="role-tag">Remote</span>
-                    </div>
-                    <p class="role-description">Design and implement cloud infrastructure solutions across AWS, Azure, and GCP. Work with containerization, Infrastructure as Code, and modern DevOps practices to build scalable systems.</p>
-                    <div class="role-skills">
-                        <span>AWS/Azure/GCP</span>
-                        <span>Terraform</span>
-                        <span>Kubernetes</span>
-                        <span>Docker</span>
-                    </div>
-                    <a href="contact.html" class="btn btn-outline">Express Interest</a>
-                </div>
-
-                <!-- SOC Analyst -->
-                <div class="role-card glass-card fade-in">
-                    <div class="role-header">
-                        <h3>SOC Analyst</h3>
-                        <span class="role-tag">Remote</span>
-                    </div>
-                    <p class="role-description">Monitor security systems, analyze threats, and respond to security incidents. Work with SIEM platforms, endpoint detection tools, and threat intelligence to protect client environments.</p>
-                    <div class="role-skills">
-                        <span>SIEM</span>
-                        <span>Threat Analysis</span>
-                        <span>Incident Response</span>
-                        <span>EDR</span>
-                    </div>
-                    <a href="contact.html" class="btn btn-outline">Express Interest</a>
-                </div>
-
-                <!-- Network Engineer -->
-                <div class="role-card glass-card fade-in">
-                    <div class="role-header">
-                        <h3>Network Engineer</h3>
-                        <span class="role-tag">Remote</span>
-                    </div>
-                    <p class="role-description">Design and implement enterprise network solutions including LAN/WAN, SD-WAN, and network security. Troubleshoot complex network issues and optimize performance.</p>
-                    <div class="role-skills">
-                        <span>Cisco</span>
-                        <span>SD-WAN</span>
-                        <span>Firewalls</span>
-                        <span>Network Security</span>
-                    </div>
-                    <a href="contact.html" class="btn btn-outline">Express Interest</a>
-                </div>
-
-                <!-- Software Developer -->
-                <div class="role-card glass-card fade-in">
-                    <div class="role-header">
-                        <h3>Software Developer</h3>
-                        <span class="role-tag">Remote</span>
-                    </div>
-                    <p class="role-description">Build custom software solutions using modern technologies and best practices. Contribute to internal products and client projects across web, API, and application development.</p>
-                    <div class="role-skills">
-                        <span>JavaScript/TypeScript</span>
-                        <span>Python</span>
-                        <span>React</span>
-                        <span>Node.js</span>
-                    </div>
-                    <a href="contact.html" class="btn btn-outline">Express Interest</a>
-                </div>
-
-                <!-- IT Support Specialist -->
-                <div class="role-card glass-card fade-in">
-                    <div class="role-header">
-                        <h3>IT Support Specialist</h3>
-                        <span class="role-tag">Remote</span>
-                    </div>
-                    <p class="role-description">Provide technical support and troubleshooting for client environments. Handle help desk tickets, system administration tasks, and user support with a focus on excellent service.</p>
-                    <div class="role-skills">
-                        <span>Windows/Linux</span>
-                        <span>Active Directory</span>
-                        <span>Help Desk</span>
-                        <span>Troubleshooting</span>
-                    </div>
-                    <a href="contact.html" class="btn btn-outline">Express Interest</a>
-                </div>
-            </div>
+      <div class="role-card fade-up">
+        <div class="role-header">
+          <h3>SOC Analyst</h3>
+          <span class="role-tag">Remote</span>
         </div>
-    </section>
-
-    <!-- Why Join Section -->
-    <section class="section careers-benefits">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Why Join Syndrax?</h2>
-                <p class="section-subtitle">What you can expect when you work with us.</p>
-            </div>
-            <div class="benefits-grid">
-                <div class="benefit-item fade-in">
-                    <div class="benefit-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polyline points="12 6 12 12 16 14"/>
-                        </svg>
-                    </div>
-                    <h4>Flexible Remote Work</h4>
-                    <p>Work from anywhere with flexible hours that fit your schedule.</p>
-                </div>
-                <div class="benefit-item fade-in">
-                    <div class="benefit-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="1" x2="12" y2="23"/>
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                        </svg>
-                    </div>
-                    <h4>Real Experience</h4>
-                    <p>Work on real projects that build your portfolio and skills.</p>
-                </div>
-                <div class="benefit-item fade-in">
-                    <div class="benefit-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
-                        </svg>
-                    </div>
-                    <h4>Growth Opportunity</h4>
-                    <p>Grow with us from the ground floor as we scale the company.</p>
-                </div>
-                <div class="benefit-item fade-in">
-                    <div class="benefit-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                        </svg>
-                    </div>
-                    <h4>Collaborative Team</h4>
-                    <p>Work with talented people who support each other's success.</p>
-                </div>
-            </div>
+        <p class="role-desc">Monitor security systems, analyze threats, and respond to security incidents. Work with SIEM platforms, endpoint detection tools, and threat intelligence to protect client environments.</p>
+        <div class="role-skills">
+          <span class="skill-pill">SIEM</span>
+          <span class="skill-pill">Threat Analysis</span>
+          <span class="skill-pill">Incident Response</span>
+          <span class="skill-pill">EDR</span>
         </div>
-    </section>
+        <a href="/contact" class="btn btn-outline btn-sm" style="align-self:flex-start;">Express Interest</a>
+      </div>
 
-    <!-- CTA Section -->
-    <section class="cta-banner">
-        <div class="container">
-            <div class="cta-content">
-                <h2>Ready to join us?</h2>
-                <p>Send us a message with your background and interests.</p>
-                <a href="contact.html" class="btn btn-primary btn-large">Get In Touch</a>
-            </div>
+      <div class="role-card fade-up">
+        <div class="role-header">
+          <h3>Network Engineer</h3>
+          <span class="role-tag">Remote</span>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="index.html" class="footer-logo">SYNDRAX</a>
-                    <p>Enterprise technology solutions engineered for scale, security, and performance.</p>
-                </div>
-                <div class="footer-links">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="careers.html">Careers</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Services</h4>
-                    <ul>
-                        <li><a href="services.html">All Services</a></li>
-                        <li><a href="solutions.html">Solutions</a></li>
-                        <li><a href="products.html">Products</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Connect</h4>
-                    <ul>
-                        <li><a href="mailto:hello@syndrax.io">hello@syndrax.io</a></li>
-                        <li><span>Pacific Northwest</span></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; Syndrax LLC 2026. All rights reserved.</p>
-                <a href="https://syndrax.io" target="_blank" rel="noopener">syndrax.io</a>
-            </div>
+        <p class="role-desc">Design and implement enterprise network solutions including LAN/WAN, SD-WAN, and network security. Troubleshoot complex network issues and optimize performance across environments.</p>
+        <div class="role-skills">
+          <span class="skill-pill">Cisco</span>
+          <span class="skill-pill">SD-WAN</span>
+          <span class="skill-pill">Firewalls</span>
+          <span class="skill-pill">Network Security</span>
         </div>
-    </footer>
+        <a href="/contact" class="btn btn-outline btn-sm" style="align-self:flex-start;">Express Interest</a>
+      </div>
 
-    <script src="script.js"></script>
+      <div class="role-card fade-up">
+        <div class="role-header">
+          <h3>Software Developer</h3>
+          <span class="role-tag">Remote</span>
+        </div>
+        <p class="role-desc">Build custom software solutions using modern technologies and best practices. Contribute to internal products and client projects across web, API, and application development.</p>
+        <div class="role-skills">
+          <span class="skill-pill">TypeScript</span>
+          <span class="skill-pill">Python</span>
+          <span class="skill-pill">React</span>
+          <span class="skill-pill">Node.js</span>
+        </div>
+        <a href="/contact" class="btn btn-outline btn-sm" style="align-self:flex-start;">Express Interest</a>
+      </div>
+
+      <div class="role-card fade-up">
+        <div class="role-header">
+          <h3>IT Support Specialist</h3>
+          <span class="role-tag">Remote</span>
+        </div>
+        <p class="role-desc">Provide technical support and troubleshooting for client environments. Handle help desk tickets, system administration tasks, and user support with a focus on excellent service delivery.</p>
+        <div class="role-skills">
+          <span class="skill-pill">Windows / Linux</span>
+          <span class="skill-pill">Active Directory</span>
+          <span class="skill-pill">Help Desk</span>
+          <span class="skill-pill">Troubleshooting</span>
+        </div>
+        <a href="/contact" class="btn btn-outline btn-sm" style="align-self:flex-start;">Express Interest</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY JOIN -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-badge">Benefits</div>
+      <h2 class="section-title">Why Join Syndrax?</h2>
+      <p class="section-sub" style="margin-bottom:0;">What you can expect when you work with us.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3>Flexible Remote Work</h3>
+        <p>Work from anywhere with flexible hours that fit your schedule and lifestyle.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 4v16"/></svg>
+        </div>
+        <h3>Real Experience</h3>
+        <p>Work on real projects that build your professional portfolio and sharpen your skills.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <h3>Growth Opportunity</h3>
+        <p>Grow with us from the ground floor as we scale the company and expand our services.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Collaborative Team</h3>
+        <p>Work alongside talented people who support each other's success and development.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-box fade-up">
+    <h2>Ready to join us?</h2>
+    <p>Send us a message with your background and interests. We'd love to hear from you.</p>
+    <div class="btn-row">
+      <a href="/contact" class="btn btn-primary btn-lg">Get In Touch</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="footer-logo">
+        <img src="assets/images/logo.png" alt="Syndrax" class="footer-logo-img">
+      </a>
+      <p>Enterprise technology solutions engineered for scale, security, and performance.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="/about">About Us</a>
+      <a href="/careers">Careers</a>
+      <a href="/contact">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="/services">All Services</a>
+      <a href="/solutions">Solutions</a>
+      <a href="/products">Products</a>
+      <a href="/gridwatch">Gridwatch</a>
+    </div>
+    <div class="footer-col">
+      <h4>Locations</h4>
+      <span>HQ: Wyoming, USA</span>
+      <span>Portland, OR</span>
+      <span>Seattle, WA</span>
+      <a href="mailto:hello@syndrax.io">hello@syndrax.io</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© Syndrax LLC 2026. All rights reserved. Licensed in Wyoming &mdash; Operating in the Pacific Northwest</span>
+    <a href="https://syndrax.io" target="_blank" rel="noopener">syndrax.io</a>
+  </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>

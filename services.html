@@ -1,244 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services - Syndrax LLC</title>
-    <meta name="description" content="Comprehensive technology services including cloud infrastructure, cybersecurity, managed IT, network engineering, software development, and R&D contracting.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services — Syndrax LLC</title>
+  <meta name="description" content="Comprehensive technology services including cloud infrastructure, cybersecurity, managed IT, network engineering, software development, and R&D contracting.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%233b82f6'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,sans-serif' font-weight='800' font-size='20' fill='white'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">SYNDRAX</a>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="services.html" class="active">Services</a></li>
-                <li><a href="solutions.html">Solutions</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="careers.html">Careers</a></li>
-                <li><a href="contact.html" class="nav-cta">Contact</a></li>
-            </ul>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="assets/images/logo.png" alt="Syndrax" class="nav-logo-img">
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links">
+      <a href="/services" class="active">Services</a>
+      <a href="/solutions">Solutions</a>
+      <div class="nav-dropdown">
+        <a href="/products">Products</a>
+        <div class="nav-dropdown-menu">
+          <a href="/products">All Products</a>
+          <a href="/gridwatch">Gridwatch</a>
         </div>
-    </nav>
+      </div>
+      <a href="/about">About</a>
+      <a href="/careers">Careers</a>
+      <a href="/contact" class="nav-cta">Get in Touch</a>
+    </div>
+  </div>
+</nav>
 
-    <!-- Hero Banner -->
-    <section class="page-hero">
-        <div class="container">
-            <h1 class="page-title">What We Do</h1>
-            <p class="page-subtitle">Comprehensive technology services designed to power enterprise success.</p>
-        </div>
-    </section>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/services">Services</a>
+  <a href="/solutions">Solutions</a>
+  <a href="/products">Products</a>
+  <a href="/gridwatch">Gridwatch</a>
+  <a href="/about">About</a>
+  <a href="/careers">Careers</a>
+  <a href="/contact" style="text-align:center;border-radius:8px;background:var(--green);color:white;padding:11px 0;">Get in Touch</a>
+</div>
 
-    <!-- Services Detail Section -->
-    <section class="section services-detail">
-        <div class="container">
-            <!-- Cloud & Infrastructure -->
-            <div class="service-detail-card glass-card fade-in" id="cloud">
-                <div class="service-detail-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-                    </svg>
-                </div>
-                <div class="service-detail-content">
-                    <h2>Cloud & Infrastructure Engineering</h2>
-                    <p>We design, deploy, and manage cloud infrastructure that scales with your business. Our team architects solutions across major cloud platforms, ensuring optimal performance, cost efficiency, and reliability.</p>
-                    <ul class="service-features">
-                        <li>Multi-cloud architecture design (AWS, Azure, GCP)</li>
-                        <li>Infrastructure as Code (Terraform, CloudFormation)</li>
-                        <li>Container orchestration (Kubernetes, Docker)</li>
-                        <li>Serverless architecture implementation</li>
-                        <li>Cloud migration and optimization</li>
-                        <li>Disaster recovery and business continuity planning</li>
-                        <li>Cost optimization and resource management</li>
-                        <li>24/7 infrastructure monitoring and support</li>
-                    </ul>
-                </div>
-            </div>
+<section class="page-hero">
+  <div class="page-hero-glow"></div>
+  <div class="page-hero-content">
+    <div class="section-badge">Services</div>
+    <h1>What We <span class="accent">Do</span></h1>
+    <p>Comprehensive technology services designed to power enterprise success at every layer of your stack.</p>
+  </div>
+</section>
 
-            <!-- Cybersecurity & SOC -->
-            <div class="service-detail-card glass-card fade-in" id="security">
-                <div class="service-detail-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                </div>
-                <div class="service-detail-content">
-                    <h2>Cybersecurity & SOC Contracting</h2>
-                    <p>Our security operations team provides comprehensive protection against modern cyber threats. We offer SOC services, threat intelligence, and incident response capabilities to keep your organization secure around the clock.</p>
-                    <ul class="service-features">
-                        <li>24/7 Security Operations Center (SOC) services</li>
-                        <li>Threat detection and incident response</li>
-                        <li>Vulnerability assessments and penetration testing</li>
-                        <li>Security Information and Event Management (SIEM)</li>
-                        <li>Endpoint detection and response (EDR)</li>
-                        <li>Compliance and regulatory support (SOC 2, HIPAA, PCI-DSS)</li>
-                        <li>Security awareness training</li>
-                        <li>Digital forensics and threat hunting</li>
-                    </ul>
-                </div>
-            </div>
+<section class="section">
+  <div class="container">
+    <div class="services-grid">
 
-            <!-- Managed IT Services -->
-            <div class="service-detail-card glass-card fade-in" id="managed-it">
-                <div class="service-detail-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                        <line x1="8" y1="21" x2="16" y2="21"/>
-                        <line x1="12" y1="17" x2="12" y2="21"/>
-                    </svg>
-                </div>
-                <div class="service-detail-content">
-                    <h2>Managed IT Services</h2>
-                    <p>Focus on your core business while we handle your technology operations. Our managed services provide proactive support, maintenance, and optimization to ensure your IT infrastructure runs smoothly and efficiently.</p>
-                    <ul class="service-features">
-                        <li>Proactive system monitoring and maintenance</li>
-                        <li>Help desk and technical support</li>
-                        <li>Patch management and system updates</li>
-                        <li>Backup and disaster recovery management</li>
-                        <li>Asset management and lifecycle planning</li>
-                        <li>Vendor management and procurement</li>
-                        <li>IT strategy and roadmap planning</li>
-                        <li>Service level agreements (SLAs) with guaranteed response times</li>
-                    </ul>
-                </div>
-            </div>
+    <div class="service-card fade-up" id="cloud">
+      <div class="service-card-icon">
+        <svg viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+      </div>
+      <div class="service-card-body">
+        <h2>Cloud &amp; Infrastructure Engineering</h2>
+        <p>We design, deploy, and manage cloud infrastructure that scales with your business. Our team architects solutions across major cloud platforms, ensuring optimal performance, cost efficiency, and reliability at every stage.</p>
+        <ul class="service-list">
+          <li>Multi-cloud architecture design (AWS, Azure, GCP)</li>
+          <li>Infrastructure as Code (Terraform, CloudFormation)</li>
+          <li>Container orchestration (Kubernetes, Docker)</li>
+          <li>Serverless architecture implementation</li>
+          <li>Cloud migration and optimization</li>
+          <li>Disaster recovery and business continuity</li>
+          <li>Cost optimization and resource management</li>
+          <li>24/7 infrastructure monitoring and support</li>
+        </ul>
+      </div>
+    </div>
 
-            <!-- Network Engineering -->
-            <div class="service-detail-card glass-card fade-in" id="network">
-                <div class="service-detail-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
-                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
-                        <line x1="6" y1="6" x2="6.01" y2="6"/>
-                        <line x1="6" y1="18" x2="6.01" y2="18"/>
-                    </svg>
-                </div>
-                <div class="service-detail-content">
-                    <h2>Network Engineering</h2>
-                    <p>Build and maintain robust network infrastructure that supports your business operations. Our network engineers design, implement, and optimize networks for performance, security, and scalability.</p>
-                    <ul class="service-features">
-                        <li>Enterprise network architecture design</li>
-                        <li>LAN/WAN implementation and optimization</li>
-                        <li>SD-WAN deployment and management</li>
-                        <li>Network security (firewalls, VPNs, segmentation)</li>
-                        <li>Wireless network design and deployment</li>
-                        <li>Network monitoring and performance optimization</li>
-                        <li>Data center networking</li>
-                        <li>Network troubleshooting and support</li>
-                    </ul>
-                </div>
-            </div>
+    <div class="service-card fade-up" id="security">
+      <div class="service-card-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="service-card-body">
+        <h2>Cybersecurity &amp; SOC Contracting</h2>
+        <p>Our security operations team provides comprehensive protection against modern cyber threats. We offer SOC services, threat intelligence, and incident response capabilities to keep your organization secure around the clock.</p>
+        <ul class="service-list">
+          <li>24/7 Security Operations Center (SOC) services</li>
+          <li>Threat detection and incident response</li>
+          <li>Vulnerability assessments and penetration testing</li>
+          <li>SIEM deployment and management</li>
+          <li>Endpoint detection and response (EDR)</li>
+          <li>Compliance support (SOC 2, HIPAA, PCI-DSS)</li>
+          <li>Security awareness training</li>
+          <li>Digital forensics and threat hunting</li>
+        </ul>
+      </div>
+    </div>
 
-            <!-- Software Development -->
-            <div class="service-detail-card glass-card fade-in" id="software">
-                <div class="service-detail-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="16 18 22 12 16 6"/>
-                        <polyline points="8 6 2 12 8 18"/>
-                    </svg>
-                </div>
-                <div class="service-detail-content">
-                    <h2>Software Development</h2>
-                    <p>Custom software solutions built to address your unique business challenges. Our development team creates scalable, maintainable applications using modern technologies and best practices.</p>
-                    <ul class="service-features">
-                        <li>Custom application development</li>
-                        <li>Web application and API development</li>
-                        <li>Mobile application development</li>
-                        <li>Legacy system modernization</li>
-                        <li>Integration and middleware development</li>
-                        <li>DevOps and CI/CD pipeline implementation</li>
-                        <li>Code review and quality assurance</li>
-                        <li>Ongoing maintenance and support</li>
-                    </ul>
-                </div>
-            </div>
+    <div class="service-card fade-up" id="managed-it">
+      <div class="service-card-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <div class="service-card-body">
+        <h2>Managed IT Services</h2>
+        <p>Focus on your core business while we handle your technology operations. Our managed services provide proactive support, maintenance, and optimization to ensure your IT infrastructure runs smoothly and efficiently every day.</p>
+        <ul class="service-list">
+          <li>Proactive system monitoring and maintenance</li>
+          <li>Help desk and technical support</li>
+          <li>Patch management and system updates</li>
+          <li>Backup and disaster recovery management</li>
+          <li>Asset management and lifecycle planning</li>
+          <li>Vendor management and procurement</li>
+          <li>IT strategy and roadmap planning</li>
+          <li>SLAs with guaranteed response times</li>
+        </ul>
+      </div>
+    </div>
 
-            <!-- R&D & Contracting -->
-            <div class="service-detail-card glass-card fade-in" id="rnd">
-                <div class="service-detail-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
-                    </svg>
-                </div>
-                <div class="service-detail-content">
-                    <h2>R&D & Contracting</h2>
-                    <p>Specialized research and development capabilities for complex technology challenges. We provide expert contracting services for organizations requiring specialized technical expertise.</p>
-                    <ul class="service-features">
-                        <li>Emerging technology research and evaluation</li>
-                        <li>Proof of concept development</li>
-                        <li>Technical feasibility studies</li>
-                        <li>Specialized engineering contracting</li>
-                        <li>Technology consulting and advisory</li>
-                        <li>Innovation workshops and strategy sessions</li>
-                        <li>Prototype development</li>
-                        <li>Technical documentation and knowledge transfer</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="service-card fade-up" id="network">
+      <div class="service-card-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="6" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
+      </div>
+      <div class="service-card-body">
+        <h2>Network Engineering</h2>
+        <p>Build and maintain robust network infrastructure that supports your business operations. Our network engineers design, implement, and optimize networks for performance, security, and scalability at enterprise scale.</p>
+        <ul class="service-list">
+          <li>Enterprise network architecture design</li>
+          <li>LAN/WAN implementation and optimization</li>
+          <li>SD-WAN deployment and management</li>
+          <li>Network security (firewalls, VPNs, segmentation)</li>
+          <li>Wireless network design and deployment</li>
+          <li>Network monitoring and performance optimization</li>
+          <li>Data center networking</li>
+          <li>Network troubleshooting and support</li>
+        </ul>
+      </div>
+    </div>
 
-    <!-- CTA Section -->
-    <section class="cta-banner">
-        <div class="container">
-            <div class="cta-content">
-                <h2>Ready to get started?</h2>
-                <p>Contact us to discuss your technology needs and how we can help.</p>
-                <a href="contact.html" class="btn btn-primary btn-large">Contact Us</a>
-            </div>
-        </div>
-    </section>
+    <div class="service-card fade-up" id="software">
+      <div class="service-card-icon">
+        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      </div>
+      <div class="service-card-body">
+        <h2>Software Development</h2>
+        <p>Custom software solutions built to address your unique business challenges. Our development team creates scalable, maintainable applications using modern technologies and best practices that stand the test of time.</p>
+        <ul class="service-list">
+          <li>Custom application development</li>
+          <li>Web application and API development</li>
+          <li>Mobile application development</li>
+          <li>Legacy system modernization</li>
+          <li>Integration and middleware development</li>
+          <li>DevOps and CI/CD pipeline implementation</li>
+          <li>Code review and quality assurance</li>
+          <li>Ongoing maintenance and support</li>
+        </ul>
+      </div>
+    </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="index.html" class="footer-logo">SYNDRAX</a>
-                    <p>Enterprise technology solutions engineered for scale, security, and performance.</p>
-                </div>
-                <div class="footer-links">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="careers.html">Careers</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Services</h4>
-                    <ul>
-                        <li><a href="services.html">All Services</a></li>
-                        <li><a href="solutions.html">Solutions</a></li>
-                        <li><a href="products.html">Products</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Connect</h4>
-                    <ul>
-                        <li><a href="mailto:hello@syndrax.io">hello@syndrax.io</a></li>
-                        <li><span>Pacific Northwest</span></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; Syndrax LLC 2026. All rights reserved.</p>
-                <a href="https://syndrax.io" target="_blank" rel="noopener">syndrax.io</a>
-            </div>
-        </div>
-    </footer>
+    <div class="service-card fade-up" id="rnd">
+      <div class="service-card-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+      </div>
+      <div class="service-card-body">
+        <h2>R&amp;D &amp; Contracting</h2>
+        <p>Specialized research and development capabilities for complex technology challenges. We provide expert contracting services for organizations requiring specialized technical expertise on demanding and innovative projects.</p>
+        <ul class="service-list">
+          <li>Emerging technology research and evaluation</li>
+          <li>Proof of concept development</li>
+          <li>Technical feasibility studies</li>
+          <li>Specialized engineering contracting</li>
+          <li>Technology consulting and advisory</li>
+          <li>Innovation workshops and strategy sessions</li>
+          <li>Prototype development</li>
+          <li>Technical documentation and knowledge transfer</li>
+        </ul>
+      </div>
+    </div>
 
-    <script src="script.js"></script>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-box fade-up">
+    <h2>Ready to get started?</h2>
+    <p>Contact us to discuss your technology needs and how we can help your organization move forward.</p>
+    <div class="btn-row">
+      <a href="/contact" class="btn btn-primary btn-lg">Contact Us</a>
+      <a href="/solutions" class="btn btn-secondary btn-lg">View Solutions</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="footer-logo">
+        <img src="assets/images/logo.png" alt="Syndrax" class="footer-logo-img">
+      </a>
+      <p>Enterprise technology solutions engineered for scale, security, and performance.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="/about">About Us</a>
+      <a href="/careers">Careers</a>
+      <a href="/contact">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="/services">All Services</a>
+      <a href="/solutions">Solutions</a>
+      <a href="/products">Products</a>
+      <a href="/gridwatch">Gridwatch</a>
+    </div>
+    <div class="footer-col">
+      <h4>Locations</h4>
+      <span>HQ: Wyoming, USA</span>
+      <span>Portland, OR</span>
+      <span>Seattle, WA</span>
+      <a href="mailto:hello@syndrax.io">hello@syndrax.io</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© Syndrax LLC 2026. All rights reserved. Licensed in Wyoming &mdash; Operating in the Pacific Northwest</span>
+    <a href="https://syndrax.io" target="_blank" rel="noopener">syndrax.io</a>
+  </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
