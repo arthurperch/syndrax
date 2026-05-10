@@ -1,202 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ Syndrax LLC — Enterprise Technology</title>
-    <meta name="description" content="Cloud infrastructure, cybersecurity, and managed services built for the modern enterprise.">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%233b82f6'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,sans-serif' font-weight='800' font-size='20' fill='white'%3ES%3C/text%3E%3C/svg%3E">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Syndrax LLC — Enterprise Technology</title>
+  <meta name="description" content="Cloud infrastructure, cybersecurity, and managed services built for the modern enterprise.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%233b82f6'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,sans-serif' font-weight='800' font-size='20' fill='white'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <span class="logo-icon">S</span>
-                <span class="logo-text">SYNDRAX</span>
-            </a>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="services.html">Services</a></li>
-                <li><a href="solutions.html">Solutions</a></li>
-                <li class="has-dropdown">
-                    <a href="products.html">Products</a>
-                    <ul class="dropdown">
-                        <li><a href="products.html">All Products</a></li>
-                        <li><a href="gridwatch.html">Gridwatch</a></li>
-                    </ul>
-                </li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="careers.html">Careers</a></li>
-                <li><a href="contact.html" class="nav-cta">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
 
-    <section class="hero hero-home" id="hero">
-        <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1920')"></div>
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1 class="hero-title"><span class="typing-text" id="typingText"></span><span class="cursor">|</span></h1>
-            <p class="hero-subtitle">Cloud infrastructure, cybersecurity, and managed services built for the modern enterprise.</p>
-            <div class="hero-buttons">
-                <a href="services.html" class="btn btn-primary">Our Services</a>
-                <a href="contact.html" class="btn btn-outline">Get in Touch</a>
-            </div>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">S</div>
+      SYNDRAX
+    </a>
+    <div class="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="solutions.html">Solutions</a></li>
+      <li class="dropdown">
+        <a href="products.html">Products</a>
+        <div class="dropdown-menu">
+          <a href="products.html">All Products</a>
+          <a href="gridwatch.html">Gridwatch</a>
         </div>
-    </section>
+      </li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="careers.html">Careers</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+</nav>
 
-    <section class="section services-overview" id="services">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Our Services</h2>
-                <p class="section-subtitle">Comprehensive technology solutions designed to power your business forward.</p>
-            </div>
-            <div class="services-grid">
-                <div class="service-card glass-card fade-in">
-                    <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></div>
-                    <h3>Cloud & Infrastructure</h3>
-                    <p>Scalable cloud architecture and infrastructure engineering for enterprise performance and reliability.</p>
-                </div>
-                <div class="service-card glass-card fade-in">
-                    <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-                    <h3>Cybersecurity & SOC</h3>
-                    <p>24/7 security operations, threat monitoring, and incident response to protect your critical assets.</p>
-                </div>
-                <div class="service-card glass-card fade-in">
-                    <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-                    <h3>Managed IT Services</h3>
-                    <p>End-to-end IT management, support, and optimization for seamless business operations.</p>
-                </div>
-                <div class="service-card glass-card fade-in">
-                    <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
-                    <h3>Network Engineering</h3>
-                    <p>Enterprise-grade network architecture, optimization, and management for maximum uptime.</p>
-                </div>
-                <div class="service-card glass-card fade-in">
-                    <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
-                    <h3>Software Development</h3>
-                    <p>Custom software solutions and application development tailored to your business requirements.</p>
-                </div>
-                <div class="service-card glass-card fade-in">
-                    <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg></div>
-                    <h3>R&D & Contracting</h3>
-                    <p>Innovative research initiatives and specialized technology contracting for complex projects.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Enterprise Technology</div>
+    <h1><span class="typing-text"></span><br>Engineered for Scale.</h1>
+    <p>Cloud infrastructure, cybersecurity, and managed services built for the modern enterprise.</p>
+    <div class="btn-group">
+      <a href="services.html" class="btn-primary">Our Services</a>
+      <a href="contact.html" class="btn-secondary">Get in Touch</a>
+    </div>
+  </div>
+</section>
 
-    <section class="section why-syndrax">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Why Syndrax?</h2>
-                <p class="section-subtitle">We combine deep technical expertise with a commitment to excellence.</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card fade-in">
-                    <div class="feature-icon glow-blue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-                    <h3>Innovation</h3>
-                    <p>We stay at the forefront of emerging technologies, continuously researching and implementing cutting-edge solutions.</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon glow-cyan"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-                    <h3>Reliability</h3>
-                    <p>Our infrastructure and services are engineered for maximum uptime and performance you can depend on.</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon glow-blue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-                    <h3>Security</h3>
-                    <p>Security is embedded in everything we do, protecting your assets against evolving threats.</p>
-                </div>
-            </div>
+<section>
+  <div class="container text-center">
+    <div class="section-badge">What We Do</div>
+    <h2 class="section-title">Our Services</h2>
+    <p class="section-sub">Comprehensive technology solutions designed to power your business forward.</p>
+    <div class="grid-3">
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
         </div>
-    </section>
+        <h3>Cloud & Infrastructure</h3>
+        <p>Scalable cloud architecture and infrastructure engineering for enterprise performance and reliability.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Cybersecurity & SOC</h3>
+        <p>24/7 security operations, threat monitoring, and incident response to protect your critical assets.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>Managed IT Services</h3>
+        <p>End-to-end IT management, support, and optimization for seamless business operations.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg>
+        </div>
+        <h3>Network Engineering</h3>
+        <p>Enterprise-grade network architecture, optimization, and management for maximum uptime.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <h3>Software Development</h3>
+        <p>Custom software solutions and application development tailored to your business requirements.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
+        </div>
+        <h3>R&D & Contracting</h3>
+        <p>Innovative research initiatives and specialized technology contracting for complex projects.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <section class="section products-teaser">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Our Products</h2>
-                <p class="section-subtitle">Proprietary software solutions built to solve real business challenges.</p>
-            </div>
-            <div class="product-showcase glass-card fade-in">
-                <div class="product-badge">In Development</div>
-                <div class="product-content">
-                    <div class="product-icon-large"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9"/></svg></div>
-                    <div class="product-info">
-                        <h3>Syndrax Sync</h3>
-                        <p>Intelligent inventory synchronization across eBay, Amazon, and AliExpress. Built for modern resellers who need real-time inventory management.</p>
-                        <a href="products.html" class="btn btn-outline">Learn More</a>
-                    </div>
-                </div>
-            </div>
+<section style="background: var(--bg2);">
+  <div class="container text-center">
+    <div class="section-badge">Why Us</div>
+    <h2 class="section-title">Why Syndrax?</h2>
+    <p class="section-sub">We combine deep technical expertise with a commitment to excellence.</p>
+    <div class="grid-3">
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
-    </section>
+        <h3>Innovation</h3>
+        <p>We stay at the forefront of emerging technologies, continuously researching and implementing cutting-edge solutions.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon cyan">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <h3>Reliability</h3>
+        <p>Our infrastructure and services are engineered for maximum uptime and performance you can depend on.</p>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3>Security</h3>
+        <p>Security is embedded in everything we do, protecting your assets against evolving threats.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <section class="section gridwatch-section">
-        <div class="container">
-            <div class="gridwatch-card glass-card fade-in">
-                <span class="opensource-badge">OPEN SOURCE</span>
-                <h2>Introducing Gridwatch</h2>
-                <p class="gridwatch-tagline">Enterprise network monitoring. Free for nonprofits, churches, and community organizations.</p>
-                <p class="gridwatch-desc">Gridwatch is Syndrax's open source network monitoring and infrastructure visibility platform. Built for organizations that need enterprise-grade visibility without enterprise-grade cost. We believe every organization deserves reliable technology — which is why Gridwatch is free to install for qualifying nonprofits, churches, and charitable organizations.</p>
-                <div class="feature-pills">
-                    <span class="pill">Free Installation for Nonprofits</span>
-                    <span class="pill">Open Source on GitHub</span>
-                </div>
-                <div class="gridwatch-buttons">
-                    <a href="https://github.com/syndrax/gridwatch" target="_blank" class="btn btn-github"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg> GitHub</a>
-                    <a href="gridwatch.html" class="btn btn-outline-cyan">Learn More</a>
-                </div>
-            </div>
-        </div>
-    </section>
+<section>
+  <div class="container text-center">
+    <div class="section-badge">Products</div>
+    <h2 class="section-title">Our Products</h2>
+    <p class="section-sub">Proprietary software solutions built to solve real business challenges.</p>
+    <div class="card fade-up" style="max-width: 700px; margin: 0 auto; display: flex; align-items: center; gap: 32px; text-align: left;">
+      <div class="card-icon" style="width: 80px; height: 80px; flex-shrink: 0;">
+        <svg viewBox="0 0 24 24" style="width: 40px; height: 40px;"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20M12 2a10 10 0 0 1 0 20M2 12h20"/></svg>
+      </div>
+      <div>
+        <span class="badge badge-blue" style="margin-bottom: 12px;">In Development</span>
+        <h3 style="font-size: 22px; margin-bottom: 8px;">Syndrax Sync</h3>
+        <p>Intelligent inventory synchronization across eBay, Amazon, and AliExpress. Built for modern resellers who need real-time inventory management.</p>
+        <a href="products.html" class="btn-secondary" style="margin-top: 16px; padding: 10px 20px; font-size: 13px;">Learn More</a>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <section class="cta-banner">
-        <div class="container">
-            <div class="cta-content">
-                <h2>Ready to modernize your infrastructure?</h2>
-                <p>Let's discuss how Syndrax can help transform your technology operations.</p>
-                <a href="contact.html" class="btn btn-primary btn-large">Get Started</a>
-            </div>
-        </div>
-    </section>
+<section class="gridwatch-section">
+  <div class="container text-center">
+    <div class="section-badge cyan">Open Source</div>
+    <h2 class="section-title">Introducing Gridwatch</h2>
+    <p class="section-sub">Enterprise network monitoring. Free for nonprofits, churches, and community organizations.</p>
+    <p style="max-width: 800px; margin: 0 auto 32px; color: var(--gray); font-size: 15px; line-height: 1.7;">Gridwatch is Syndrax's open source network monitoring and infrastructure visibility platform. Built for organizations that need enterprise-grade visibility without enterprise-grade cost. We believe every organization deserves reliable technology — which is why Gridwatch is free to install for qualifying nonprofits, churches, and charitable organizations.</p>
+    <div class="pill-group" style="justify-content: center;">
+      <span class="pill">Free Installation for Nonprofits</span>
+      <span class="pill">Open Source on GitHub</span>
+    </div>
+    <div class="btn-group">
+      <a href="https://github.com/syndrax/gridwatch" target="_blank" class="btn-secondary" style="border-color: var(--cyan); color: var(--cyan);">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="width:18px;height:18px;"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="gridwatch.html" class="btn-primary" style="background: var(--cyan);">Learn More</a>
+    </div>
+  </div>
+</section>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="index.html" class="footer-logo"><span class="logo-icon">S</span><span>SYNDRAX</span></a>
-                    <p>Enterprise technology solutions engineered for scale, security, and performance.</p>
-                </div>
-                <div class="footer-links">
-                    <h4>Company</h4>
-                    <ul><li><a href="about.html">About Us</a></li><li><a href="careers.html">Careers</a></li><li><a href="contact.html">Contact</a></li></ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Services</h4>
-                    <ul><li><a href="services.html">All Services</a></li><li><a href="solutions.html">Solutions</a></li><li><a href="products.html">Products</a></li></ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Connect</h4>
-                    <ul>
-                        <li><a href="mailto:hello@syndrax.io">hello@syndrax.io</a></li>
-                        <li><span>Headquarters: Wyoming USA</span></li>
-                        <li><span>Offices: Portland OR — Seattle WA</span></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>Licensed in Wyoming • Operating in the Pacific Northwest</p>
-                <p>&copy; Syndrax LLC 2026. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-    <script src="script.js"></script>
+<section>
+  <div class="container">
+    <div class="cta-banner fade-up">
+      <h2>Ready to modernize your infrastructure?</h2>
+      <p>Let's discuss how Syndrax can help transform your technology operations.</p>
+      <a href="contact.html" class="btn-primary">Get Started</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">S</div>
+        SYNDRAX
+      </a>
+      <p>Enterprise technology solutions engineered for scale, security, and performance.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="about.html">About Us</a>
+      <a href="careers.html">Careers</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="services.html">All Services</a>
+      <a href="solutions.html">Solutions</a>
+      <a href="products.html">Products</a>
+      <a href="gridwatch.html">Gridwatch</a>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <p>hello@syndrax.io</p>
+      <p>HQ: Wyoming, USA</p>
+      <p>Portland, OR — Seattle, WA</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© Syndrax LLC 2026. All rights reserved. Licensed in Wyoming • Operating in the Pacific Northwest</span>
+    <a href="https://syndrax.io">syndrax.io</a>
+  </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
