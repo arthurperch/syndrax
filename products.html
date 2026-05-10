@@ -1,225 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - Syndrax LLC</title>
-    <meta name="description" content="Proprietary software products by Syndrax LLC. Featuring Syndrax Sync - intelligent inventory management across e-commerce platforms.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products — Syndrax LLC</title>
+  <meta name="description" content="Proprietary software products by Syndrax LLC. Syndrax Sync for e-commerce inventory management and Gridwatch for network monitoring.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%233b82f6'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,sans-serif' font-weight='800' font-size='20' fill='white'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">SYNDRAX</a>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="services.html">Services</a></li>
-                <li><a href="solutions.html">Solutions</a></li>
-                <li><a href="products.html" class="active">Products</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="careers.html">Careers</a></li>
-                <li><a href="contact.html" class="nav-cta">Contact</a></li>
-            </ul>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="assets/images/logo.png" alt="Syndrax">
+      <span class="nav-logo-text">Syndrax</span>
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links">
+      <a href="/services">Services</a>
+      <a href="/solutions">Solutions</a>
+      <div class="nav-dropdown">
+        <a href="/products" class="active">Products</a>
+        <div class="nav-dropdown-menu">
+          <a href="/products">All Products</a>
+          <a href="/gridwatch">Gridwatch</a>
         </div>
-    </nav>
+      </div>
+      <a href="/about">About</a>
+      <a href="/careers">Careers</a>
+      <a href="/contact" class="nav-cta">Get in Touch</a>
+    </div>
+  </div>
+</nav>
 
-    <!-- Hero Banner -->
-    <section class="page-hero">
-        <div class="container">
-            <h1 class="page-title">Our Products</h1>
-            <p class="page-subtitle">Proprietary software solutions built to solve real business challenges.</p>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/services">Services</a>
+  <a href="/solutions">Solutions</a>
+  <a href="/products">Products</a>
+  <a href="/gridwatch">Gridwatch</a>
+  <a href="/about">About</a>
+  <a href="/careers">Careers</a>
+  <a href="/contact" style="text-align:center;border-radius:8px;background:var(--blue);color:white;padding:11px 0;">Get in Touch</a>
+</div>
+
+<section class="page-hero">
+  <div class="page-hero-glow"></div>
+  <div class="page-hero-content">
+    <div class="section-badge">Products</div>
+    <h1>Proprietary <span class="accent">Software</span></h1>
+    <p>Built in-house to solve real business challenges that off-the-shelf solutions can't address.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- Syndrax Sync -->
+    <div class="product-featured fade-up">
+      <span class="product-badge badge-warning">In Development</span>
+      <div class="product-layout">
+        <div class="product-visual">
+          <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
         </div>
-    </section>
+        <div class="product-content">
+          <h2>Syndrax Sync</h2>
+          <div class="product-tagline">Intelligent Inventory Synchronization</div>
+          <p class="product-desc">Syndrax Sync is a powerful inventory management platform designed for modern e-commerce resellers. It provides real-time synchronization across eBay, Amazon, and AliExpress, eliminating overselling and streamlining multi-platform operations at scale.</p>
 
-    <!-- Featured Product Section -->
-    <section class="section product-featured">
-        <div class="container">
-            <div class="product-featured-card glass-card fade-in">
-                <div class="product-status-badge">In Development</div>
-                <div class="product-featured-layout">
-                    <div class="product-featured-visual">
-                        <div class="product-icon-container">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"/>
-                            </svg>
-                        </div>
-                        <div class="product-visual-glow"></div>
-                    </div>
-                    <div class="product-featured-content">
-                        <h2>Syndrax Sync</h2>
-                        <p class="product-tagline">Intelligent Inventory Synchronization</p>
-                        <p class="product-description">Syndrax Sync is a powerful inventory management platform designed for modern e-commerce resellers. It provides real-time synchronization across eBay, Amazon, and AliExpress, eliminating overselling and streamlining multi-platform operations.</p>
-                        
-                        <div class="product-features">
-                            <h4>Key Features</h4>
-                            <div class="product-features-grid">
-                                <div class="product-feature-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                                    </svg>
-                                    <span>Real-time sync across platforms</span>
-                                </div>
-                                <div class="product-feature-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                                    </svg>
-                                    <span>Oversell prevention</span>
-                                </div>
-                                <div class="product-feature-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                        <line x1="3" y1="9" x2="21" y2="9"/>
-                                        <line x1="9" y1="21" x2="9" y2="9"/>
-                                    </svg>
-                                    <span>Unified dashboard</span>
-                                </div>
-                                <div class="product-feature-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                                    </svg>
-                                    <span>Smart notifications</span>
-                                </div>
-                                <div class="product-feature-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="12" y1="1" x2="12" y2="23"/>
-                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                                    </svg>
-                                    <span>Pricing optimization tools</span>
-                                </div>
-                                <div class="product-feature-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="18" y1="20" x2="18" y2="10"/>
-                                        <line x1="12" y1="20" x2="12" y2="4"/>
-                                        <line x1="6" y1="20" x2="6" y2="14"/>
-                                    </svg>
-                                    <span>Analytics and reporting</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="product-platforms">
-                            <h4>Supported Platforms</h4>
-                            <div class="platform-badges">
-                                <span class="platform-badge">eBay</span>
-                                <span class="platform-badge">Amazon</span>
-                                <span class="platform-badge">AliExpress</span>
-                            </div>
-                        </div>
-
-                        <div class="product-cta">
-                            <a href="contact.html" class="btn btn-primary">Get Early Access</a>
-                            <p class="product-cta-note">Join our early access program for updates on launch.</p>
-                        </div>
-                    </div>
-                </div>
+          <div class="product-features-grid">
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Real-time cross-platform sync
             </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Oversell prevention
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Unified dashboard
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Smart notifications
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Pricing optimization
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Analytics &amp; reporting
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <div style="font-size:11.5px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Supported Platforms</div>
+            <div class="platform-row">
+              <span class="platform-pill">eBay</span>
+              <span class="platform-pill">Amazon</span>
+              <span class="platform-pill">AliExpress</span>
+            </div>
+          </div>
+
+          <div class="btn-row" style="justify-content:flex-start;">
+            <a href="/contact" class="btn btn-primary">Get Early Access</a>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:10px;">Join our early access program for launch updates.</p>
         </div>
-    </section>
+      </div>
+    </div>
 
-    <!-- Coming Soon Section -->
-    <section class="section products-coming-soon">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">More Coming Soon</h2>
-                <p class="section-subtitle">We're actively developing new products to address enterprise technology challenges.</p>
-            </div>
-            <div class="coming-soon-grid">
-                <div class="coming-soon-card glass-card fade-in">
-                    <div class="coming-soon-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="12" y1="8" x2="12" y2="12"/>
-                            <line x1="12" y1="16" x2="12.01" y2="16"/>
-                        </svg>
-                    </div>
-                    <h3>Infrastructure Monitoring</h3>
-                    <p>Advanced monitoring and observability tools for cloud-native infrastructure.</p>
-                    <span class="coming-soon-badge">Coming 2026</span>
-                </div>
-                <div class="coming-soon-card glass-card fade-in">
-                    <div class="coming-soon-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                            <path d="M12 8v4"/>
-                            <path d="M12 16h.01"/>
-                        </svg>
-                    </div>
-                    <h3>Security Analytics</h3>
-                    <p>AI-powered security analytics and threat intelligence platform.</p>
-                    <span class="coming-soon-badge">In Research</span>
-                </div>
-                <div class="coming-soon-card glass-card fade-in">
-                    <div class="coming-soon-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-                        </svg>
-                    </div>
-                    <h3>Automation Platform</h3>
-                    <p>Enterprise workflow automation and integration platform.</p>
-                    <span class="coming-soon-badge">In Planning</span>
-                </div>
-            </div>
+    <!-- Gridwatch -->
+    <div class="product-featured fade-up" style="border-color:rgba(6,182,212,0.15);">
+      <span class="product-badge badge-success">Open Source</span>
+      <div class="product-layout">
+        <div class="product-visual cyan-visual">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20M12 2a10 10 0 0 1 0 20M2 12h20"/><path d="M12 6v12"/></svg>
         </div>
-    </section>
+        <div class="product-content">
+          <h2>Gridwatch</h2>
+          <div class="product-tagline cyan">Enterprise Network Monitoring</div>
+          <p class="product-desc">Gridwatch is Syndrax's open source network monitoring and infrastructure visibility platform. Built for organizations that need enterprise-grade visibility without enterprise cost. Free to install for qualifying nonprofits, churches, and charitable organizations.</p>
 
-    <!-- CTA Section -->
-    <section class="cta-banner">
-        <div class="container">
-            <div class="cta-content">
-                <h2>Interested in our products?</h2>
-                <p>Get in touch to learn more about early access and upcoming releases.</p>
-                <a href="contact.html" class="btn btn-primary btn-large">Contact Us</a>
+          <div class="product-features-grid">
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24" style="stroke:var(--cyan);"><polyline points="20 6 9 17 4 12"/></svg>
+              Real-time monitoring
             </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24" style="stroke:var(--cyan);"><polyline points="20 6 9 17 4 12"/></svg>
+              Intelligent alerting
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24" style="stroke:var(--cyan);"><polyline points="20 6 9 17 4 12"/></svg>
+              Custom dashboards
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24" style="stroke:var(--cyan);"><polyline points="20 6 9 17 4 12"/></svg>
+              Free for nonprofits
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24" style="stroke:var(--cyan);"><polyline points="20 6 9 17 4 12"/></svg>
+              Multi-cloud support
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24" style="stroke:var(--cyan);"><polyline points="20 6 9 17 4 12"/></svg>
+              Open source on GitHub
+            </div>
+          </div>
+
+          <div class="btn-row" style="justify-content:flex-start;">
+            <a href="/gridwatch" class="btn btn-cyan">Learn More</a>
+            <a href="https://github.com/syndrax/gridwatch" target="_blank" rel="noopener" class="btn btn-secondary">
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              GitHub
+            </a>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="index.html" class="footer-logo">SYNDRAX</a>
-                    <p>Enterprise technology solutions engineered for scale, security, and performance.</p>
-                </div>
-                <div class="footer-links">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="careers.html">Careers</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Services</h4>
-                    <ul>
-                        <li><a href="services.html">All Services</a></li>
-                        <li><a href="solutions.html">Solutions</a></li>
-                        <li><a href="products.html">Products</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Connect</h4>
-                    <ul>
-                        <li><a href="mailto:hello@syndrax.io">hello@syndrax.io</a></li>
-                        <li><span>Pacific Northwest</span></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; Syndrax LLC 2026. All rights reserved.</p>
-                <a href="https://syndrax.io" target="_blank" rel="noopener">syndrax.io</a>
-            </div>
+    <!-- More Coming -->
+    <div class="section-head" style="margin-top:72px;">
+      <div class="section-badge">Roadmap</div>
+      <h2 class="section-title">More Coming Soon</h2>
+      <p class="section-sub" style="margin-bottom:0;">We're actively developing new products to address enterprise technology challenges.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
-    </footer>
+        <h3>Infrastructure Monitoring</h3>
+        <p>Advanced monitoring and observability tools for cloud-native infrastructure environments.</p>
+        <div style="margin-top:14px;"><span class="badge-inline badge-blue">Coming 2026</span></div>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Security Analytics</h3>
+        <p>AI-powered security analytics and threat intelligence platform for enterprise environments.</p>
+        <div style="margin-top:14px;"><span class="badge-inline badge-blue">In Research</span></div>
+      </div>
+      <div class="card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <h3>Automation Platform</h3>
+        <p>Enterprise workflow automation and integration platform for modern business operations.</p>
+        <div style="margin-top:14px;"><span class="badge-inline badge-blue">In Planning</span></div>
+      </div>
+    </div>
 
-    <script src="script.js"></script>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-box fade-up">
+    <h2>Interested in our products?</h2>
+    <p>Get in touch to learn more about early access programs and upcoming product releases.</p>
+    <div class="btn-row">
+      <a href="/contact" class="btn btn-primary btn-lg">Contact Us</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Syndrax">
+        <span class="nav-logo-text">Syndrax</span>
+      </a>
+      <p>Enterprise technology solutions engineered for scale, security, and performance.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="/about">About Us</a>
+      <a href="/careers">Careers</a>
+      <a href="/contact">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="/services">All Services</a>
+      <a href="/solutions">Solutions</a>
+      <a href="/products">Products</a>
+      <a href="/gridwatch">Gridwatch</a>
+    </div>
+    <div class="footer-col">
+      <h4>Locations</h4>
+      <span>HQ: Wyoming, USA</span>
+      <span>Portland, OR</span>
+      <span>Seattle, WA</span>
+      <a href="mailto:hello@syndrax.io">hello@syndrax.io</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© Syndrax LLC 2026. All rights reserved. Licensed in Wyoming &mdash; Operating in the Pacific Northwest</span>
+    <a href="https://syndrax.io" target="_blank" rel="noopener">syndrax.io</a>
+  </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>

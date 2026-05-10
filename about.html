@@ -1,201 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - Syndrax LLC</title>
-    <meta name="description" content="Learn about Syndrax LLC - a technology company focused on R&D, cloud networking, cybersecurity contracting, and software development.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Syndrax LLC</title>
+  <meta name="description" content="Learn about Syndrax LLC — a technology company focused on R&D, cloud networking, cybersecurity, and software development.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%233b82f6'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,sans-serif' font-weight='800' font-size='20' fill='white'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">SYNDRAX</a>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="services.html">Services</a></li>
-                <li><a href="solutions.html">Solutions</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="about.html" class="active">About</a></li>
-                <li><a href="careers.html">Careers</a></li>
-                <li><a href="contact.html" class="nav-cta">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
 
-    <!-- Hero Banner -->
-    <section class="page-hero">
-        <div class="container">
-            <h1 class="page-title">About Syndrax</h1>
-            <p class="page-subtitle">Building enterprise-grade technology for the modern business landscape.</p>
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="assets/images/logo.png" alt="Syndrax">
+      <span class="nav-logo-text">Syndrax</span>
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links">
+      <a href="/services">Services</a>
+      <a href="/solutions">Solutions</a>
+      <div class="nav-dropdown">
+        <a href="/products">Products</a>
+        <div class="nav-dropdown-menu">
+          <a href="/products">All Products</a>
+          <a href="/gridwatch">Gridwatch</a>
         </div>
-    </section>
+      </div>
+      <a href="/about" class="active">About</a>
+      <a href="/careers">Careers</a>
+      <a href="/contact" class="nav-cta">Get in Touch</a>
+    </div>
+  </div>
+</nav>
 
-    <!-- Mission Section -->
-    <section class="section about-mission">
-        <div class="container">
-            <div class="about-mission-content glass-card fade-in">
-                <h2>Our Mission</h2>
-                <p>Syndrax LLC is a technology company focused on building enterprise-grade infrastructure, cybersecurity solutions, and proprietary software. We work with teams, contractors, and partners to deliver modern technology at scale.</p>
-                <p>Founded with a vision to bridge the gap between cutting-edge technology and practical business needs, we specialize in research and development, cloud networking, cybersecurity contracting, and software development. Our approach combines deep technical expertise with a commitment to understanding the unique challenges faced by modern enterprises.</p>
-                <p>We believe that every organization deserves access to robust, secure, and scalable technology solutions. Whether you're a growing startup or an established enterprise, we partner with you to build systems that drive real business value and position you for long-term success.</p>
-            </div>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/services">Services</a>
+  <a href="/solutions">Solutions</a>
+  <a href="/products">Products</a>
+  <a href="/gridwatch">Gridwatch</a>
+  <a href="/about">About</a>
+  <a href="/careers">Careers</a>
+  <a href="/contact" style="text-align:center;border-radius:8px;background:var(--blue);color:white;padding:11px 0;">Get in Touch</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-glow"></div>
+  <div class="page-hero-content">
+    <div class="section-badge">About Us</div>
+    <h1>We Build <span class="accent">Enterprise Technology</span></h1>
+    <p>A technology company focused on R&D, cloud networking, cybersecurity, and software development — built for the modern business landscape.</p>
+  </div>
+</section>
+
+<!-- MISSION -->
+<section class="section">
+  <div class="container">
+    <div class="mission-card fade-up">
+      <h2>Our Mission</h2>
+      <p>Syndrax LLC is a technology company focused on building enterprise-grade infrastructure, cybersecurity solutions, and proprietary software. We work with teams, contractors, and partners to deliver modern technology at scale.</p>
+      <p>Founded with a vision to bridge the gap between cutting-edge technology and practical business needs, we specialize in research and development, cloud networking, cybersecurity contracting, and software development. Our approach combines deep technical expertise with a commitment to understanding the unique challenges faced by modern enterprises.</p>
+      <p>We believe that every organization deserves access to robust, secure, and scalable technology solutions. Whether you're a growing startup or an established enterprise, we partner with you to build systems that drive real business value and position you for long-term success.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CORE VALUES -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-badge">Values</div>
+      <h2 class="section-title">Our Core Values</h2>
+      <p class="section-sub" style="margin-bottom:0;">The principles that guide every decision we make.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="value-card fade-up">
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
         </div>
-    </section>
-
-    <!-- Core Values Section -->
-    <section class="section about-values">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Our Core Values</h2>
-                <p class="section-subtitle">The principles that guide everything we do.</p>
-            </div>
-            <div class="values-grid">
-                <div class="value-card glass-card fade-in">
-                    <div class="value-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
-                        </svg>
-                    </div>
-                    <h3>Innovation</h3>
-                    <p>We constantly explore emerging technologies and creative solutions. Innovation isn't just about using new tools—it's about finding better ways to solve problems and deliver value to our clients.</p>
-                </div>
-                <div class="value-card glass-card fade-in">
-                    <div class="value-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        </svg>
-                    </div>
-                    <h3>Security</h3>
-                    <p>Security is foundational to everything we build. We embed security practices into our development processes, infrastructure designs, and operational procedures from day one.</p>
-                </div>
-                <div class="value-card glass-card fade-in">
-                    <div class="value-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                            <polyline points="22 4 12 14.01 9 11.01"/>
-                        </svg>
-                    </div>
-                    <h3>Reliability</h3>
-                    <p>Our clients depend on us, and we take that responsibility seriously. We build systems designed for uptime, performance, and consistency—technology you can count on.</p>
-                </div>
-                <div class="value-card glass-card fade-in">
-                    <div class="value-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                        </svg>
-                    </div>
-                    <h3>Collaboration</h3>
-                    <p>Great technology is built through partnership. We work closely with our clients, contractors, and team members to ensure alignment, transparency, and shared success.</p>
-                </div>
-            </div>
+        <h3>Innovation</h3>
+        <p>We constantly explore emerging technologies and creative solutions. Innovation is about finding better ways to solve problems and deliver value.</p>
+      </div>
+      <div class="value-card fade-up">
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
-    </section>
-
-    <!-- Leadership Team Section -->
-    <section class="section about-team">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Our Leadership Team</h2>
-                <p class="section-subtitle">Experienced leaders driving innovation and excellence.</p>
-            </div>
-            <div class="team-grid">
-                <div class="team-card glass-card fade-in">
-                    <div class="team-photo"><img src="assets/images/team/daren-hill.jpg" alt="Daren Hill" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect fill=%27%23141b2d%27 width=%27200%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27Inter,sans-serif%27 font-size=%2760%27 fill=%27%233b82f6%27%3EDH%3C/text%3E%3C/svg%3E'"></div>
-                    <h3>Daren Hill</h3>
-                    <span class="team-title">Chief Executive Officer</span>
-                    <p>Visionary leader driving Syndrax's mission to deliver enterprise-grade technology solutions across the Pacific Northwest and beyond.</p>
-                </div>
-                <div class="team-card glass-card fade-in">
-                    <div class="team-photo"><img src="assets/images/team/marcus-ryan.jpg" alt="Marcus Ryan" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect fill=%27%23141b2d%27 width=%27200%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27Inter,sans-serif%27 font-size=%2760%27 fill=%27%233b82f6%27%3EMR%3C/text%3E%3C/svg%3E'"></div>
-                    <h3>Marcus Ryan</h3>
-                    <span class="team-title">Chief Technology Officer</span>
-                    <p>Engineering leader with deep expertise in cloud architecture, distributed systems, and enterprise infrastructure at scale.</p>
-                </div>
-                <div class="team-card glass-card fade-in">
-                    <div class="team-photo"><img src="assets/images/team/sarah-kovacs.jpg" alt="Sarah Kovacs" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect fill=%27%23141b2d%27 width=%27200%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27Inter,sans-serif%27 font-size=%2760%27 fill=%27%233b82f6%27%3ESK%3C/text%3E%3C/svg%3E'"></div>
-                    <h3>Sarah Kovacs</h3>
-                    <span class="team-title">Chief Security Officer</span>
-                    <p>Cybersecurity veteran specializing in SOC operations, threat intelligence, and enterprise security frameworks.</p>
-                </div>
-                <div class="team-card glass-card fade-in">
-                    <div class="team-photo"><img src="assets/images/team/james-okafor.jpg" alt="James Okafor" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect fill=%27%23141b2d%27 width=%27200%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27Inter,sans-serif%27 font-size=%2760%27 fill=%27%233b82f6%27%3EJO%3C/text%3E%3C/svg%3E'"></div>
-                    <h3>James Okafor</h3>
-                    <span class="team-title">Head of Cloud Infrastructure</span>
-                    <p>Cloud architect with extensive experience designing and scaling enterprise infrastructure across AWS, Azure, and GCP.</p>
-                </div>
-                <div class="team-card glass-card fade-in">
-                    <div class="team-photo"><img src="assets/images/team/arjun-sharma.jpg" alt="Arjun Sharma" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect fill=%27%23141b2d%27 width=%27200%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27Inter,sans-serif%27 font-size=%2760%27 fill=%27%233b82f6%27%3EAS%3C/text%3E%3C/svg%3E'"></div>
-                    <h3>Arjun Sharma</h3>
-                    <span class="team-title">Head of Software Development</span>
-                    <p>Senior engineering leader driving software development practices, product delivery, and technical innovation at Syndrax.</p>
-                </div>
-            </div>
+        <h3>Security</h3>
+        <p>Security is foundational to everything we build. We embed security practices into our development, infrastructure, and operations from day one.</p>
+      </div>
+      <div class="value-card fade-up">
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-banner">
-        <div class="container">
-            <div class="cta-content">
-                <h2>Want to learn more about Syndrax?</h2>
-                <p>Get in touch with us to discuss how we can help your organization.</p>
-                <a href="contact.html" class="btn btn-primary btn-large">Contact Us</a>
-            </div>
+        <h3>Reliability</h3>
+        <p>Our clients depend on us, and we take that seriously. We build systems designed for uptime, performance, and consistency you can count on.</p>
+      </div>
+      <div class="value-card fade-up">
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
-    </section>
+        <h3>Collaboration</h3>
+        <p>Great technology is built through partnership. We work closely with clients and team members to ensure alignment, transparency, and shared success.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="index.html" class="footer-logo">SYNDRAX</a>
-                    <p>Enterprise technology solutions engineered for scale, security, and performance.</p>
-                </div>
-                <div class="footer-links">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="careers.html">Careers</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Services</h4>
-                    <ul>
-                        <li><a href="services.html">All Services</a></li>
-                        <li><a href="solutions.html">Solutions</a></li>
-                        <li><a href="products.html">Products</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Connect</h4>
-                    <ul>
-                        <li><a href="mailto:hello@syndrax.io">hello@syndrax.io</a></li>
-                        <li><span>Pacific Northwest</span></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; Syndrax LLC 2026. All rights reserved.</p>
-                <a href="https://syndrax.io" target="_blank" rel="noopener">syndrax.io</a>
-            </div>
-        </div>
-    </footer>
+<!-- TEAM -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-badge">Leadership</div>
+      <h2 class="section-title">Our Leadership Team</h2>
+      <p class="section-sub" style="margin-bottom:0;">Experienced leaders driving innovation and excellence.</p>
+    </div>
+    <div class="grid grid-5">
+      <div class="team-card fade-up">
+        <img class="team-photo" src="assets/images/team/daren-hill.jpg" alt="Daren Hill"
+          onerror="this.outerHTML='<div class=\'team-photo\' style=\'display:flex;align-items:center;justify-content:center;background:rgba(59,130,246,0.1);font-size:28px;font-weight:800;color:var(--blue);\'>DH</div>'">
+        <div class="team-name">Daren Hill</div>
+        <div class="team-role">Chief Executive Officer</div>
+        <div class="team-bio">Visionary leader driving Syndrax's mission to deliver enterprise-grade technology solutions across the Pacific Northwest and beyond.</div>
+      </div>
+      <div class="team-card fade-up">
+        <img class="team-photo" src="assets/images/team/marcus-ryan.jpg" alt="Marcus Ryan"
+          onerror="this.outerHTML='<div class=\'team-photo\' style=\'display:flex;align-items:center;justify-content:center;background:rgba(59,130,246,0.1);font-size:28px;font-weight:800;color:var(--blue);\'>MR</div>'">
+        <div class="team-name">Marcus Ryan</div>
+        <div class="team-role">Chief Technology Officer</div>
+        <div class="team-bio">Engineering leader with deep expertise in cloud architecture, distributed systems, and enterprise infrastructure at scale.</div>
+      </div>
+      <div class="team-card fade-up">
+        <img class="team-photo" src="assets/images/team/sarah-kovacs.jpg" alt="Sarah Kovacs"
+          onerror="this.outerHTML='<div class=\'team-photo\' style=\'display:flex;align-items:center;justify-content:center;background:rgba(59,130,246,0.1);font-size:28px;font-weight:800;color:var(--blue);\'>SK</div>'">
+        <div class="team-name">Sarah Kovacs</div>
+        <div class="team-role">Chief Security Officer</div>
+        <div class="team-bio">Cybersecurity veteran specializing in SOC operations, threat intelligence, and enterprise security frameworks.</div>
+      </div>
+      <div class="team-card fade-up">
+        <img class="team-photo" src="assets/images/team/james-okafor.jpg" alt="James Okafor"
+          onerror="this.outerHTML='<div class=\'team-photo\' style=\'display:flex;align-items:center;justify-content:center;background:rgba(59,130,246,0.1);font-size:28px;font-weight:800;color:var(--blue);\'>JO</div>'">
+        <div class="team-name">James Okafor</div>
+        <div class="team-role">Head of Cloud Infrastructure</div>
+        <div class="team-bio">Cloud architect with extensive experience designing and scaling enterprise infrastructure across AWS, Azure, and GCP.</div>
+      </div>
+      <div class="team-card fade-up">
+        <img class="team-photo" src="assets/images/team/arjun-sharma.jpg" alt="Arjun Sharma"
+          onerror="this.outerHTML='<div class=\'team-photo\' style=\'display:flex;align-items:center;justify-content:center;background:rgba(59,130,246,0.1);font-size:28px;font-weight:800;color:var(--blue);\'>AS</div>'">
+        <div class="team-name">Arjun Sharma</div>
+        <div class="team-role">Head of Software Development</div>
+        <div class="team-bio">Senior engineering leader driving software development practices, product delivery, and technical innovation at Syndrax.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <script src="script.js"></script>
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-box fade-up">
+    <h2>Want to learn more about Syndrax?</h2>
+    <p>Get in touch to discuss how we can help your organization succeed with technology.</p>
+    <div class="btn-row">
+      <a href="/contact" class="btn btn-primary btn-lg">Contact Us</a>
+      <a href="/careers" class="btn btn-secondary btn-lg">Join the Team</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Syndrax">
+        <span class="nav-logo-text">Syndrax</span>
+      </a>
+      <p>Enterprise technology solutions engineered for scale, security, and performance.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="/about">About Us</a>
+      <a href="/careers">Careers</a>
+      <a href="/contact">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="/services">All Services</a>
+      <a href="/solutions">Solutions</a>
+      <a href="/products">Products</a>
+      <a href="/gridwatch">Gridwatch</a>
+    </div>
+    <div class="footer-col">
+      <h4>Locations</h4>
+      <span>HQ: Wyoming, USA</span>
+      <span>Portland, OR</span>
+      <span>Seattle, WA</span>
+      <a href="mailto:hello@syndrax.io">hello@syndrax.io</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© Syndrax LLC 2026. All rights reserved. Licensed in Wyoming &mdash; Operating in the Pacific Northwest</span>
+    <a href="https://syndrax.io" target="_blank" rel="noopener">syndrax.io</a>
+  </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
