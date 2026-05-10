@@ -52,25 +52,12 @@ nav {
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-weight: 800;
-  font-size: 18px;
-  letter-spacing: 2px;
-  color: var(--white);
 }
 
-.logo-icon {
-  width: 36px;
-  height: 36px;
-  background: var(--blue);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 18px;
-  color: white;
-  flex-shrink: 0;
+.logo-img {
+  height: 44px;
+  width: auto;
+  display: block;
 }
 
 .nav-links {
