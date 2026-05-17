@@ -72,8 +72,9 @@
     <div class="product-featured fade-up">
       <span class="product-badge badge-blue">Live</span>
       <div class="product-layout">
-        <div class="product-visual">
-          <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
+        <div class="product-visual product-particle-container">
+          <canvas class="product-particles"></canvas>
+          <img src="assets/images/synball.png" alt="Syndrax Sync" class="product-logo-icon">
         </div>
         <div class="product-content">
           <h2>Syndrax Sync</h2>
@@ -117,7 +118,7 @@
           </div>
 
           <div class="btn-row" style="justify-content:flex-start;">
-            <a href="/contact" class="btn btn-primary">Get Early Access</a>
+            <a href="/contact" class="btn btn-primary">Request Demo</a>
           </div>
                   </div>
       </div>
@@ -127,8 +128,9 @@
     <div class="product-featured fade-up" style="border-color:rgba(6,182,212,0.15);">
       <span class="product-badge badge-success">Open Source</span>
       <div class="product-layout">
-        <div class="product-visual cyan-visual">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20M12 2a10 10 0 0 1 0 20M2 12h20"/><path d="M12 6v12"/></svg>
+        <div class="product-visual cyan-visual product-particle-container">
+          <canvas class="product-particles"></canvas>
+          <img src="assets/images/synball.png" alt="Gridwatch" class="product-logo-icon">
         </div>
         <div class="product-content">
           <h2>Gridwatch</h2>
@@ -173,6 +175,84 @@
       </div>
     </div>
 
+    <!-- Syndrax Vault -->
+    <div class="product-featured fade-up">
+      <span class="product-badge badge-blue">Coming Soon</span>
+      <div class="product-layout">
+        <div class="product-visual product-particle-container">
+          <canvas class="product-particles"></canvas>
+          <img src="assets/images/synball.png" alt="Syndrax Vault" class="product-logo-icon">
+        </div>
+        <div class="product-content">
+          <h2>Syndrax Vault</h2>
+          <div class="product-tagline">Secure Credential Management</div>
+          <p class="product-desc">Enterprise-grade secrets management and credential rotation platform. Centralize API keys, database credentials, and certificates with automatic rotation policies and full audit trails.</p>
+
+          <div class="product-features-grid">
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Automated key rotation
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Full audit logging
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Role-based access
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Multi-cloud integration
+            </div>
+          </div>
+
+          <div class="btn-row" style="justify-content:flex-start;">
+            <a href="/contact" class="btn btn-primary">Request Demo</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Syndrax Flow -->
+    <div class="product-featured fade-up">
+      <span class="product-badge badge-blue">Coming Soon</span>
+      <div class="product-layout">
+        <div class="product-visual product-particle-container">
+          <canvas class="product-particles"></canvas>
+          <img src="assets/images/synball.png" alt="Syndrax Flow" class="product-logo-icon">
+        </div>
+        <div class="product-content">
+          <h2>Syndrax Flow</h2>
+          <div class="product-tagline">Intelligent Workflow Automation</div>
+          <p class="product-desc">No-code workflow automation for IT operations. Connect your infrastructure tools, automate incident response, and build runbooks that execute themselves when triggered by alerts or events.</p>
+
+          <div class="product-features-grid">
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Visual workflow builder
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Event-driven triggers
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              50+ integrations
+            </div>
+            <div class="product-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Automated runbooks
+            </div>
+          </div>
+
+          <div class="btn-row" style="justify-content:flex-start;">
+            <a href="/contact" class="btn btn-primary">Request Demo</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- More Coming -->
     <div class="section-head" style="margin-top:72px;">
       <div class="section-badge">Roadmap</div>
@@ -186,7 +266,7 @@
         </div>
         <h3>Infrastructure Monitoring</h3>
         <p>Advanced monitoring and observability tools for cloud-native infrastructure environments.</p>
-              </div>
+      </div>
       <div class="card fade-up">
         <div class="card-icon">
           <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -255,5 +335,62 @@
 </footer>
 
 <script src="script.js?v=2"></script>
+<script>
+(function() {
+  const canvases = document.querySelectorAll('.product-particles');
+  canvases.forEach(canvas => {
+    const ctx = canvas.getContext('2d');
+    const container = canvas.parentElement;
+    let particles = [];
+    let animId;
+
+    function resize() {
+      canvas.width = container.offsetWidth;
+      canvas.height = container.offsetHeight;
+    }
+
+    function createParticles() {
+      particles = [];
+      const count = Math.floor((canvas.width * canvas.height) / 4000);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.5 + 0.5,
+          dx: (Math.random() - 0.5) * 0.3,
+          dy: (Math.random() - 0.5) * 0.3,
+          opacity: Math.random() * 0.4 + 0.1
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(2,132,199,' + p.opacity + ')';
+        ctx.fill();
+      });
+      animId = requestAnimationFrame(draw);
+    }
+
+    resize();
+    createParticles();
+    draw();
+
+    window.addEventListener('resize', () => {
+      resize();
+      createParticles();
+    });
+  });
+})();
+</script>
 </body>
 </html>
