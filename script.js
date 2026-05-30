@@ -1,3 +1,22 @@
+// Dark mode — default dark, persist preference
+(function() {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light') {
+    document.documentElement.classList.remove('dark');
+  } else {
+    document.documentElement.classList.add('dark');
+  }
+})();
+
+function initThemeToggle() {
+  document.querySelectorAll('.theme-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+  });
+}
+
 // Navbar scroll effect
 const navbar = document.getElementById('navbar');
 if (navbar) {
@@ -44,6 +63,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     }
   });
 });
+
+initThemeToggle();
 
 // Cursor glow effect
 if (window.matchMedia('(pointer: fine)').matches) {
