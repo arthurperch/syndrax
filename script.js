@@ -1,10 +1,7 @@
-// Dark mode — default dark, persist preference
+// Dark mode — default dark, restore light only if explicitly saved
 (function() {
-  const saved = localStorage.getItem('theme');
-  if (saved === 'light') {
+  if (localStorage.getItem('theme') === 'light') {
     document.documentElement.classList.remove('dark');
-  } else {
-    document.documentElement.classList.add('dark');
   }
 })();
 
