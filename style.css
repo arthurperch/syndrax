@@ -430,23 +430,27 @@ html:not(.dark) .navbar.scrolled {
 
 /* Navbar wordmark image */
 .nav-logo-wordmark {
-  height: 50px;
+  height: 58px;
   width: auto;
   display: block;
   object-fit: contain;
-  filter: drop-shadow(0 1px 12px rgba(0,207,255,0.18)) drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+  filter: drop-shadow(0 1px 14px rgba(0,207,255,0.22)) drop-shadow(0 1px 3px rgba(0,0,0,0.28));
 }
 
 html:not(.dark) .nav-logo-wordmark {
-  filter: drop-shadow(0 1px 6px rgba(0,153,204,0.12)) drop-shadow(0 1px 2px rgba(15,23,42,0.12));
+  filter: drop-shadow(0 1px 6px rgba(0,153,204,0.14)) drop-shadow(0 1px 2px rgba(15,23,42,0.12));
 }
 
 @media (max-width: 1024px) {
-  .nav-logo-wordmark { height: 44px; }
+  .nav-logo-wordmark { height: 52px; }
+}
+
+@media (max-width: 768px) {
+  .nav-logo-wordmark { height: 48px; }
 }
 
 @media (max-width: 520px) {
-  .nav-logo-wordmark { height: 36px; }
+  .nav-logo-wordmark { height: 44px; }
 }
 
 .nav-links {
@@ -1647,13 +1651,32 @@ html:not(.dark) .hero-dash-footer { border-top-color: rgba(15,23,42,0.07); }
 }
 
 .hero h1 .accent-2 {
-  background: linear-gradient(90deg, #FF00D4 0%, #00CFFF 100%);
+  background: linear-gradient(
+    90deg,
+    #FF00D4 0%,
+    #cc00aa 18%,
+    #ffffff 38%,
+    #00CFFF 50%,
+    #00CFFF 62%,
+    #ffffff 72%,
+    #FF00D4 90%,
+    #FF00D4 100%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 0;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: block;
   line-height: 1.02;
   margin-top: 0.02em;
+  animation: scaleShine 3.6s ease-in-out infinite;
+}
+
+@keyframes scaleShine {
+  0%   { background-position: 100% 0; }
+  45%  { background-position: 0% 0; }
+  100% { background-position: 100% 0; }
 }
 
 .hero-sub {
