@@ -3721,14 +3721,17 @@ footer {
   }
   /* Simplified mobile: just the card, orb hidden */
   .hero-visual-cluster {
-    min-height: 420px;
+    min-height: auto;
+    padding-bottom: 24px;
   }
   .hero-dash {
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100% - 16px);
-    max-width: 380px;
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
     animation: none;
   }
   .hero-callout { display: none; }
@@ -3745,7 +3748,10 @@ footer {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-5 { grid-template-columns: repeat(2, 1fr); }
   .footer-inner { grid-template-columns: 1fr; gap: 28px; }
-  .cta-box { padding: 48px 28px; }
+  .hero-metric-chip-anchor { display: none; }
+  .cta-box { padding: 48px 24px; overflow: visible; }
+  .cta-box .btn-row { flex-wrap: wrap; gap: 12px; }
+  .cta-box .btn { width: 100%; max-width: 360px; justify-content: center; }
   .section { padding: 72px 24px; }
   .services-grid { grid-template-columns: 1fr; }
   .service-card { flex-direction: column; }
