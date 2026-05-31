@@ -6,7 +6,7 @@
   <title>Syndrax Sync — E-Commerce Automation Platform</title>
   <meta name="description" content="Price intelligently. Sell everywhere. Scale without hiring. Syndrax Sync automates your entire e-commerce operation across every marketplace.">
   <link rel="icon" type="image/png" href="assets/images/synball.png">
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
   <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.remove("dark");}</script>
 </head>
 <body>
@@ -75,60 +75,66 @@
 
     <!-- Command Core Visual -->
     <div class="cc-scene" id="ccScene" aria-hidden="true">
-      <!-- SVG for beams and orbit rings -->
-      <svg class="cc-svg" id="ccSvg" viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg">
+      <svg class="cc-svg" id="ccSvg" viewBox="0 0 720 720" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="orbGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#00CFFF" stop-opacity="0.35"/>
-            <stop offset="60%" stop-color="#0099cc" stop-opacity="0.12"/>
+          <!-- Orb radial glow -->
+          <radialGradient id="ccOrbGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stop-color="#00CFFF" stop-opacity="0.42"/>
+            <stop offset="55%"  stop-color="#0099cc" stop-opacity="0.14"/>
             <stop offset="100%" stop-color="#FF00D4" stop-opacity="0"/>
           </radialGradient>
-          <filter id="beamBlur" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="1.5"/>
+          <!-- Soft beam blur -->
+          <filter id="ccBeamBlur" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="1.8"/>
           </filter>
-          <filter id="nodeGlow" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="3" result="blur"/>
+          <!-- Node glow -->
+          <filter id="ccNodeGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="blur"/>
             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <!-- Packet glow -->
+          <filter id="ccPktGlow" x="-200%" y="-200%" width="500%" height="500%">
+            <feGaussianBlur stdDeviation="2.5"/>
           </filter>
         </defs>
 
-        <!-- Outer orbit ring -->
-        <circle class="cc-orbit-ring" cx="280" cy="280" r="200"/>
-        <!-- Inner orbit ring -->
-        <circle class="cc-orbit-ring cc-orbit-ring--inner" cx="280" cy="280" r="130"/>
+        <!-- Outer dashed orbit guide ring -->
+        <circle class="cc-orbit-ring" cx="360" cy="360" r="252"/>
+        <!-- Inner subtle ring -->
+        <circle class="cc-orbit-ring cc-orbit-ring--inner" cx="360" cy="360" r="162"/>
 
-        <!-- Beam group — drawn by JS -->
+        <!-- Beam group — JS writes <line> elements here -->
         <g id="ccBeams"></g>
 
-        <!-- Center orb glow halo -->
-        <circle cx="280" cy="280" r="110" fill="url(#orbGlow)" class="cc-orb-halo"/>
+        <!-- Orb background halo -->
+        <circle class="cc-orb-halo" cx="360" cy="360" r="136" fill="url(#ccOrbGrad)"/>
 
-        <!-- Marketplace nodes — positioned by CSS custom props, animated by JS rotation -->
+        <!-- Node badge groups — JS writes <g> elements here -->
         <g id="ccNodes"></g>
 
-        <!-- Data packets group -->
+        <!-- Data packet dots — JS writes <circle> elements here -->
         <g id="ccPackets"></g>
       </svg>
 
-      <!-- Center orb (existing synball) -->
+      <!-- Center orb (HTML overlay so the real synball image shows) -->
       <div class="cc-orb">
-        <img src="assets/images/synball.png" alt="Syndrax Core" class="cc-orb-img">
+        <div class="cc-orb-pulse"></div>
         <div class="cc-orb-ring cc-orb-ring--1"></div>
         <div class="cc-orb-ring cc-orb-ring--2"></div>
-        <div class="cc-orb-pulse"></div>
+        <img src="assets/images/synball.png" alt="Syndrax Command Core" class="cc-orb-img">
       </div>
 
-      <!-- HUD chips — floated absolutely, JS handles fade cycling -->
+      <!-- HUD data chips (HTML, JS cycles visibility) -->
       <div class="cc-hud" id="ccHud">
-        <div class="cc-chip cc-chip--green" data-idx="0"><span class="cc-chip-dot"></span>In Stock: 38</div>
-        <div class="cc-chip cc-chip--cyan" data-idx="1"><span class="cc-chip-dot"></span>eBay Synced</div>
-        <div class="cc-chip cc-chip--amber" data-idx="2"><span class="cc-chip-dot"></span>Low Stock</div>
-        <div class="cc-chip cc-chip--cyan" data-idx="3"><span class="cc-chip-dot"></span>$24.99</div>
-        <div class="cc-chip cc-chip--red" data-idx="4"><span class="cc-chip-dot"></span>OOS</div>
-        <div class="cc-chip cc-chip--green" data-idx="5"><span class="cc-chip-dot"></span>+12 Orders</div>
-        <div class="cc-chip cc-chip--cyan" data-idx="6"><span class="cc-chip-dot"></span>Google Feed Synced</div>
-        <div class="cc-chip cc-chip--green" data-idx="7"><span class="cc-chip-dot"></span>Margin +18%</div>
-        <div class="cc-chip cc-chip--cyan" data-idx="8"><span class="cc-chip-dot"></span>FB Ads Active</div>
+        <div class="cc-chip cc-chip--green"  data-slot="0"><span class="cc-chip-dot"></span><span>In Stock: 38</span></div>
+        <div class="cc-chip cc-chip--cyan"   data-slot="1"><span class="cc-chip-dot"></span><span>eBay Synced</span></div>
+        <div class="cc-chip cc-chip--amber"  data-slot="2"><span class="cc-chip-dot"></span><span>Low Stock</span></div>
+        <div class="cc-chip cc-chip--cyan"   data-slot="3"><span class="cc-chip-dot"></span><span>$24.99</span></div>
+        <div class="cc-chip cc-chip--red"    data-slot="4"><span class="cc-chip-dot"></span><span>OOS</span></div>
+        <div class="cc-chip cc-chip--green"  data-slot="5"><span class="cc-chip-dot"></span><span>Margin +18%</span></div>
+        <div class="cc-chip cc-chip--cyan"   data-slot="6"><span class="cc-chip-dot"></span><span>Google Feed Synced</span></div>
+        <div class="cc-chip cc-chip--green"  data-slot="7"><span class="cc-chip-dot"></span><span>+12 Orders</span></div>
+        <div class="cc-chip cc-chip--cyan"   data-slot="8"><span class="cc-chip-dot"></span><span>FB Ads Active</span></div>
       </div>
     </div><!-- /.cc-scene -->
 
@@ -583,210 +589,221 @@
 
 <script src="script.js?v=7"></script>
 <script>
-(function() {
+(function () {
   'use strict';
 
-  // ── Platform node definitions ──────────────────────────────────────────────
+  // ── SVG coordinate space (matches viewBox="0 0 720 720") ──────────────────
+  const VB = 720, CX = 360, CY = 360;
+  const ORBIT_R = 252;   // matches SVG circle r="252"
+  const NW = 88, NH = 34; // badge width/height
+
+  // ── Platform definitions ──────────────────────────────────────────────────
+  // color: accent color for border + glow; glowColor: rgba string for beam
   const PLATFORMS = [
-    { id: 'amazon',   label: 'AMAZON',    color: '#FF9900', abbr: 'AMZ' },
-    { id: 'ebay',     label: 'EBAY',      color: '#E53238', abbr: 'EBA' },
-    { id: 'etsy',     label: 'ETSY',      color: '#F56400', abbr: 'ETS' },
-    { id: 'shopify',  label: 'SHOPIFY',   color: '#96BF48', abbr: 'SHO' },
-    { id: 'walmart',  label: 'WALMART',   color: '#0071CE', abbr: 'WMT' },
-    { id: 'tiktok',   label: 'TIKTOK',    color: '#69C9D0', abbr: 'TIK' },
-    { id: 'woo',      label: 'WOO',       color: '#7F54B3', abbr: 'WOO' },
-    { id: 'bigcomm',  label: 'BIGCOMM',   color: '#34495E', abbr: 'BIG' },
+    { name: 'Amazon',    color: '#FF9900', glow: 'rgba(255,153,0,'   },
+    { name: 'eBay',      color: '#E53238', glow: 'rgba(229,50,56,'   },
+    { name: 'Etsy',      color: '#F1641E', glow: 'rgba(241,100,30,'  },
+    { name: 'Shopify',   color: '#96BF48', glow: 'rgba(150,191,72,'  },
+    { name: 'Walmart',   color: '#0071CE', glow: 'rgba(0,113,206,'   },
+    { name: 'TikTok',    color: '#69C9D0', glow: 'rgba(105,201,208,' },
+    { name: 'Facebook',  color: '#1877F2', glow: 'rgba(24,119,242,'  },
+    { name: 'Google',    color: '#4285F4', glow: 'rgba(66,133,244,'  },
   ];
 
-  const CX = 280, CY = 280;  // SVG viewBox center
-  const ORBIT_R = 200;        // orbit radius
-  const NODE_W = 58, NODE_H = 26; // node badge size
+  // ── HUD chip positions (%, %) for each slot ───────────────────────────────
+  // Placed away from the orbit ring so they don't clash with badges
+  const CHIP_SLOTS = [
+    { top: '5%',  left: '3%'  },
+    { top: '18%', left: '76%' },
+    { top: '50%', left: '83%' },
+    { top: '73%', left: '4%'  },
+    { top: '38%', left: '1%'  },
+    { top: '86%', left: '36%' },
+    { top: '7%',  left: '42%' },
+    { top: '80%', left: '62%' },
+    { top: '60%', left: '77%' },
+  ];
 
+  // ── Get DOM refs ──────────────────────────────────────────────────────────
   const scene   = document.getElementById('ccScene');
-  const svg     = document.getElementById('ccSvg');
   const beamG   = document.getElementById('ccBeams');
   const nodeG   = document.getElementById('ccNodes');
   const packetG = document.getElementById('ccPackets');
-  if (!scene || !svg) return;
+  if (!scene || !beamG) return;
 
-  // Responsively scale the SVG viewBox coordinates to match the CSS px size
-  function getScenePx() {
-    return scene.offsetWidth || 560;
-  }
+  // ── Assign chip slot positions ────────────────────────────────────────────
+  const chips = Array.from(document.querySelectorAll('.cc-chip'));
+  chips.forEach((chip, i) => {
+    const s = CHIP_SLOTS[i % CHIP_SLOTS.length];
+    chip.style.top  = s.top;
+    chip.style.left = s.left;
+  });
 
-  // ── Build node elements ────────────────────────────────────────────────────
-  const nodeEls = []; // { group, bg, abbr, label, beam, packet, angle }
+  // ── Build SVG node badges + beams ─────────────────────────────────────────
+  const NS = 'http://www.w3.org/2000/svg';
 
-  PLATFORMS.forEach((p, i) => {
+  const nodes = PLATFORMS.map((p, i) => {
     const angle0 = (i / PLATFORMS.length) * Math.PI * 2 - Math.PI / 2;
-    const nx = CX + ORBIT_R * Math.cos(angle0);
-    const ny = CY + ORBIT_R * Math.sin(angle0);
+    const nx0 = CX + ORBIT_R * Math.cos(angle0);
+    const ny0 = CY + ORBIT_R * Math.sin(angle0);
 
-    // ── Beam ──
-    const beam = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    // ── Beam ────────────────────────────────────────────────────────────────
+    const beam = document.createElementNS(NS, 'line');
     beam.setAttribute('x1', CX); beam.setAttribute('y1', CY);
-    beam.setAttribute('x2', nx); beam.setAttribute('y2', ny);
+    beam.setAttribute('x2', nx0); beam.setAttribute('y2', ny0);
     beam.setAttribute('stroke', p.color);
     beam.setAttribute('stroke-width', '1');
+    beam.setAttribute('stroke-dasharray', '5 8');
     beam.setAttribute('stroke-opacity', '0.35');
-    beam.setAttribute('stroke-dasharray', '4 6');
-    beam.style.filter = 'url(#beamBlur)';
+    beam.style.filter = 'url(#ccBeamBlur)';
+    // stagger beam pulse so they don't all flash together
+    beam.style.animationDelay = `${i * 0.44}s`;
+    beam.classList.add('cc-beam-line');
     beamG.appendChild(beam);
 
-    // ── Node group ──
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    g.setAttribute('filter', 'url(#nodeGlow)');
+    // ── Badge group ──────────────────────────────────────────────────────────
+    const g = document.createElementNS(NS, 'g');
 
-    // backdrop rect
-    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    rect.setAttribute('x', nx - NODE_W / 2);
-    rect.setAttribute('y', ny - NODE_H / 2);
-    rect.setAttribute('width', NODE_W);
-    rect.setAttribute('height', NODE_H);
-    rect.setAttribute('rx', '6');
-    rect.setAttribute('fill', 'rgba(6,13,24,0.92)');
-    rect.setAttribute('stroke', p.color);
-    rect.setAttribute('stroke-width', '0.8');
-    rect.setAttribute('stroke-opacity', '0.55');
+    // Outer glow rect (blurred duplicate for soft halo)
+    const glow = document.createElementNS(NS, 'rect');
+    glow.setAttribute('x', nx0 - NW / 2 - 1);
+    glow.setAttribute('y', ny0 - NH / 2 - 1);
+    glow.setAttribute('width', NW + 2);
+    glow.setAttribute('height', NH + 2);
+    glow.setAttribute('rx', '9');
+    glow.setAttribute('fill', 'none');
+    glow.setAttribute('stroke', p.color);
+    glow.setAttribute('stroke-width', '3');
+    glow.setAttribute('stroke-opacity', '0.35');
+    glow.style.filter = 'url(#ccNodeGlow)';
 
-    // color accent bar on left
-    const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    bar.setAttribute('x', nx - NODE_W / 2);
-    bar.setAttribute('y', ny - NODE_H / 2);
-    bar.setAttribute('width', '3');
-    bar.setAttribute('height', NODE_H);
-    bar.setAttribute('rx', '3');
-    bar.setAttribute('fill', p.color);
-    bar.setAttribute('opacity', '0.85');
+    // Background fill
+    const bg = document.createElementNS(NS, 'rect');
+    bg.setAttribute('x', nx0 - NW / 2);
+    bg.setAttribute('y', ny0 - NH / 2);
+    bg.setAttribute('width', NW);
+    bg.setAttribute('height', NH);
+    bg.setAttribute('rx', '8');
+    bg.setAttribute('fill', 'rgba(5,11,22,0.88)');
+    bg.setAttribute('stroke', p.color);
+    bg.setAttribute('stroke-width', '0.85');
+    bg.setAttribute('stroke-opacity', '0.6');
 
-    // label text
-    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    txt.setAttribute('x', nx + 2);
-    txt.setAttribute('y', ny);
+    // Glass sheen — top highlight line
+    const sheen = document.createElementNS(NS, 'rect');
+    sheen.setAttribute('x', nx0 - NW / 2 + 4);
+    sheen.setAttribute('y', ny0 - NH / 2 + 1);
+    sheen.setAttribute('width', NW - 8);
+    sheen.setAttribute('height', '1');
+    sheen.setAttribute('rx', '1');
+    sheen.setAttribute('fill', 'rgba(255,255,255,0.12)');
+
+    // Platform name text
+    const txt = document.createElementNS(NS, 'text');
+    txt.setAttribute('x', nx0);
+    txt.setAttribute('y', ny0);
     txt.setAttribute('text-anchor', 'middle');
     txt.setAttribute('dominant-baseline', 'middle');
     txt.setAttribute('font-family', "'Space Grotesk','Inter',sans-serif");
-    txt.setAttribute('font-size', '8');
-    txt.setAttribute('font-weight', '800');
-    txt.setAttribute('letter-spacing', '0.8');
-    txt.setAttribute('fill', p.color);
-    txt.setAttribute('opacity', '0.92');
-    txt.textContent = p.abbr;
+    txt.setAttribute('font-size', '10');
+    txt.setAttribute('font-weight', '700');
+    txt.setAttribute('letter-spacing', '0.6');
+    txt.setAttribute('fill', 'rgba(210,235,255,0.88)');
+    txt.textContent = p.name;
 
-    g.appendChild(rect);
-    g.appendChild(bar);
+    g.appendChild(glow);
+    g.appendChild(bg);
+    g.appendChild(sheen);
     g.appendChild(txt);
     nodeG.appendChild(g);
 
-    // ── Data packet dot ──
-    const pkt = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    pkt.setAttribute('r', '3');
+    // ── Data packet dot ──────────────────────────────────────────────────────
+    const pkt = document.createElementNS(NS, 'circle');
+    pkt.setAttribute('r', '3.5');
     pkt.setAttribute('fill', p.color);
     pkt.setAttribute('opacity', '0');
-    pkt.setAttribute('filter', 'url(#beamBlur)');
+    pkt.style.filter = 'url(#ccPktGlow)';
     packetG.appendChild(pkt);
 
-    nodeEls.push({ g, rect, bar, txt, beam, pkt, angle: angle0, nx, ny, p });
+    return { g, glow, bg, sheen, txt, beam, pkt, angle: angle0 };
   });
 
-  // ── HUD chip positions (% of scene size) ─────────────────────────────────
-  const HUD_POSITIONS = [
-    { top: '8%',  left: '2%'  },
-    { top: '22%', left: '82%' },
-    { top: '55%', left: '88%' },
-    { top: '75%', left: '5%'  },
-    { top: '40%', left: '1%'  },
-    { top: '88%', left: '30%' },
-    { top: '10%', left: '45%' },
-    { top: '82%', left: '60%' },
-    { top: '62%', left: '74%' },
-  ];
-  const chips = Array.from(document.querySelectorAll('.cc-chip'));
-  chips.forEach((chip, i) => {
-    const pos = HUD_POSITIONS[i % HUD_POSITIONS.length];
-    chip.style.top  = pos.top;
-    chip.style.left = pos.left;
-  });
-
-  // ── Animation state ────────────────────────────────────────────────────────
-  const ORBIT_SPEED = 0.00015;  // radians per ms — slow elegant rotation
+  // ── Animation state ───────────────────────────────────────────────────────
+  const ORBIT_SPEED = 0.00012; // rad/ms — ~87s full orbit, very slow
   let lastT = null;
   let orbitAngle = 0;
 
-  // Packet state per node
-  const packetState = nodeEls.map((_, i) => ({
-    t: 0,                   // 0→1 progress along beam
+  // Per-node packet state
+  const pkts = nodes.map((_, i) => ({
     running: false,
-    delay: 2000 + i * 700,  // stagger start
-    lastFire: -9999,
-    interval: 3200 + i * 400,
+    t: 0,
+    lastFire: -(3000 + i * 800), // stagger first fire
+    interval: 3500 + i * 350,
   }));
 
-  // Chip cycling
-  const CHIP_CYCLE = 3200;
-  let lastChipCycle = 0;
+  // Chip cycling state
+  const VISIBLE = 3;
+  const CYCLE_MS = 3000;
+  let lastCycle = 0;
   let chipCursor = 0;
-  const VISIBLE_CHIPS = 4;
+
   function cycleChips(now) {
-    if (now - lastChipCycle < CHIP_CYCLE) return;
-    lastChipCycle = now;
-    chips.forEach(c => c.classList.remove('cc-chip--visible'));
-    for (let k = 0; k < VISIBLE_CHIPS; k++) {
-      chips[(chipCursor + k) % chips.length].classList.add('cc-chip--visible');
+    if (now - lastCycle < CYCLE_MS) return;
+    lastCycle = now;
+    chips.forEach(c => c.classList.remove('cc-visible'));
+    for (let k = 0; k < VISIBLE; k++) {
+      chips[(chipCursor + k) % chips.length].classList.add('cc-visible');
     }
-    chipCursor = (chipCursor + 2) % chips.length;
+    chipCursor = (chipCursor + 1) % chips.length;
   }
 
-  // ── Main RAF loop ─────────────────────────────────────────────────────────
+  // ── RAF loop ──────────────────────────────────────────────────────────────
   function tick(now) {
     if (!lastT) lastT = now;
-    const dt = Math.min(now - lastT, 50); // cap delta to avoid jumps
+    const dt = Math.min(now - lastT, 50);
     lastT = now;
 
     orbitAngle += ORBIT_SPEED * dt;
 
-    const scenePx = getScenePx();
-    const scale = scenePx / 560;
-
-    nodeEls.forEach((n, i) => {
+    nodes.forEach((n, i) => {
       const a = n.angle + orbitAngle;
       const nx = CX + ORBIT_R * Math.cos(a);
       const ny = CY + ORBIT_R * Math.sin(a);
 
-      // Move node badge
-      n.rect.setAttribute('x', nx - NODE_W / 2);
-      n.rect.setAttribute('y', ny - NODE_H / 2);
-      n.bar.setAttribute('x',  nx - NODE_W / 2);
-      n.bar.setAttribute('y',  ny - NODE_H / 2);
-      n.txt.setAttribute('x',  nx + 2);
-      n.txt.setAttribute('y',  ny);
+      // Update badge position
+      const bx = nx - NW / 2, by = ny - NH / 2;
+      n.glow.setAttribute('x', bx - 1);
+      n.glow.setAttribute('y', by - 1);
+      n.bg.setAttribute('x', bx);
+      n.bg.setAttribute('y', by);
+      n.sheen.setAttribute('x', bx + 4);
+      n.sheen.setAttribute('y', by + 1);
+      n.txt.setAttribute('x', nx);
+      n.txt.setAttribute('y', ny);
 
-      // Move beam endpoint
+      // Update beam endpoint
       n.beam.setAttribute('x2', nx);
       n.beam.setAttribute('y2', ny);
 
-      // Packet animation
-      const ps = packetState[i];
+      // Packet travel
+      const ps = pkts[i];
       if (!ps.running && now - ps.lastFire > ps.interval) {
         ps.running = true;
         ps.t = 0;
         ps.lastFire = now;
       }
       if (ps.running) {
-        ps.t += dt / 1400; // travel duration ~1.4s
+        ps.t += dt / 1600; // ~1.6s travel
         if (ps.t >= 1) {
           ps.running = false;
           n.pkt.setAttribute('opacity', '0');
         } else {
-          // ease-in: slower start
-          const ease = ps.t * ps.t;
-          const px = nx + (CX - nx) * ease;
-          const py = ny + (CY - ny) * ease;
-          n.pkt.setAttribute('cx', px);
-          n.pkt.setAttribute('cy', py);
-          // fade: bright in mid-travel, gone at ends
-          const alpha = Math.sin(ps.t * Math.PI) * 0.95;
-          n.pkt.setAttribute('opacity', alpha);
+          const ease = ps.t < 0.5
+            ? 2 * ps.t * ps.t
+            : 1 - Math.pow(-2 * ps.t + 2, 2) / 2; // ease-in-out
+          n.pkt.setAttribute('cx', nx + (CX - nx) * ease);
+          n.pkt.setAttribute('cy', ny + (CY - ny) * ease);
+          n.pkt.setAttribute('opacity', String(Math.sin(ps.t * Math.PI) * 0.9));
         }
       }
     });
@@ -795,8 +812,9 @@
     requestAnimationFrame(tick);
   }
 
-  // Kick off initial chips
-  chips.slice(0, VISIBLE_CHIPS).forEach(c => c.classList.add('cc-chip--visible'));
+  // Kick off: show first batch of chips immediately
+  chips.slice(0, VISIBLE).forEach(c => c.classList.add('cc-visible'));
+  chipCursor = VISIBLE % chips.length;
   requestAnimationFrame(tick);
 })();
 </script>
