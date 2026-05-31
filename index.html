@@ -6,7 +6,7 @@
   <title>Syndrax Sync — E-Commerce Automation Platform</title>
   <meta name="description" content="Price intelligently. Sell everywhere. Scale without hiring. Syndrax Sync automates your entire e-commerce operation across every marketplace.">
   <link rel="icon" type="image/png" href="assets/images/synball.png">
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
   <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.remove("dark");}</script>
 </head>
 <body>
@@ -71,28 +71,67 @@
 <section class="hero">
   <div class="hero-glow"></div>
   <div class="hero-grid"></div>
-  <div class="hero-rings">
-    <div class="hero-ring"></div>
-    <div class="hero-ring"></div>
-    <div class="hero-ring"></div>
-    <div class="hero-ring"></div>
-  </div>
   <div class="hero-content">
-    <div class="hero-sphere">
-      <img src="assets/images/synball.png" alt="" class="hero-sphere-img">
-      <div class="particle" style="width:6px;height:6px;background:#00CFFF;--orbit-r:180px;animation-duration:4s;"></div>
-      <div class="particle" style="width:5px;height:5px;background:#0099cc;--orbit-r:195px;animation-duration:5.5s;"></div>
-      <div class="particle" style="width:7px;height:7px;background:#FF00D4;--orbit-r:210px;animation-duration:6s;"></div>
-      <div class="particle" style="width:5px;height:5px;background:#35E0FF;--orbit-r:170px;animation-duration:3.5s;"></div>
-      <div class="particle" style="width:6px;height:6px;background:#0099cc;--orbit-r:220px;animation-duration:7s;"></div>
-      <div class="particle" style="width:5px;height:5px;background:#FF3DFF;--orbit-r:190px;animation-duration:4.5s;"></div>
-      <div class="particle" style="width:7px;height:7px;background:#00CFFF;--orbit-r:235px;animation-duration:8s;"></div>
-      <div class="particle" style="width:6px;height:6px;background:#FF00D4;--orbit-r:200px;animation-duration:5.5s;"></div>
-      <div class="particle" style="width:5px;height:5px;background:#35E0FF;--orbit-r:215px;animation-duration:6.5s;"></div>
-      <div class="particle" style="width:6px;height:6px;background:#0099cc;--orbit-r:240px;animation-duration:7.5s;"></div>
-      <div class="particle" style="width:7px;height:7px;background:#00CFFF;--orbit-r:165px;animation-duration:3s;"></div>
-      <div class="particle" style="width:5px;height:5px;background:#FF00D4;--orbit-r:250px;animation-duration:9s;"></div>
-    </div>
+
+    <!-- Command Core Visual -->
+    <div class="cc-scene" id="ccScene" aria-hidden="true">
+      <!-- SVG for beams and orbit rings -->
+      <svg class="cc-svg" id="ccSvg" viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="orbGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#00CFFF" stop-opacity="0.35"/>
+            <stop offset="60%" stop-color="#0099cc" stop-opacity="0.12"/>
+            <stop offset="100%" stop-color="#FF00D4" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="beamBlur" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1.5"/>
+          </filter>
+          <filter id="nodeGlow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Outer orbit ring -->
+        <circle class="cc-orbit-ring" cx="280" cy="280" r="200"/>
+        <!-- Inner orbit ring -->
+        <circle class="cc-orbit-ring cc-orbit-ring--inner" cx="280" cy="280" r="130"/>
+
+        <!-- Beam group — drawn by JS -->
+        <g id="ccBeams"></g>
+
+        <!-- Center orb glow halo -->
+        <circle cx="280" cy="280" r="110" fill="url(#orbGlow)" class="cc-orb-halo"/>
+
+        <!-- Marketplace nodes — positioned by CSS custom props, animated by JS rotation -->
+        <g id="ccNodes"></g>
+
+        <!-- Data packets group -->
+        <g id="ccPackets"></g>
+      </svg>
+
+      <!-- Center orb (existing synball) -->
+      <div class="cc-orb">
+        <img src="assets/images/synball.png" alt="Syndrax Core" class="cc-orb-img">
+        <div class="cc-orb-ring cc-orb-ring--1"></div>
+        <div class="cc-orb-ring cc-orb-ring--2"></div>
+        <div class="cc-orb-pulse"></div>
+      </div>
+
+      <!-- HUD chips — floated absolutely, JS handles fade cycling -->
+      <div class="cc-hud" id="ccHud">
+        <div class="cc-chip cc-chip--green" data-idx="0"><span class="cc-chip-dot"></span>In Stock: 38</div>
+        <div class="cc-chip cc-chip--cyan" data-idx="1"><span class="cc-chip-dot"></span>eBay Synced</div>
+        <div class="cc-chip cc-chip--amber" data-idx="2"><span class="cc-chip-dot"></span>Low Stock</div>
+        <div class="cc-chip cc-chip--cyan" data-idx="3"><span class="cc-chip-dot"></span>$24.99</div>
+        <div class="cc-chip cc-chip--red" data-idx="4"><span class="cc-chip-dot"></span>OOS</div>
+        <div class="cc-chip cc-chip--green" data-idx="5"><span class="cc-chip-dot"></span>+12 Orders</div>
+        <div class="cc-chip cc-chip--cyan" data-idx="6"><span class="cc-chip-dot"></span>Google Feed Synced</div>
+        <div class="cc-chip cc-chip--green" data-idx="7"><span class="cc-chip-dot"></span>Margin +18%</div>
+        <div class="cc-chip cc-chip--cyan" data-idx="8"><span class="cc-chip-dot"></span>FB Ads Active</div>
+      </div>
+    </div><!-- /.cc-scene -->
+
     <div class="hero-badge"><span>One Platform. Every Marketplace.</span></div>
     <h1>Price Like a Pro.<br><span class="accent">Sell Everywhere.</span><br><span class="accent-2">Scale.</span></h1>
     <p class="hero-sub">One source of truth. Multi-channel execution. Real-time intelligence.<br>Your agent works 24/7 so you don't have to.</p>
@@ -542,6 +581,224 @@
   </div>
 </footer>
 
-<script src="script.js?v=6"></script>
+<script src="script.js?v=7"></script>
+<script>
+(function() {
+  'use strict';
+
+  // ── Platform node definitions ──────────────────────────────────────────────
+  const PLATFORMS = [
+    { id: 'amazon',   label: 'AMAZON',    color: '#FF9900', abbr: 'AMZ' },
+    { id: 'ebay',     label: 'EBAY',      color: '#E53238', abbr: 'EBA' },
+    { id: 'etsy',     label: 'ETSY',      color: '#F56400', abbr: 'ETS' },
+    { id: 'shopify',  label: 'SHOPIFY',   color: '#96BF48', abbr: 'SHO' },
+    { id: 'walmart',  label: 'WALMART',   color: '#0071CE', abbr: 'WMT' },
+    { id: 'tiktok',   label: 'TIKTOK',    color: '#69C9D0', abbr: 'TIK' },
+    { id: 'woo',      label: 'WOO',       color: '#7F54B3', abbr: 'WOO' },
+    { id: 'bigcomm',  label: 'BIGCOMM',   color: '#34495E', abbr: 'BIG' },
+  ];
+
+  const CX = 280, CY = 280;  // SVG viewBox center
+  const ORBIT_R = 200;        // orbit radius
+  const NODE_W = 58, NODE_H = 26; // node badge size
+
+  const scene   = document.getElementById('ccScene');
+  const svg     = document.getElementById('ccSvg');
+  const beamG   = document.getElementById('ccBeams');
+  const nodeG   = document.getElementById('ccNodes');
+  const packetG = document.getElementById('ccPackets');
+  if (!scene || !svg) return;
+
+  // Responsively scale the SVG viewBox coordinates to match the CSS px size
+  function getScenePx() {
+    return scene.offsetWidth || 560;
+  }
+
+  // ── Build node elements ────────────────────────────────────────────────────
+  const nodeEls = []; // { group, bg, abbr, label, beam, packet, angle }
+
+  PLATFORMS.forEach((p, i) => {
+    const angle0 = (i / PLATFORMS.length) * Math.PI * 2 - Math.PI / 2;
+    const nx = CX + ORBIT_R * Math.cos(angle0);
+    const ny = CY + ORBIT_R * Math.sin(angle0);
+
+    // ── Beam ──
+    const beam = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    beam.setAttribute('x1', CX); beam.setAttribute('y1', CY);
+    beam.setAttribute('x2', nx); beam.setAttribute('y2', ny);
+    beam.setAttribute('stroke', p.color);
+    beam.setAttribute('stroke-width', '1');
+    beam.setAttribute('stroke-opacity', '0.35');
+    beam.setAttribute('stroke-dasharray', '4 6');
+    beam.style.filter = 'url(#beamBlur)';
+    beamG.appendChild(beam);
+
+    // ── Node group ──
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('filter', 'url(#nodeGlow)');
+
+    // backdrop rect
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', nx - NODE_W / 2);
+    rect.setAttribute('y', ny - NODE_H / 2);
+    rect.setAttribute('width', NODE_W);
+    rect.setAttribute('height', NODE_H);
+    rect.setAttribute('rx', '6');
+    rect.setAttribute('fill', 'rgba(6,13,24,0.92)');
+    rect.setAttribute('stroke', p.color);
+    rect.setAttribute('stroke-width', '0.8');
+    rect.setAttribute('stroke-opacity', '0.55');
+
+    // color accent bar on left
+    const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bar.setAttribute('x', nx - NODE_W / 2);
+    bar.setAttribute('y', ny - NODE_H / 2);
+    bar.setAttribute('width', '3');
+    bar.setAttribute('height', NODE_H);
+    bar.setAttribute('rx', '3');
+    bar.setAttribute('fill', p.color);
+    bar.setAttribute('opacity', '0.85');
+
+    // label text
+    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    txt.setAttribute('x', nx + 2);
+    txt.setAttribute('y', ny);
+    txt.setAttribute('text-anchor', 'middle');
+    txt.setAttribute('dominant-baseline', 'middle');
+    txt.setAttribute('font-family', "'Space Grotesk','Inter',sans-serif");
+    txt.setAttribute('font-size', '8');
+    txt.setAttribute('font-weight', '800');
+    txt.setAttribute('letter-spacing', '0.8');
+    txt.setAttribute('fill', p.color);
+    txt.setAttribute('opacity', '0.92');
+    txt.textContent = p.abbr;
+
+    g.appendChild(rect);
+    g.appendChild(bar);
+    g.appendChild(txt);
+    nodeG.appendChild(g);
+
+    // ── Data packet dot ──
+    const pkt = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    pkt.setAttribute('r', '3');
+    pkt.setAttribute('fill', p.color);
+    pkt.setAttribute('opacity', '0');
+    pkt.setAttribute('filter', 'url(#beamBlur)');
+    packetG.appendChild(pkt);
+
+    nodeEls.push({ g, rect, bar, txt, beam, pkt, angle: angle0, nx, ny, p });
+  });
+
+  // ── HUD chip positions (% of scene size) ─────────────────────────────────
+  const HUD_POSITIONS = [
+    { top: '8%',  left: '2%'  },
+    { top: '22%', left: '82%' },
+    { top: '55%', left: '88%' },
+    { top: '75%', left: '5%'  },
+    { top: '40%', left: '1%'  },
+    { top: '88%', left: '30%' },
+    { top: '10%', left: '45%' },
+    { top: '82%', left: '60%' },
+    { top: '62%', left: '74%' },
+  ];
+  const chips = Array.from(document.querySelectorAll('.cc-chip'));
+  chips.forEach((chip, i) => {
+    const pos = HUD_POSITIONS[i % HUD_POSITIONS.length];
+    chip.style.top  = pos.top;
+    chip.style.left = pos.left;
+  });
+
+  // ── Animation state ────────────────────────────────────────────────────────
+  const ORBIT_SPEED = 0.00015;  // radians per ms — slow elegant rotation
+  let lastT = null;
+  let orbitAngle = 0;
+
+  // Packet state per node
+  const packetState = nodeEls.map((_, i) => ({
+    t: 0,                   // 0→1 progress along beam
+    running: false,
+    delay: 2000 + i * 700,  // stagger start
+    lastFire: -9999,
+    interval: 3200 + i * 400,
+  }));
+
+  // Chip cycling
+  const CHIP_CYCLE = 3200;
+  let lastChipCycle = 0;
+  let chipCursor = 0;
+  const VISIBLE_CHIPS = 4;
+  function cycleChips(now) {
+    if (now - lastChipCycle < CHIP_CYCLE) return;
+    lastChipCycle = now;
+    chips.forEach(c => c.classList.remove('cc-chip--visible'));
+    for (let k = 0; k < VISIBLE_CHIPS; k++) {
+      chips[(chipCursor + k) % chips.length].classList.add('cc-chip--visible');
+    }
+    chipCursor = (chipCursor + 2) % chips.length;
+  }
+
+  // ── Main RAF loop ─────────────────────────────────────────────────────────
+  function tick(now) {
+    if (!lastT) lastT = now;
+    const dt = Math.min(now - lastT, 50); // cap delta to avoid jumps
+    lastT = now;
+
+    orbitAngle += ORBIT_SPEED * dt;
+
+    const scenePx = getScenePx();
+    const scale = scenePx / 560;
+
+    nodeEls.forEach((n, i) => {
+      const a = n.angle + orbitAngle;
+      const nx = CX + ORBIT_R * Math.cos(a);
+      const ny = CY + ORBIT_R * Math.sin(a);
+
+      // Move node badge
+      n.rect.setAttribute('x', nx - NODE_W / 2);
+      n.rect.setAttribute('y', ny - NODE_H / 2);
+      n.bar.setAttribute('x',  nx - NODE_W / 2);
+      n.bar.setAttribute('y',  ny - NODE_H / 2);
+      n.txt.setAttribute('x',  nx + 2);
+      n.txt.setAttribute('y',  ny);
+
+      // Move beam endpoint
+      n.beam.setAttribute('x2', nx);
+      n.beam.setAttribute('y2', ny);
+
+      // Packet animation
+      const ps = packetState[i];
+      if (!ps.running && now - ps.lastFire > ps.interval) {
+        ps.running = true;
+        ps.t = 0;
+        ps.lastFire = now;
+      }
+      if (ps.running) {
+        ps.t += dt / 1400; // travel duration ~1.4s
+        if (ps.t >= 1) {
+          ps.running = false;
+          n.pkt.setAttribute('opacity', '0');
+        } else {
+          // ease-in: slower start
+          const ease = ps.t * ps.t;
+          const px = nx + (CX - nx) * ease;
+          const py = ny + (CY - ny) * ease;
+          n.pkt.setAttribute('cx', px);
+          n.pkt.setAttribute('cy', py);
+          // fade: bright in mid-travel, gone at ends
+          const alpha = Math.sin(ps.t * Math.PI) * 0.95;
+          n.pkt.setAttribute('opacity', alpha);
+        }
+      }
+    });
+
+    cycleChips(now);
+    requestAnimationFrame(tick);
+  }
+
+  // Kick off initial chips
+  chips.slice(0, VISIBLE_CHIPS).forEach(c => c.classList.add('cc-chip--visible'));
+  requestAnimationFrame(tick);
+})();
+</script>
 </body>
 </html>

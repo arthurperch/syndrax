@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
-/* v=6 */
+/* v=7 */
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -856,34 +856,217 @@ html:not(.dark) .mobile-menu-close {
   pointer-events: none;
 }
 
-/* Animated wave rings behind sphere */
-.hero-rings {
+/* ===================== COMMAND CORE ===================== */
+.cc-scene {
+  position: relative;
+  width: 560px;
+  height: 560px;
+  margin: 0 auto 20px;
+  flex-shrink: 0;
+}
+
+.cc-svg {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Orbit guide rings */
+.cc-orbit-ring {
+  fill: none;
+  stroke: rgba(0,207,255,0.1);
+  stroke-width: 1;
+  stroke-dasharray: 4 8;
+}
+.cc-orbit-ring--inner {
+  stroke: rgba(0,207,255,0.06);
+  stroke-dasharray: 3 10;
+}
+
+/* Orb halo breathe */
+.cc-orb-halo {
+  animation: ccOrbHaloBreathe 5s ease-in-out infinite;
+}
+@keyframes ccOrbHaloBreathe {
+  0%, 100% { opacity: 0.7; r: 110; }
+  50%       { opacity: 1;   r: 124; }
+}
+
+/* Center orb container */
+.cc-orb {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 148px;
+  height: 148px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.cc-orb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: relative;
+  z-index: 3;
+  filter:
+    drop-shadow(0 0 28px rgba(0,207,255,0.6))
+    drop-shadow(0 0 60px rgba(0,153,204,0.35))
+    drop-shadow(0 0 90px rgba(255,0,212,0.22));
+  animation: ccOrbGlow 5s ease-in-out infinite;
+}
+@keyframes ccOrbGlow {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 28px rgba(0,207,255,0.6))
+      drop-shadow(0 0 60px rgba(0,153,204,0.35))
+      drop-shadow(0 0 90px rgba(255,0,212,0.22));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 42px rgba(0,207,255,0.85))
+      drop-shadow(0 0 80px rgba(0,153,204,0.5))
+      drop-shadow(0 0 120px rgba(255,0,212,0.4));
+  }
+}
+
+/* Orb spin rings */
+.cc-orb-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(0,207,255,0.22);
+  pointer-events: none;
+}
+.cc-orb-ring--1 {
+  width: 174px; height: 174px;
+  border-color: rgba(0,207,255,0.18);
+  animation: ccRingSpin 12s linear infinite;
+}
+.cc-orb-ring--2 {
+  width: 198px; height: 198px;
+  border-color: rgba(255,0,212,0.12);
+  animation: ccRingSpin 18s linear infinite reverse;
+}
+@keyframes ccRingSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Orb pulse */
+.cc-orb-pulse {
+  position: absolute;
+  width: 148px; height: 148px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,207,255,0.15) 0%, transparent 70%);
+  animation: ccOrbPulse 3.5s ease-in-out infinite;
+}
+@keyframes ccOrbPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%       { transform: scale(1.35); opacity: 0; }
+}
+
+/* Marketplace node badges (rendered by JS into SVG <g>) */
+.cc-node-group {
+  cursor: default;
+}
+.cc-node-bg {
+  fill: rgba(6,13,24,0.9);
+  stroke: rgba(0,207,255,0.22);
+  stroke-width: 1;
+  rx: 10;
+}
+.cc-node-label {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  fill: rgba(180,230,255,0.85);
+  text-anchor: middle;
+  dominant-baseline: middle;
+  letter-spacing: 0.5px;
+}
+
+/* Beam lines */
+.cc-beam {
+  stroke-width: 1.2;
+  fill: none;
+  opacity: 0.55;
+  animation: ccBeamPulse 3s ease-in-out infinite;
+}
+@keyframes ccBeamPulse {
+  0%, 100% { opacity: 0.35; stroke-width: 1; }
+  50%       { opacity: 0.75; stroke-width: 1.6; }
+}
+
+/* Data packets */
+.cc-packet {
+  r: 3;
+  opacity: 0;
+}
+
+/* HUD chip container */
+.cc-hud {
+  position: absolute;
+  inset: 0;
   pointer-events: none;
 }
 
-.hero-ring {
+/* Individual HUD chips */
+.cc-chip {
   position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px 4px 7px;
+  border-radius: 6px;
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  background: rgba(6,13,24,0.88);
+  border: 1px solid rgba(0,207,255,0.18);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  will-change: opacity, transform;
+}
+.cc-chip.cc-chip--visible {
+  opacity: 1;
+}
+
+.cc-chip-dot {
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  border: 1px solid rgba(0,207,255,0.12);
-  animation: ringExpand 4s ease-out infinite;
+  flex-shrink: 0;
 }
 
-.hero-ring:nth-child(1) { width: 420px; height: 420px; animation-delay: 0s; border-color: rgba(0,207,255,0.1); }
-.hero-ring:nth-child(2) { width: 560px; height: 560px; animation-delay: 1s; border-color: rgba(0,153,204,0.08); }
-.hero-ring:nth-child(3) { width: 700px; height: 700px; animation-delay: 2s; border-color: rgba(255,0,212,0.06); }
-.hero-ring:nth-child(4) { width: 850px; height: 850px; animation-delay: 3s; border-color: rgba(0,207,255,0.04); }
+.cc-chip--cyan  { border-color: rgba(0,207,255,0.25); color: #7BE8FF; }
+.cc-chip--cyan  .cc-chip-dot { background: #00CFFF; box-shadow: 0 0 5px #00CFFF; }
 
-@keyframes ringExpand {
-  0% { transform: scale(0.85); opacity: 0; }
-  20% { opacity: 1; }
-  100% { transform: scale(1.15); opacity: 0; }
+.cc-chip--green { border-color: rgba(22,163,74,0.35); color: #4ade80; }
+.cc-chip--green .cc-chip-dot { background: #16a34a; box-shadow: 0 0 5px #16a34a; }
+
+.cc-chip--amber { border-color: rgba(217,119,6,0.35); color: #fbbf24; }
+.cc-chip--amber .cc-chip-dot { background: #d97706; box-shadow: 0 0 5px #d97706; }
+
+.cc-chip--red   { border-color: rgba(220,38,38,0.35); color: #f87171; }
+.cc-chip--red   .cc-chip-dot { background: #dc2626; box-shadow: 0 0 5px #dc2626; }
+
+/* Platform icon logos inside nodes */
+.cc-node-icon {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 8px;
+  font-weight: 800;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  letter-spacing: 0.3px;
 }
+
+
 
 .hero-content {
   position: relative;
@@ -891,97 +1074,6 @@ html:not(.dark) .mobile-menu-close {
   max-width: 1100px;
   margin: 0 auto;
   width: 100%;
-}
-
-/* Hero Sphere */
-.hero-sphere {
-  width: 330px;
-  height: 330px;
-  border-radius: 50%;
-  position: relative;
-  margin: 0 auto 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: spherePulse 5s ease-in-out infinite;
-}
-
-/* Color wave ring around sphere */
-.hero-sphere::before {
-  content: '';
-  position: absolute;
-  inset: -20px;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg, #00CFFF, #0099cc, transparent, #FF00D4, transparent, #00CFFF);
-  opacity: 0.18;
-  animation: sphereRotate 6s linear infinite;
-  filter: blur(12px);
-}
-
-.hero-sphere::after {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  background: conic-gradient(from 180deg, transparent, #00CFFF, transparent, #FF00D4, transparent);
-  opacity: 0.25;
-  animation: sphereRotate 3s linear infinite reverse;
-  filter: blur(4px);
-}
-
-@keyframes sphereRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.hero-sphere-img {
-  width: 76%;
-  height: 76%;
-  object-fit: contain;
-  border-radius: 50%;
-  position: relative;
-  z-index: 2;
-  filter:
-    drop-shadow(0 0 40px rgba(0,207,255,0.5))
-    drop-shadow(0 0 80px rgba(0,153,204,0.3))
-    drop-shadow(0 0 120px rgba(255,0,212,0.2));
-  animation: sphereGlow 4s ease-in-out infinite;
-}
-
-@keyframes sphereGlow {
-  0%, 100% {
-    filter:
-      drop-shadow(0 0 40px rgba(0,207,255,0.5))
-      drop-shadow(0 0 80px rgba(0,153,204,0.3))
-      drop-shadow(0 0 120px rgba(255,0,212,0.2));
-  }
-  50% {
-    filter:
-      drop-shadow(0 0 60px rgba(0,207,255,0.7))
-      drop-shadow(0 0 100px rgba(0,153,204,0.4))
-      drop-shadow(0 0 160px rgba(255,0,212,0.35));
-  }
-}
-
-@keyframes spherePulse {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-12px) scale(1.02); }
-}
-
-.particle {
-  position: absolute;
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  animation: orbit linear infinite;
-  z-index: 3;
-  filter: blur(0.5px);
-  box-shadow: 0 0 6px currentColor;
-}
-
-@keyframes orbit {
-  from { transform: rotate(0deg) translateX(var(--orbit-r)) rotate(0deg); }
-  to { transform: rotate(360deg) translateX(var(--orbit-r)) rotate(-360deg); }
 }
 
 .hero-badge {
@@ -3034,6 +3126,7 @@ footer {
   .hermes-avatar-wrap { flex-direction: row; justify-content: center; }
   .trust-grid { grid-template-columns: 1fr 1fr; }
   .hero-sphere { width: 280px; height: 280px; }
+  .cc-scene { width: 440px; height: 440px; }
   .hero-ring:nth-child(3), .hero-ring:nth-child(4) { display: none; }
 }
 
@@ -3044,6 +3137,8 @@ footer {
   .hero { padding: 88px 24px 60px; }
   .hero h1 { letter-spacing: -2px; }
   .hero-sphere { width: 240px; height: 240px; }
+  .cc-scene { width: 340px; height: 340px; }
+  .cc-chip { font-size: 9px; padding: 3px 7px; }
   .hero-ring { display: none; }
   .grid-3 { grid-template-columns: 1fr; }
   .grid-2 { grid-template-columns: 1fr; }
@@ -3082,4 +3177,6 @@ footer {
   footer { padding: 48px 24px 28px; }
   .mission-card { padding: 28px; }
   .hero-sphere { width: 180px; height: 180px; }
+  .cc-scene { width: 280px; height: 280px; }
+  .cc-chip { display: none; }
 }
