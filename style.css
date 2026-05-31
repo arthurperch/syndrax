@@ -1679,6 +1679,180 @@ html:not(.dark) .hero-dash-footer { border-top-color: rgba(15,23,42,0.07); }
   100% { background-position: 100% 0; }
 }
 
+/* "Scale." second headline — tight spacing so it reads as one headline stack */
+.hero-h1-scale {
+  font-size: clamp(56px, 6.5vw, 100px);
+  font-weight: 900;
+  line-height: 0.96;
+  letter-spacing: -4px;
+  color: var(--text);
+  margin: 0 0 28px;
+}
+
+/* ===================== HERO ROBOT RAIL ===================== */
+.hero-rail {
+  width: 100%;
+  max-width: 560px;
+  margin: 6px 0 4px;
+  display: block;
+}
+
+.hero-rail-track {
+  position: relative;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+/* The thin rail line */
+.hero-rail-line {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(0,207,255,0.7) 0%, rgba(255,0,212,0.5) 50%, rgba(0,207,255,0.7) 100%);
+  border-radius: 2px;
+}
+
+/* End nodes */
+.hero-rail-node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+.hero-rail-node--left  { left: 0; }
+.hero-rail-node--right { right: 0; }
+
+.hero-rail-node-inner {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #00CFFF;
+  filter: drop-shadow(0 0 5px rgba(0,207,255,0.55));
+}
+.hero-rail-node--right .hero-rail-node-inner {
+  color: #FF00D4;
+  filter: drop-shadow(0 0 5px rgba(255,0,212,0.55));
+}
+
+/* Bubble popup above node */
+.hero-rail-bubble {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.85) translateY(6px);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.28), 0 0 0 1px rgba(0,207,255,0.1);
+  transition: none;
+  z-index: 10;
+}
+html.dark .hero-rail-bubble {
+  background: rgba(15,30,50,0.95);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,207,255,0.14);
+}
+.hero-rail-bubble.pop {
+  animation: railBubblePop 1.8s ease forwards;
+}
+@keyframes railBubblePop {
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.82) translateY(8px); }
+  18%  { opacity: 1; transform: translateX(-50%) scale(1)    translateY(0px); }
+  65%  { opacity: 1; transform: translateX(-50%) scale(1)    translateY(-8px); }
+  100% { opacity: 0; transform: translateX(-50%) scale(0.9)  translateY(-16px); }
+}
+
+.hero-rail-bubble-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+.hero-rail-bubble-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--text);
+  font-family: var(--nav-font);
+}
+
+/* Moving robot */
+.hero-rail-robot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  will-change: left;
+  /* bob animation layered on top of JS-driven left position */
+  animation: railRobotBob 1.8s ease-in-out infinite;
+}
+.hero-rail-robot img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0,207,255,0.3));
+  /* flip applied via JS class */
+  transition: transform 0.3s ease;
+}
+.hero-rail-robot.flipped img { transform: scaleX(-1); }
+
+@keyframes railRobotBob {
+  0%,100% { margin-top: 0px; }
+  50%      { margin-top: -4px; }
+}
+
+/* Reduced motion: freeze everything, keep static layout */
+@media (prefers-reduced-motion: reduce) {
+  .hero-rail-robot { animation: none; left: 50% !important; }
+  .hero-rail-bubble.pop { animation: none; opacity: 0; }
+  .hero-h1-scale .accent-2 { animation: none; background-position: 50% 0; }
+}
+
+/* Mobile: center, compact */
+@media (max-width: 768px) {
+  .hero-rail {
+    max-width: min(100%, 300px);
+    margin: 4px auto 2px;
+  }
+  .hero-rail-track { height: 40px; }
+  .hero-rail-robot img { width: 28px; height: 28px; }
+  .hero-rail-node-inner { width: 14px; height: 14px; }
+  .hero-rail-bubble-icon { width: 18px; height: 18px; }
+  .hero-rail-bubble { padding: 4px 7px; border-radius: 8px; }
+  .hero-rail-bubble-text { font-size: 10px; }
+  .hero-h1-scale {
+    font-size: clamp(38px, 10vw, 56px);
+    letter-spacing: -2px;
+    text-align: center;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-h1-scale {
+    font-size: clamp(36px, 10vw, 50px);
+    letter-spacing: -1.5px;
+  }
+}
+
+
 .hero-sub {
   font-size: clamp(15px, 1.4vw, 18px);
   color: var(--text-gray);

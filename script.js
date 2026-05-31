@@ -428,7 +428,137 @@ function initHeroAutoplay() {
 
 // Init after DOM ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initHeroAutoplay);
+  document.addEventListener('DOMContentLoaded', () => { initHeroAutoplay(); initHeroRail(); });
 } else {
   initHeroAutoplay();
+  initHeroRail();
+}
+
+// ===================== HERO ROBOT RAIL =====================
+function initHeroRail() {
+  const rail     = document.getElementById('heroRail');
+  const robot    = document.getElementById('railRobot');
+  const track    = rail && rail.querySelector('.hero-rail-track');
+  if (!rail || !robot || !track) return;
+
+  // Respect prefers-reduced-motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const bubbleLeft      = document.getElementById('railBubbleLeft');
+  const bubbleLeftIcon  = document.getElementById('railBubbleLeftIcon');
+  const bubbleLeftText  = document.getElementById('railBubbleLeftText');
+  const bubbleRight     = document.getElementById('railBubbleRight');
+  const bubbleRightIcon = document.getElementById('railBubbleRightIcon');
+  const bubbleRightText = document.getElementById('railBubbleRightText');
+
+  // Bubble sequences: [icon path, label]
+  const LEFT_BUBBLES = [
+    ['assets/svg/robot3.svg',      'AI Ready'],
+    ['assets/svg/think.svg',       'Analyzing'],
+    ['assets/svg/ecom.svg',        'Sync Init'],
+    ['assets/svg/robot3.svg',      'Queued'],
+    ['assets/svg/think.svg',       'Optimizing'],
+  ];
+  const RIGHT_BUBBLES = [
+    ['assets/svg/money.svg',       'Price Live'],
+    ['assets/svg/shopify.svg',     'Listed'],
+    ['assets/svg/amazon.svg',      'Synced'],
+    ['assets/svg/review.svg',      'SEO Fixed'],
+    ['assets/svg/happy.svg',       'Stock OK'],
+    ['assets/svg/email.svg',       'Feed Clean'],
+    ['assets/svg/speaker.svg',     'Margin Up'],
+    ['assets/svg/ebay.svg',        'eBay Live'],
+    ['assets/svg/ecom.svg',        'Store Ready'],
+  ];
+
+  let leftIdx  = 0;
+  let rightIdx = 0;
+
+  // Travel from one end to the other
+  // progress 0 = left node, 1 = right node
+  // Uses ease-in-out via cubic-bezier approximation with rAF
+  function ease(t) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  }
+
+  function getNodeX(side) {
+    const nodeEl = rail.querySelector(side === 'left' ? '.hero-rail-node--left' : '.hero-rail-node--right');
+    const trackRect = track.getBoundingClientRect();
+    const nodeRect  = nodeEl.getBoundingClientRect();
+    return (nodeRect.left + nodeRect.width / 2) - trackRect.left;
+  }
+
+  function popBubble(bubbleEl, iconEl, textEl, pool, idxRef) {
+    const [src, label] = pool[idxRef % pool.length];
+    iconEl.src = src;
+    textEl.textContent = label;
+    // Reset animation
+    bubbleEl.classList.remove('pop');
+    void bubbleEl.offsetWidth; // reflow
+    bubbleEl.classList.add('pop');
+    return idxRef + 1;
+  }
+
+  function travel(fromSide, duration, onDone) {
+    const fromX = getNodeX(fromSide);
+    const toX   = getNodeX(fromSide === 'left' ? 'right' : 'left');
+    const start = performance.now();
+
+    // Flip robot to face direction of travel
+    if (fromSide === 'left') {
+      robot.classList.remove('flipped');
+    } else {
+      robot.classList.add('flipped');
+    }
+
+    function step(now) {
+      const elapsed = now - start;
+      const raw = Math.min(elapsed / duration, 1);
+      const t   = ease(raw);
+      robot.style.left = (fromX + (toX - fromX) * t) + 'px';
+      if (raw < 1) {
+        requestAnimationFrame(step);
+      } else {
+        robot.style.left = toX + 'px';
+        onDone && onDone();
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function runCycle() {
+    // Phase 1: pause at left, pop left bubble, then travel right
+    setTimeout(() => {
+      leftIdx = popBubble(bubbleLeft, bubbleLeftIcon, bubbleLeftText, LEFT_BUBBLES, leftIdx);
+    }, 400);
+
+    setTimeout(() => {
+      travel('left', 3200, () => {
+        // Phase 2: arrived right, pop right bubble, pause, then return
+        rightIdx = popBubble(bubbleRight, bubbleRightIcon, bubbleRightText, RIGHT_BUBBLES, rightIdx);
+
+        setTimeout(() => {
+          travel('right', 3200, () => {
+            // Back at left — small pause then repeat
+            setTimeout(runCycle, 700);
+          });
+        }, 1600);
+      });
+    }, 1200);
+  }
+
+  // Position robot at left node initially
+  robot.style.left = getNodeX('left') + 'px';
+
+  // Recalculate on resize
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      robot.style.left = getNodeX('left') + 'px';
+    }, 100);
+  }, { passive: true });
+
+  // Kick off after a short delay so layout is settled
+  setTimeout(runCycle, 800);
 }
