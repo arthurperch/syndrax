@@ -3686,8 +3686,9 @@ footer {
   .hamburger { display: flex; }
   .nav-inner { grid-template-columns: 1fr auto; }
   .hero {
-    padding: 100px 0 64px;
+    padding: 96px 0 56px;
     min-height: auto;
+    overflow: visible;
   }
   .hero h1 {
     font-size: clamp(40px, 11vw, 60px);
