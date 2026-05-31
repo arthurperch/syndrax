@@ -12,7 +12,7 @@
   <meta name="twitter:title" content="Syndrax Sync — AI E-Commerce Automation Platform">
   <meta name="twitter:description" content="Automate pricing, inventory sync, oversell protection, marketplace listings, and marketing feeds across every channel with Syndrax.">
   <link rel="icon" type="image/png" href="assets/images/synball.png">
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=16">
   <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.remove("dark");}</script>
 </head>
 <body>
@@ -78,8 +78,6 @@
         </a>
         <a href="/features" class="btn btn-secondary btn-lg">See How It Works</a>
       </div>
-
-      <!-- Marketplace strip -->
       <div class="hero-integrations">
         <span class="hero-int-label">Works with</span>
         <div class="hero-int-icons">
@@ -96,86 +94,179 @@
       </div>
     </div>
 
-    <!-- Right column: orb cluster + floating icons + dashboard card -->
+    <!-- Right column: visual system (orb + callouts + dashboard card) -->
     <div class="hero-right">
 
-      <!-- Orb anchored to this column -->
-      <div class="hero-orb-bg" aria-hidden="true">
-        <div class="hero-orb-ring hero-orb-ring-1"></div>
-        <div class="hero-orb-ring hero-orb-ring-2"></div>
-        <div class="hero-orb-ring hero-orb-ring-3"></div>
-        <img src="assets/images/synball.png" alt="" class="hero-orb-img">
-      </div>
+      <!-- The full visual cluster: orb system + dashboard card side by side -->
+      <div class="hero-visual-cluster">
 
-      <!-- Floating marketplace icons orbiting the visual cluster -->
-      <div class="hero-float-icons" aria-hidden="true">
-        <span class="hero-float-icon hero-float-icon-1"><img src="assets/icons/marketplaces/amazon.svg" alt="" width="22" height="22"></span>
-        <span class="hero-float-icon hero-float-icon-2"><img src="assets/icons/marketplaces/ebay.svg" alt="" width="20" height="20"></span>
-        <span class="hero-float-icon hero-float-icon-3"><img src="assets/icons/marketplaces/shopify.svg" alt="" width="20" height="20"></span>
-        <span class="hero-float-icon hero-float-icon-4"><img src="assets/icons/marketplaces/google.svg" alt="" width="19" height="19"></span>
-        <span class="hero-float-icon hero-float-icon-5"><img src="assets/icons/marketplaces/facebook.svg" alt="" width="19" height="19"></span>
-        <span class="hero-float-icon hero-float-icon-6"><img src="assets/icons/marketplaces/walmart.svg" alt="" width="20" height="20"></span>
-      </div>
-
-      <div class="hero-dash">
-        <div class="hero-dash-header">
-          <div class="hero-dash-title">
-            <span class="hero-dash-live-dot"></span>
-            Live Commerce Control
+        <!-- Dashboard card — left side of cluster -->
+        <div class="hero-dash">
+          <div class="hero-dash-header">
+            <div class="hero-dash-title">
+              <span class="hero-dash-live-dot"></span>
+              Live Commerce Control
+            </div>
+            <span class="hero-dash-status">Hermes Active</span>
           </div>
-          <span class="hero-dash-status">Hermes Active</span>
+
+          <div class="hero-dash-row">
+            <div class="hero-dash-row-icon hero-dash-row-icon--green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="hero-dash-row-body">
+              <div class="hero-dash-row-label">Pricing Automation</div>
+              <div class="hero-dash-row-value">$24.99 <span class="hero-dash-arrow">→</span> $27.49</div>
+            </div>
+            <div class="hero-dash-row-badge hero-dash-row-badge--green">+18% margin</div>
+          </div>
+
+          <div class="hero-dash-row">
+            <div class="hero-dash-row-icon hero-dash-row-icon--cyan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.88"/></svg>
+            </div>
+            <div class="hero-dash-row-body">
+              <div class="hero-dash-row-label">Inventory Sync</div>
+              <div class="hero-dash-row-value">Amazon · eBay · Shopify</div>
+            </div>
+            <div class="hero-dash-row-badge hero-dash-row-badge--cyan">38 live</div>
+          </div>
+
+          <div class="hero-dash-row">
+            <div class="hero-dash-row-icon hero-dash-row-icon--amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <div class="hero-dash-row-body">
+              <div class="hero-dash-row-label">Oversell Protection</div>
+              <div class="hero-dash-row-value">Walmart paused</div>
+            </div>
+            <div class="hero-dash-row-badge hero-dash-row-badge--amber">OOS blocked</div>
+          </div>
+
+          <div class="hero-dash-row">
+            <div class="hero-dash-row-icon hero-dash-row-icon--blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M12 13v4m-2-2h4"/></svg>
+            </div>
+            <div class="hero-dash-row-body">
+              <div class="hero-dash-row-label">Marketing Feed</div>
+              <div class="hero-dash-row-value">Google + Facebook</div>
+            </div>
+            <div class="hero-dash-row-badge hero-dash-row-badge--cyan">Synced</div>
+          </div>
+
+          <div class="hero-dash-row">
+            <div class="hero-dash-row-icon hero-dash-row-icon--purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div class="hero-dash-row-body">
+              <div class="hero-dash-row-label">Marketplace Updates</div>
+              <div class="hero-dash-row-value">Fees, stock &amp; rules</div>
+            </div>
+            <div class="hero-dash-row-badge hero-dash-row-badge--green">Updated</div>
+          </div>
+
+          <div class="hero-dash-footer">
+            <span>Last updated <strong>12 seconds ago</strong></span>
+            <span class="hero-dash-powered">by Hermes</span>
+          </div>
         </div>
 
-        <div class="hero-dash-row">
-          <div class="hero-dash-row-icon hero-dash-row-icon--green">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          </div>
-          <div class="hero-dash-row-body">
-            <div class="hero-dash-row-label">Pricing Automation</div>
-            <div class="hero-dash-row-value">$24.99 <span class="hero-dash-arrow">→</span> $27.49</div>
-          </div>
-          <div class="hero-dash-row-badge hero-dash-row-badge--green">+18% margin</div>
-        </div>
+        <!-- Orb system — right side of cluster, with callouts -->
+        <div class="hero-orb-system" aria-hidden="true">
 
-        <div class="hero-dash-row">
-          <div class="hero-dash-row-icon hero-dash-row-icon--cyan">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.88"/></svg>
-          </div>
-          <div class="hero-dash-row-body">
-            <div class="hero-dash-row-label">Inventory Sync</div>
-            <div class="hero-dash-row-value">Amazon · eBay · Shopify</div>
-          </div>
-          <div class="hero-dash-row-badge hero-dash-row-badge--cyan">38 live</div>
-        </div>
+          <!-- SVG connector lines from orb to callouts -->
+          <svg class="hero-orb-lines" viewBox="0 0 320 480" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Line to top-left callout (Pricing) -->
+            <line x1="160" y1="240" x2="40" y2="80" stroke="url(#lineGrad1)" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+            <circle cx="40" cy="80" r="3" fill="#00CFFF" opacity="0.7"/>
+            <!-- Line to top-right callout (Inventory) -->
+            <line x1="160" y1="240" x2="280" y2="90" stroke="url(#lineGrad2)" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+            <circle cx="280" cy="90" r="3" fill="#00CFFF" opacity="0.7"/>
+            <!-- Line to bottom-left callout (Oversell) -->
+            <line x1="160" y1="240" x2="35" y2="380" stroke="url(#lineGrad1)" stroke-width="1" stroke-dasharray="4 4" opacity="0.4"/>
+            <circle cx="35" cy="380" r="3" fill="#FF00D4" opacity="0.6"/>
+            <!-- Line to bottom-right callout (Marketing) -->
+            <line x1="160" y1="240" x2="285" y2="385" stroke="url(#lineGrad2)" stroke-width="1" stroke-dasharray="4 4" opacity="0.4"/>
+            <circle cx="285" cy="385" r="3" fill="#FF00D4" opacity="0.6"/>
+            <!-- Line to mid-right callout (Catalog) -->
+            <line x1="160" y1="240" x2="295" y2="240" stroke="url(#lineGrad2)" stroke-width="1" stroke-dasharray="4 4" opacity="0.35"/>
+            <circle cx="295" cy="240" r="3" fill="#00CFFF" opacity="0.5"/>
+            <defs>
+              <linearGradient id="lineGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00CFFF" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#00CFFF" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="lineGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#FF00D4" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#FF00D4" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+          </svg>
 
-        <div class="hero-dash-row">
-          <div class="hero-dash-row-icon hero-dash-row-icon--amber">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          <!-- Orb core -->
+          <div class="hero-orb-bg">
+            <div class="hero-orb-ring hero-orb-ring-1"></div>
+            <div class="hero-orb-ring hero-orb-ring-2"></div>
+            <div class="hero-orb-ring hero-orb-ring-3"></div>
+            <img src="assets/images/synball.png" alt="" class="hero-orb-img">
           </div>
-          <div class="hero-dash-row-body">
-            <div class="hero-dash-row-label">Oversell Protection</div>
-            <div class="hero-dash-row-value">Walmart paused</div>
-          </div>
-          <div class="hero-dash-row-badge hero-dash-row-badge--amber">OOS blocked</div>
-        </div>
 
-        <div class="hero-dash-row">
-          <div class="hero-dash-row-icon hero-dash-row-icon--blue">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M12 13v4m-2-2h4"/></svg>
+          <!-- Feature callouts — 5 around the orb -->
+          <div class="hero-callout hero-callout-tl">
+            <div class="hero-callout-icon hero-callout-icon--cyan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="hero-callout-text">
+              <strong>Pricing Automation</strong>
+              <span>AI repricing that wins the buy box.</span>
+            </div>
           </div>
-          <div class="hero-dash-row-body">
-            <div class="hero-dash-row-label">Marketing Feed</div>
-            <div class="hero-dash-row-value">Google + Facebook</div>
-          </div>
-          <div class="hero-dash-row-badge hero-dash-row-badge--cyan">Synced</div>
-        </div>
 
-        <div class="hero-dash-footer">
-          <span>Last updated <strong>12 seconds ago</strong></span>
-          <span class="hero-dash-powered">by Hermes</span>
-        </div>
-      </div>
-    </div>
+          <div class="hero-callout hero-callout-tr">
+            <div class="hero-callout-icon hero-callout-icon--cyan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.88"/></svg>
+            </div>
+            <div class="hero-callout-text">
+              <strong>Inventory Sync</strong>
+              <span>Real-time across all channels.</span>
+            </div>
+          </div>
+
+          <div class="hero-callout hero-callout-bl">
+            <div class="hero-callout-icon hero-callout-icon--magenta">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <div class="hero-callout-text">
+              <strong>Oversell Protection</strong>
+              <span>Smart rules prevent oversells.</span>
+            </div>
+          </div>
+
+          <div class="hero-callout hero-callout-br">
+            <div class="hero-callout-icon hero-callout-icon--magenta">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M12 13v4m-2-2h4"/></svg>
+            </div>
+            <div class="hero-callout-text">
+              <strong>Marketing Feed</strong>
+              <span>Optimized data that drives sales.</span>
+            </div>
+          </div>
+
+          <div class="hero-callout hero-callout-mr">
+            <div class="hero-callout-icon hero-callout-icon--cyan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+            </div>
+            <div class="hero-callout-text">
+              <strong>Catalog Sync</strong>
+              <span>Titles, prices, attributes in sync.</span>
+            </div>
+          </div>
+
+        </div><!-- /hero-orb-system -->
+
+      </div><!-- /hero-visual-cluster -->
+
+    </div><!-- /hero-right -->
 
   </div>
 </section>
