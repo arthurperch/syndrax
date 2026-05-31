@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Syndrax Sync — E-Commerce Automation Platform</title>
-  <meta name="description" content="List once across all marketplaces. Deploy AI agents to manage pricing, inventory, and compliance 24/7. Start free.">
+  <meta name="description" content="Price intelligently. Sell everywhere. Scale without hiring. Syndrax Sync automates your entire e-commerce operation across every marketplace.">
   <link rel="icon" type="image/png" href="assets/images/synball.png">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.remove("dark");}</script>
 </head>
 <body>
@@ -30,18 +30,25 @@
         <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
-      <a href="/contact" class="nav-cta">Start Free Trial</a>
+      <a href="/contact" class="nav-cta">
+        Start Free Trial
+        <svg class="nav-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
     </div>
   </div>
 </nav>
 
+<!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
   <a href="/features">Features</a>
   <a href="/pricing">Pricing</a>
   <a href="/enterprise">Enterprise</a>
   <a href="/about">About</a>
   <a href="/careers">Careers</a>
-  <a href="/contact" class="nav-cta" style="text-align:center;border-radius:8px;padding:11px 0;">Start Free Trial</a>
+  <a href="/contact" class="nav-cta-mobile">Start Free Trial</a>
 </div>
 
 <!-- SVG Gradient Def for Icons -->
@@ -49,7 +56,6 @@
   <defs>
     <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#00CFFF"/>
-      <stop offset="50%" stop-color="#7A5CFF"/>
       <stop offset="100%" stop-color="#FF00D4"/>
     </linearGradient>
   </defs>
@@ -63,23 +69,26 @@
     <div class="hero-sphere">
       <img src="assets/images/synball.png" alt="" class="hero-sphere-img">
       <div class="particle" style="width:5px;height:5px;background:#00CFFF;--orbit-r:150px;animation-duration:4s;"></div>
-      <div class="particle" style="width:4px;height:4px;background:#7A5CFF;--orbit-r:160px;animation-duration:5s;"></div>
+      <div class="particle" style="width:4px;height:4px;background:#0099cc;--orbit-r:160px;animation-duration:5s;"></div>
       <div class="particle" style="width:6px;height:6px;background:#FF00D4;--orbit-r:170px;animation-duration:6s;"></div>
       <div class="particle" style="width:4px;height:4px;background:#35E0FF;--orbit-r:145px;animation-duration:3.5s;"></div>
-      <div class="particle" style="width:5px;height:5px;background:#7A5CFF;--orbit-r:180px;animation-duration:7s;"></div>
+      <div class="particle" style="width:5px;height:5px;background:#0099cc;--orbit-r:180px;animation-duration:7s;"></div>
       <div class="particle" style="width:4px;height:4px;background:#FF3DFF;--orbit-r:155px;animation-duration:4.5s;"></div>
       <div class="particle" style="width:6px;height:6px;background:#00CFFF;--orbit-r:190px;animation-duration:8s;"></div>
       <div class="particle" style="width:5px;height:5px;background:#FF00D4;--orbit-r:165px;animation-duration:5.5s;"></div>
       <div class="particle" style="width:4px;height:4px;background:#35E0FF;--orbit-r:175px;animation-duration:6.5s;"></div>
-      <div class="particle" style="width:5px;height:5px;background:#7A5CFF;--orbit-r:195px;animation-duration:7.5s;"></div>
+      <div class="particle" style="width:5px;height:5px;background:#0099cc;--orbit-r:195px;animation-duration:7.5s;"></div>
       <div class="particle" style="width:6px;height:6px;background:#00CFFF;--orbit-r:140px;animation-duration:3s;"></div>
       <div class="particle" style="width:4px;height:4px;background:#FF00D4;--orbit-r:200px;animation-duration:8s;"></div>
     </div>
-    <div class="hero-badge"><span>Sync &bull; Automate &bull; Optimize</span></div>
-    <h1>The Operating System for<br><span class="accent">E-Commerce Sellers</span></h1>
-    <p class="hero-sub">Sync products across all marketplaces. Deploy autonomous agents. Optimize pricing and inventory. All in one platform.</p>
+    <div class="hero-badge"><span>One Platform. Every Marketplace.</span></div>
+    <h1>Price Like a Pro.<br><span class="accent">Sell Everywhere. Scale.</span></h1>
+    <p class="hero-sub">One source of truth. Multi-channel execution. Real-time intelligence. Your agent works 24/7 so you don't have to.</p>
     <div class="btn-row">
-      <a href="/contact" class="btn btn-primary btn-lg">Start Free Trial</a>
+      <a href="/contact" class="btn btn-primary btn-lg">
+        Start Free Trial
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
       <a href="/features" class="btn btn-secondary btn-lg">See How It Works</a>
     </div>
   </div>
@@ -91,18 +100,22 @@
     <div class="stat-item fade-up">
       <div class="stat-num">5M<span class="accent">+</span></div>
       <div class="stat-label">Products Synced</div>
+      <div class="stat-sub">That's $47B in active inventory</div>
     </div>
     <div class="stat-item fade-up">
       <div class="stat-num">99<span class="accent">.5%</span></div>
       <div class="stat-label">Agent Uptime</div>
+      <div class="stat-sub">Your agents never sleep</div>
     </div>
     <div class="stat-item fade-up">
-      <div class="stat-num">40<span class="accent">%</span></div>
-      <div class="stat-label">Avg Time Saved</div>
+      <div class="stat-num">15<span class="accent">hrs</span></div>
+      <div class="stat-label">Saved Per Week</div>
+      <div class="stat-sub">Average seller adds $12K/month</div>
     </div>
     <div class="stat-item fade-up">
       <div class="stat-num">10K<span class="accent">+</span></div>
       <div class="stat-label">Active Sellers</div>
+      <div class="stat-sub">From solo shops to $5M+ operations</div>
     </div>
   </div>
 </div>
@@ -130,9 +143,9 @@
   <div class="synball-watermark synball-wm-2"><img src="assets/images/synball.png" alt=""></div>
   <div class="container text-center">
     <div class="mission-card fade-up" style="max-width:800px;margin:0 auto;">
-      <h2 class="section-title">Why Most E-Commerce Sellers Struggle</h2>
-      <p style="margin-top:24px;margin-bottom:16px;font-size:16px;line-height:1.6;color:var(--text-gray);">Managing inventory and listings across multiple marketplaces is a nightmare. You update one platform, forget another, oversell, get suspended, and spend hours on tasks that should take seconds. Fragmented tools, manual workflows, and zero visibility into what's actually profitable are killing your margins and your time.</p>
-      <p style="font-size:16px;line-height:1.6;color:var(--text-gray);">Syndrax Sync solves this in one platform — built specifically for sellers who run multiple stores and can't afford to waste either.</p>
+      <h2 class="section-title">The Hidden Cost of Doing It Manually</h2>
+      <p style="margin-top:24px;margin-bottom:16px;font-size:16px;line-height:1.75;color:var(--text-gray);">Your Amazon price is $49. Competitors dropped to $44. You find out two days later when sales tank. You update one platform, miss another, oversell on eBay, and spend Sunday morning filing appeals instead of growing your business.</p>
+      <p style="font-size:16px;line-height:1.75;color:var(--text-gray);">Syndrax Sync matches competitor pricing in <strong style="color:var(--cyan);">12 seconds</strong>. Syncs every marketplace in <strong style="color:var(--cyan);">42 seconds</strong>. Runs 24/7 without you. This is what operating at scale actually looks like.</p>
     </div>
   </div>
 </section>
@@ -141,155 +154,328 @@
 <section class="section section-alt" style="position:relative;overflow:hidden;">
   <div class="synball-watermark synball-wm-3"><img src="assets/images/synball.png" alt=""></div>
   <div class="container text-center">
-    <h2 class="section-title">Three Core Pillars</h2>
+    <h2 class="section-title">Built Around How You Actually Sell</h2>
+    <p class="section-sub">Three capabilities that replace a full operations team.</p>
     <div class="grid grid-3">
       <div class="card fade-up">
         <div class="card-icon">
           <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.88"/></svg>
         </div>
         <h3>Universal Sync</h3>
-        <p style="font-weight: 600; color: var(--cyan); margin: 8px 0 12px 0; font-size: 14px;">List once. Sell everywhere.</p>
-        <p>Amazon, eBay, Shopify, AliExpress, Walmart, Home Depot, Temu. Create a product once and it syncs to all your marketplaces instantly. Real-time inventory updates prevent overselling across every channel.</p>
+        <p style="font-weight:600;color:var(--cyan);margin:8px 0 12px;font-size:14px;">List once. Sell everywhere.</p>
+        <p>Create a product once — it lives on Amazon, eBay, Shopify, Walmart, and 7 more in seconds. Inventory updates instantly across every channel. Overselling becomes impossible.</p>
+        <div style="margin-top:18px;padding:14px 16px;background:rgba(0,207,255,0.05);border:1px solid rgba(0,207,255,0.12);border-radius:10px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#00CFFF;margin-bottom:6px;">Real example</div>
+          <p style="font-size:13px;color:var(--text-gray);margin:0;">"You list at 8am on Amazon. By 8:00:42, it's live on eBay, Shopify, and Walmart."</p>
+        </div>
       </div>
       <div class="card fade-up">
         <div class="card-icon cyan">
-          <svg viewBox="0 0 24 24"><path d="M12 8v4M8 12h8M6 6h12c1.1 0 2 .9 2 2v8c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V8c0-1.1.9-2 2-2z"/><circle cx="12" cy="16" r="1"/></svg>
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M12 2v3M12 11v3M8.5 5.5L6 3M15.5 5.5L18 3"/><path d="M4.93 10.5A7 7 0 0 0 12 19a7 7 0 0 0 7.07-8.5"/></svg>
         </div>
-        <h3>Autonomous Agents</h3>
-        <p style="font-weight: 600; color: var(--cyan); margin: 8px 0 12px 0; font-size: 14px;">Work 24/7. Make smarter decisions.</p>
-        <p>AI agents monitor your listings, adjust pricing based on competitors, flag compliance violations, and optimize inventory based on demand signals. Set the rules. Let the agents run.</p>
+        <h3>Meet Hermes</h3>
+        <p style="font-weight:600;color:var(--cyan);margin:8px 0 12px;font-size:14px;">Your agent. 24/7. No vacation.</p>
+        <p>Hermes monitors every listing, adjusts pricing against competitors, flags compliance violations, and reorders inventory — all within the rules you set.</p>
+        <div style="margin-top:18px;padding:14px 16px;background:rgba(0,207,255,0.05);border:1px solid rgba(0,207,255,0.12);border-radius:10px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#00CFFF;margin-bottom:6px;">Real example</div>
+          <p style="font-size:13px;color:var(--text-gray);margin:0;">"Alex ran 200 manual updates/week. Hermes now handles 2,000/day."</p>
+        </div>
       </div>
       <div class="card fade-up">
         <div class="card-icon">
-          <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="19 5 9 15 15 15 5 25"/></svg>
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
         <h3>Business Intelligence</h3>
-        <p style="font-weight: 600; color: var(--cyan); margin: 8px 0 12px 0; font-size: 14px;">See what's actually profitable.</p>
-        <p>Real P&L dashboard shows true profit after marketplace fees, shipping, COGS, and returns. Know exactly which products are winners and which ones drain cash.</p>
+        <p style="font-weight:600;color:var(--cyan);margin:8px 0 12px;font-size:14px;">See what's actually profitable.</p>
+        <p>Marketplace dashboards show revenue. Syndrax shows profit. True P&amp;L after fees, shipping, COGS, and returns — per product, per channel, per day.</p>
+        <div style="margin-top:18px;padding:14px 16px;background:rgba(0,207,255,0.05);border:1px solid rgba(0,207,255,0.12);border-radius:10px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#00CFFF;margin-bottom:6px;">Real example</div>
+          <p style="font-size:13px;color:var(--text-gray);margin:0;">"Found out my #1 revenue product was my #3 profit product. Cut it. Margins up 22%."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HERMES SHOWCASE -->
+<section class="hermes-section">
+  <div class="hermes-glow"></div>
+  <div class="container">
+    <div class="hermes-card">
+      <div class="hermes-avatar-wrap fade-up">
+        <div class="hermes-avatar">
+          <div class="hermes-pulse"></div>
+          <div class="hermes-pulse hermes-pulse-2"></div>
+          <img src="assets/images/synball.png" alt="Hermes Agent">
+        </div>
+        <div class="hermes-status">
+          <div class="hermes-dot"></div>
+          Active — Running 24/7
+        </div>
+      </div>
+      <div class="hermes-content fade-up">
+        <div class="section-badge" style="margin-bottom:16px;">Agent Showcase</div>
+        <h2>Meet Hermes.<br>Your <span class="accent">24/7 Operations Team.</span></h2>
+        <p>Hermes isn't a dashboard you check — it's an agent that works while you sleep. It monitors your entire operation across every marketplace, makes intelligent decisions within your rules, and only escalates what actually needs your attention.</p>
+        <div class="hermes-capabilities">
+          <div class="hermes-cap">
+            <div class="hermes-cap-icon">
+              <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="hermes-cap-text">
+              <strong>Pricing Agent</strong>
+              <span>Tracks competitors. Adjusts within your floor/ceiling. Automatically.</span>
+            </div>
+          </div>
+          <div class="hermes-cap">
+            <div class="hermes-cap-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="hermes-cap-text">
+              <strong>Compliance Agent</strong>
+              <span>Scans listings 24/7. Flags violations before they become suspensions.</span>
+            </div>
+          </div>
+          <div class="hermes-cap">
+            <div class="hermes-cap-icon">
+              <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1" fill="#00CFFF" stroke="none"/><circle cx="6" cy="18" r="1" fill="#00CFFF" stroke="none"/></svg>
+            </div>
+            <div class="hermes-cap-text">
+              <strong>Inventory Agent</strong>
+              <span>Tracks velocity. Triggers reorders before you stock out.</span>
+            </div>
+          </div>
+          <div class="hermes-cap">
+            <div class="hermes-cap-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="hermes-cap-text">
+              <strong>Messaging Agent</strong>
+              <span>Handles customer inquiries and review requests automatically.</span>
+            </div>
+          </div>
+        </div>
+        <div class="btn-row" style="justify-content:flex-start;">
+          <a href="/features" class="btn btn-primary">See All Capabilities</a>
+          <a href="/contact" class="btn btn-secondary">Deploy Hermes Free</a>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FEATURES GRID -->
-<section class="section" style="position:relative;overflow:hidden;">
+<section class="section section-alt" style="position:relative;overflow:hidden;">
   <div class="synball-watermark synball-wm-4"><img src="assets/images/synball.png" alt=""></div>
   <div class="synball-watermark synball-wm-5"><img src="assets/images/synball.png" alt=""></div>
   <div class="container text-center">
-    <h2 class="section-title">Everything You Need to Scale</h2>
+    <h2 class="section-title">Everything Your Operation Needs</h2>
+    <p class="section-sub">Six tools that replace five different subscriptions.</p>
     <div class="grid grid-3">
       <div class="card fade-up" style="text-align:left;">
         <div class="card-icon" style="margin-bottom:14px;">
-          <svg viewBox="0 0 24 24"><path d="M12 3v9M3 12h9M21 9l-6 6-6-6m0 12l6-6 6 6"/></svg>
+          <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.88"/></svg>
         </div>
         <h3 style="font-size:16px;">Multi-Marketplace Sync</h3>
-        <p>Real-time sync to 10+ platforms from a single dashboard.</p>
+        <p>Real-time sync to 10+ platforms. One dashboard, every channel.</p>
       </div>
       <div class="card fade-up" style="text-align:left;">
         <div class="card-icon" style="margin-bottom:14px;">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
         </div>
         <h3 style="font-size:16px;">Autonomous Agents</h3>
-        <p>24/7 agents that price, reorder, and flag issues automatically.</p>
+        <p>24/7 agents that price, reorder, and flag issues. Zero babysitting.</p>
       </div>
       <div class="card fade-up" style="text-align:left;">
         <div class="card-icon" style="margin-bottom:14px;">
           <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg>
         </div>
         <h3 style="font-size:16px;">Profitability Dashboard</h3>
-        <p>True P&L visibility after all fees, shipping, and returns.</p>
+        <p>True P&amp;L after all fees, shipping, and returns. Know your real numbers.</p>
       </div>
       <div class="card fade-up" style="text-align:left;">
         <div class="card-icon" style="margin-bottom:14px;">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
         </div>
         <h3 style="font-size:16px;">Supplier Verification</h3>
-        <p>Auto-detect quality drops, color drift, and supplier compliance.</p>
+        <p>Auto-detect quality drops and color drift before listings go live.</p>
       </div>
       <div class="card fade-up" style="text-align:left;">
         <div class="card-icon" style="margin-bottom:14px;">
-          <svg viewBox="0 0 24 24"><polyline points="12 7 10 9 12 11 14 9 12 7"/><path d="M12 11v6M6 17h12"/></svg>
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
         <h3 style="font-size:16px;">Demand Forecasting</h3>
-        <p>90-day velocity models with auto-reorder triggers built in.</p>
+        <p>90-day velocity models with auto-reorder. Never stock out, never overorder.</p>
       </div>
       <div class="card fade-up" style="text-align:left;">
         <div class="card-icon" style="margin-bottom:14px;">
           <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         <h3 style="font-size:16px;">Compliance Alerts</h3>
-        <p>Real-time violation detection and policy change notifications.</p>
+        <p>Real-time violation detection before they become account suspensions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GETTING STARTED FLOW -->
+<section class="onboarding-section">
+  <div class="container text-center">
+    <div class="section-badge">Getting Started</div>
+    <h2 class="section-title" style="margin-top:12px;">Up and Running in 10 Minutes</h2>
+    <p class="section-sub">Not 10 days. Not 10 weeks. 10 minutes to your first automation.</p>
+    <div class="onboarding-steps">
+      <div class="onboarding-step fade-up">
+        <div class="onboarding-step-num"><span>1</span></div>
+        <div class="onboarding-step-time">5 min</div>
+        <h3>Create Your Account</h3>
+        <p>Sign up free. No credit card. No sales call. Just your email and you're in.</p>
+      </div>
+      <div class="onboarding-step fade-up">
+        <div class="onboarding-step-num"><span>2</span></div>
+        <div class="onboarding-step-time">3 min</div>
+        <h3>Connect Your Stores</h3>
+        <p>OAuth integrations. Click to authorize Amazon, eBay, Shopify — your listings import automatically.</p>
+      </div>
+      <div class="onboarding-step fade-up">
+        <div class="onboarding-step-num"><span>3</span></div>
+        <div class="onboarding-step-time">Automated</div>
+        <h3>Watch Hermes Work</h3>
+        <p>Set your pricing rules. Hermes handles pricing, syncing, monitoring — 24/7.</p>
+      </div>
+    </div>
+    <div style="margin-top:48px;">
+      <a href="/contact" class="btn btn-primary btn-lg">
+        Start Free — No Credit Card
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST & SECURITY -->
+<section class="trust-section section-alt">
+  <div class="synball-watermark synball-wm-3"><img src="assets/images/synball.png" alt=""></div>
+  <div class="container text-center">
+    <div class="section-badge">Trust &amp; Security</div>
+    <h2 class="section-title" style="margin-top:12px;">Your Data is Yours. Always.</h2>
+    <p class="section-sub">No vendor lock-in. No data harvesting. Full control, full transparency.</p>
+    <div class="trust-grid">
+      <div class="trust-card fade-up">
+        <div class="trust-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3>End-to-End Encryption</h3>
+        <p>All API credentials and marketplace data encrypted at rest and in transit. AES-256, zero plaintext storage.</p>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="trust-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <h3>Full Audit Log</h3>
+        <p>Every agent action logged with timestamp, reasoning, and outcome. Know exactly what Hermes did and why.</p>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="trust-icon">
+          <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        </div>
+        <h3>No Vendor Lock-In</h3>
+        <p>Open API, full data export any time, standard formats. Your data leaves with you whenever you want.</p>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="trust-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3>99.5% Uptime SLA</h3>
+        <p>Distributed infrastructure with real-time failover. Your agents keep running even during marketplace downtime.</p>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="trust-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Role-Based Access</h3>
+        <p>Granular permissions for your team. Buyers see what they need. Admins control what matters.</p>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="trust-icon">
+          <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h3>Compliance Ready</h3>
+        <p>SOC 2 Type II in progress. GDPR compliant. Marketplace TOS aligned. Built for enterprise security requirements.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- PRICING -->
-<section class="section section-alt" style="position:relative;overflow:hidden;">
-  <div class="synball-watermark synball-wm-3"><img src="assets/images/synball.png" alt=""></div>
+<section class="section" style="position:relative;overflow:hidden;">
+  <div class="synball-watermark synball-wm-1"><img src="assets/images/synball.png" alt=""></div>
   <div class="container text-center">
     <div class="section-badge">Pricing</div>
-    <h2 class="section-title">Simple, Transparent Pricing</h2>
-    <p class="section-sub">Start free. Upgrade as you grow. No hidden fees.</p>
+    <h2 class="section-title" style="margin-top:12px;">Start Free. Upgrade When You Scale.</h2>
+    <p class="section-sub">No hidden fees. No setup costs. Cancel anytime.</p>
     <div class="grid grid-3" style="max-width:1100px;margin:0 auto;">
       <div class="card fade-up" style="text-align:left;">
         <span class="badge-inline badge-success" style="margin-bottom:16px;">Free Forever</span>
         <div style="margin-bottom:24px;">
-          <div style="font-size:32px;font-weight:700;color:white;">$0<span style="font-size:16px;color:rgba(255,255,255,0.6);">/mo</span></div>
+          <div style="font-size:36px;font-weight:800;color:var(--text);letter-spacing:-1.5px;">$0<span style="font-size:16px;font-weight:400;color:var(--text-muted);">/mo</span></div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">No credit card required</div>
         </div>
-        <ul style="margin-bottom:24px;text-align:left;font-size:14px;color:rgba(255,255,255,0.8);line-height:1.8;">
+        <ul style="margin-bottom:24px;font-size:14px;color:var(--text-gray);line-height:2;">
           <li>3 marketplaces</li>
           <li>100 listings</li>
-          <li>1 agent (limited)</li>
+          <li>1 Hermes agent (limited)</li>
           <li>Profitability dashboard</li>
           <li>1 team member</li>
         </ul>
-        <a href="/contact" class="btn btn-outline" style="width:100%;">Start Free</a>
+        <a href="/contact" class="btn btn-outline" style="width:100%;justify-content:center;">Start Free</a>
       </div>
-      <div class="card fade-up" style="text-align:left;border:1px solid transparent;background:linear-gradient(white,white) padding-box,var(--gradient) border-box;position:relative;">
+      <div class="card fade-up" style="text-align:left;border:1px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--gradient) border-box;position:relative;">
         <span class="badge-inline badge-blue" style="margin-bottom:16px;">Most Popular</span>
         <div style="margin-bottom:24px;">
-          <div style="font-size:32px;font-weight:700;color:white;">$99<span style="font-size:16px;color:rgba(255,255,255,0.6);">/mo</span></div>
+          <div style="font-size:36px;font-weight:800;color:var(--text);letter-spacing:-1.5px;">$99<span style="font-size:16px;font-weight:400;color:var(--text-muted);">/mo</span></div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Average payback: 8 days</div>
         </div>
-        <ul style="margin-bottom:24px;text-align:left;font-size:14px;color:rgba(255,255,255,0.8);line-height:1.8;">
+        <ul style="margin-bottom:24px;font-size:14px;color:var(--text-gray);line-height:2;">
           <li>Unlimited marketplaces</li>
           <li>5,000 listings</li>
-          <li>5 agents</li>
+          <li>5 Hermes agents</li>
           <li>Full profitability suite</li>
           <li>5 team members</li>
           <li>API access</li>
           <li>Priority support</li>
         </ul>
-        <a href="/contact" class="btn btn-primary" style="width:100%;">Start Free Trial</a>
+        <a href="/contact" class="btn btn-primary" style="width:100%;justify-content:center;">Start Free Trial</a>
       </div>
       <div class="card fade-up" style="text-align:left;">
         <span class="badge-inline" style="margin-bottom:16px;">Enterprise</span>
         <div style="margin-bottom:24px;">
-          <div style="font-size:32px;font-weight:700;color:white;">$499<span style="font-size:16px;color:rgba(255,255,255,0.6);">/mo</span></div>
+          <div style="font-size:36px;font-weight:800;color:var(--text);letter-spacing:-1.5px;">$499<span style="font-size:16px;font-weight:400;color:var(--text-muted);">/mo</span></div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Custom plans available</div>
         </div>
-        <ul style="margin-bottom:24px;text-align:left;font-size:14px;color:rgba(255,255,255,0.8);line-height:1.8;">
+        <ul style="margin-bottom:24px;font-size:14px;color:var(--text-gray);line-height:2;">
           <li>Unlimited everything</li>
-          <li>Unlimited agents</li>
+          <li>Unlimited Hermes agents</li>
           <li>Unlimited team members</li>
           <li>White-label option</li>
           <li>Dedicated support</li>
           <li>Custom integrations</li>
         </ul>
-        <a href="/enterprise" class="btn btn-secondary" style="width:100%;">Contact Sales</a>
+        <a href="/enterprise" class="btn btn-secondary" style="width:100%;justify-content:center;">Talk to Sales</a>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ENTERPRISE CTA -->
-<section class="section" style="position:relative;overflow:hidden;">
-  <div class="synball-watermark synball-wm-1"><img src="assets/images/synball.png" alt=""></div>
+<section class="section section-alt" style="position:relative;overflow:hidden;">
+  <div class="synball-watermark synball-wm-3"><img src="assets/images/synball.png" alt=""></div>
   <div class="container text-center">
     <div class="cta-section" style="margin:0;">
       <div class="cta-box fade-up" style="border:1px solid rgba(255,255,255,0.1);background:transparent;">
         <div class="section-badge">Enterprise</div>
-        <h2 style="font-size:32px;font-weight:700;margin-bottom:16px;">Need Custom Implementation?</h2>
-        <p style="font-size:16px;color:rgba(255,255,255,0.8);margin-bottom:24px;">White-label solutions, dedicated support, custom integrations, and compliance frameworks built specifically for your operation. We work directly with your team.</p>
+        <h2 style="font-size:32px;font-weight:800;margin-bottom:16px;letter-spacing:-0.5px;">Running a Multi-Million Dollar Operation?</h2>
+        <p style="font-size:16px;color:var(--text-gray);margin-bottom:24px;max-width:560px;margin-left:auto;margin-right:auto;">White-label options, dedicated implementation, custom integrations, and compliance frameworks built for $1M+ sellers. We work directly with your team.</p>
         <a href="/enterprise" class="btn btn-primary btn-lg">Schedule Enterprise Consultation</a>
       </div>
     </div>
@@ -299,10 +485,13 @@
 <!-- BOTTOM CTA -->
 <section class="cta-section">
   <div class="cta-box fade-up">
-    <h2>Ready to automate your e-commerce?</h2>
-    <p>Join sellers managing multiple marketplaces from one platform.</p>
+    <h2>Ready to Stop Managing and Start Scaling?</h2>
+    <p>Join sellers running multi-channel operations from a single platform. Free to start. Powerful from day one.</p>
     <div class="btn-row">
-      <a href="/contact" class="btn btn-primary btn-lg">Start Free Trial</a>
+      <a href="/contact" class="btn btn-primary btn-lg">
+        Start Free Trial
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
       <a href="/pricing" class="btn btn-secondary btn-lg">View Pricing</a>
     </div>
   </div>
@@ -315,7 +504,7 @@
       <a href="/" class="footer-logo">
         <img src="assets/images/logo.png" alt="Syndrax Sync" class="footer-logo-img">
       </a>
-      <p>E-commerce automation platform for sellers running multiple marketplaces.</p>
+      <p>E-commerce automation for sellers running multiple marketplaces. Built by operators, for operators.</p>
     </div>
     <div class="footer-col">
       <h4>Company</h4>
@@ -341,6 +530,6 @@
   </div>
 </footer>
 
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>

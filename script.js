@@ -25,13 +25,47 @@ if (navbar) {
 // Hamburger / mobile menu
 const hamburger = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobileMenu');
+const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+function openMobileMenu() {
+  mobileMenu.classList.add('open');
+  hamburger.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMobileMenu() {
+  mobileMenu.classList.remove('open');
+  hamburger.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 if (hamburger && mobileMenu) {
   hamburger.addEventListener('click', () => {
-    mobileMenu.classList.toggle('open');
+    if (mobileMenu.classList.contains('open')) {
+      closeMobileMenu();
+    } else {
+      openMobileMenu();
+    }
   });
-  document.addEventListener('click', (e) => {
-    if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
-      mobileMenu.classList.remove('open');
+
+  if (mobileMenuClose) {
+    mobileMenuClose.addEventListener('click', closeMobileMenu);
+  }
+
+  // Close on backdrop click (click on mobile-menu itself, not its children)
+  mobileMenu.addEventListener('click', (e) => {
+    if (e.target === mobileMenu) closeMobileMenu();
+  });
+
+  // Close on link click
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+      closeMobileMenu();
     }
   });
 }
@@ -63,15 +97,15 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
 initThemeToggle();
 
-// Cursor glow effect
+// Cursor glow effect — cyan tint instead of purple
 if (window.matchMedia('(pointer: fine)').matches) {
   const cursor = document.createElement('div');
   cursor.style.cssText = `
     position:fixed;pointer-events:none;z-index:9999;
-    width:400px;height:400px;border-radius:50%;
-    background:radial-gradient(circle, rgba(122,92,255,0.12) 0%, transparent 70%);
-    transform:translate(-50%,-50%);transition:left 0.1s ease,top 0.1s ease;
-    left:-200px;top:-200px;
+    width:500px;height:500px;border-radius:50%;
+    background:radial-gradient(circle, rgba(0,207,255,0.07) 0%, transparent 65%);
+    transform:translate(-50%,-50%);transition:left 0.12s ease,top 0.12s ease;
+    left:-300px;top:-300px;
   `;
   document.body.appendChild(cursor);
   document.addEventListener('mousemove', e => {
