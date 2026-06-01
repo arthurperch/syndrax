@@ -2459,6 +2459,86 @@ html.dark .hero-rail-bubble {
   line-height: 1.55;
 }
 
+/* ===================== COMPARE PLANS TABLE ===================== */
+.cmp-wrap {
+  overflow-x: auto;
+  margin-top: 40px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+html.dark .cmp-wrap {
+  box-shadow: 0 2px 20px rgba(0,0,0,0.35);
+}
+
+.cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Header row */
+.cmp-head-row {
+  background: linear-gradient(90deg, rgba(0,207,255,0.08) 0%, rgba(0,132,199,0.06) 50%, rgba(255,0,212,0.07) 100%);
+  border-bottom: 1.5px solid var(--border);
+}
+html.dark .cmp-head-row {
+  background: linear-gradient(90deg, rgba(0,207,255,0.10) 0%, rgba(0,132,199,0.08) 50%, rgba(255,0,212,0.09) 100%);
+}
+
+.cmp-th {
+  padding: 16px 18px;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text);
+  font-family: var(--nav-font);
+  letter-spacing: 0.2px;
+}
+.cmp-th--feature {
+  text-align: left;
+  background: linear-gradient(90deg, #00CFFF, #0099cc, #FF00D4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Body rows */
+.cmp-row {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s ease;
+}
+.cmp-row--alt {
+  background: rgba(0,207,255,0.03);
+}
+html.dark .cmp-row--alt {
+  background: rgba(255,255,255,0.025);
+}
+.cmp-row--last { border-bottom: none; }
+.cmp-row:hover { background: rgba(0,207,255,0.05); }
+html.dark .cmp-row:hover { background: rgba(0,207,255,0.06); }
+
+.cmp-td {
+  padding: 15px 18px;
+  font-size: 14px;
+  color: var(--text);
+  text-align: center;
+}
+.cmp-td--label {
+  text-align: left;
+  font-weight: 500;
+  color: var(--text);
+}
+.cmp-td--dash {
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+.cmp-check {
+  color: #00CFFF;
+  font-size: 16px;
+  font-weight: 700;
+}
+
 /* ===================== PRICING TABLE ===================== */
 .pricing-table {
   width: 100%;
