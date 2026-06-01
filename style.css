@@ -2161,9 +2161,10 @@ html.dark .hero-rail-bubble {
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 28px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.28s cubic-bezier(0.34,1.2,0.64,1), box-shadow 0.28s ease, border-color 0.28s ease, background 0.28s ease, opacity 0.28s ease, filter 0.28s ease;
   box-shadow: 0 1px 4px rgba(15,23,42,0.04);
   position: relative;
+  will-change: transform;
 }
 
 /* Glow ring pseudo-element — hidden by default */
@@ -2172,9 +2173,9 @@ html.dark .hero-rail-bubble {
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: radial-gradient(ellipse at 50% 0%, rgba(0,207,255,0.18) 0%, rgba(255,0,212,0.10) 60%, transparent 100%);
+  background: radial-gradient(ellipse at 50% 20%, rgba(0,180,255,0.22) 0%, rgba(0,120,220,0.12) 45%, rgba(255,0,212,0.07) 75%, transparent 100%);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.28s ease;
   pointer-events: none;
   z-index: 0;
 }
@@ -2188,15 +2189,42 @@ html.dark .hero-rail-bubble {
   z-index: 1;
 }
 
+/* DSLR focus: hovered card zooms forward, background shifts blue, text pops */
 .card:hover {
-  border-color: rgba(0,207,255,0.30);
-  transform: translateY(-4px);
-  box-shadow: 0 0 0 1px rgba(0,207,255,0.12), 0 8px 28px rgba(0,207,255,0.10), 0 20px 48px rgba(255,0,212,0.06);
+  border-color: rgba(0,180,255,0.45);
+  transform: translateY(-6px) scale(1.025);
+  background: color-mix(in srgb, var(--card) 88%, rgba(0,140,255,1) 12%);
+  box-shadow:
+    0 0 0 1px rgba(0,180,255,0.22),
+    0 4px 12px rgba(0,140,255,0.14),
+    0 12px 36px rgba(0,140,255,0.12),
+    0 28px 56px rgba(0,80,200,0.08);
+}
+
+/* Text pops on hover — headings get brighter/bolder */
+.card:hover h3,
+.card:hover h4 {
+  color: #fff;
+  text-shadow: 0 0 20px rgba(0,200,255,0.25);
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+/* DSLR depth-of-field: when any card in a grid is hovered,
+   its siblings step back (blur + dim) */
+.grid:has(.card:hover) .card:not(:hover),
+.trust-grid:has(.trust-card:hover) .trust-card:not(:hover),
+.grid:has(.onboarding-step:hover) .onboarding-step:not(:hover) {
+  opacity: 0.55;
+  filter: blur(0.6px);
+  transform: scale(0.985);
 }
 
 .card.cyan-hover:hover {
-  border-color: rgba(0,207,255,0.38);
-  box-shadow: 0 0 0 1px rgba(0,207,255,0.16), 0 8px 32px rgba(0,207,255,0.15);
+  border-color: rgba(0,207,255,0.5);
+  box-shadow:
+    0 0 0 1px rgba(0,207,255,0.22),
+    0 8px 32px rgba(0,207,255,0.18),
+    0 24px 48px rgba(0,140,255,0.10);
 }
 
 /* Shared focus-glow for non-.card card-like elements */
@@ -2214,8 +2242,9 @@ html.dark .hero-rail-bubble {
 .contact-form-card,
 .contact-info-card,
 .pricing-card-featured {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.28s cubic-bezier(0.34,1.2,0.64,1), box-shadow 0.28s ease, border-color 0.28s ease, background 0.28s ease, opacity 0.28s ease, filter 0.28s ease;
   position: relative;
+  will-change: transform;
 }
 
 .trust-card::before,
@@ -2234,9 +2263,9 @@ html.dark .hero-rail-bubble {
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: radial-gradient(ellipse at 50% 0%, rgba(0,207,255,0.15) 0%, rgba(255,0,212,0.08) 60%, transparent 100%);
+  background: radial-gradient(ellipse at 50% 20%, rgba(0,180,255,0.20) 0%, rgba(0,120,220,0.10) 45%, rgba(255,0,212,0.06) 75%, transparent 100%);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.28s ease;
   pointer-events: none;
   z-index: 0;
 }
@@ -2281,8 +2310,22 @@ html.dark .hero-rail-bubble {
 .onboarding-step:hover,
 .gw-step:hover,
 .gw-install-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 0 1px rgba(0,207,255,0.12), 0 8px 24px rgba(0,207,255,0.09), 0 16px 40px rgba(255,0,212,0.05);
+  transform: translateY(-5px) scale(1.02);
+  background: color-mix(in srgb, var(--card) 88%, rgba(0,140,255,1) 12%);
+  box-shadow:
+    0 0 0 1px rgba(0,180,255,0.22),
+    0 8px 24px rgba(0,140,255,0.14),
+    0 20px 44px rgba(0,80,200,0.08);
+}
+
+.trust-card:hover h3, .trust-card:hover h4,
+.team-card:hover h3, .team-card:hover h4,
+.service-card:hover h3, .service-card:hover h4,
+.solution-card:hover h3, .solution-card:hover h4,
+.onboarding-step:hover h3, .gw-step:hover h3 {
+  color: #fff;
+  text-shadow: 0 0 18px rgba(0,200,255,0.22);
+  transition: color 0.25s ease, text-shadow 0.25s ease;
 }
 
 .card-icon {
@@ -4603,12 +4646,13 @@ html.dark .auth-google {
 
   /* The card nearest to viewport center gets the full focus treatment */
   .scroll-focusable.scroll-focus-active {
-    transform: translateY(-3px) scale(1.012);
-    border-color: rgba(0,207,255,0.35) !important;
+    transform: translateY(-3px) scale(1.018);
+    border-color: rgba(0,180,255,0.45) !important;
+    background: color-mix(in srgb, var(--card) 88%, rgba(0,140,255,1) 12%) !important;
     box-shadow:
-      0 0 0 1px rgba(0,207,255,0.18),
-      0 0 24px rgba(0,207,255,0.18),
-      0 0 48px rgba(255,0,212,0.08),
+      0 0 0 1px rgba(0,180,255,0.22),
+      0 0 28px rgba(0,140,255,0.18),
+      0 0 56px rgba(255,0,212,0.08),
       0 8px 24px rgba(0,0,0,0.12) !important;
     z-index: 2;
   }
