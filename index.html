@@ -202,35 +202,32 @@
             <img src="assets/images/synball.png" alt="" class="hero-orb-img">
           </div>
 
-          <!-- Dashboard card — overlaps orb from the left-center, autoplay-driven -->
-          <div class="hero-dash" id="heroDash">
-            <div class="hero-dash-header">
-              <div class="hero-dash-title">
-                <span class="hero-dash-live-dot"></span>
-                <img class="hero-dash-channel-icon" id="heroDashIcon" src="assets/icons/marketplaces/shopify.svg" alt="" width="16" height="16">
-                <span id="heroDashTitle">Shopify Automation</span>
+          <!-- Product demo video — replaces dashboard card -->
+          <div class="hero-demo-wrap" id="heroDash">
+            <div class="hero-demo-inner">
+              <video
+                class="hero-demo-video"
+                id="heroDemoVideo"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="none"
+              >
+                <source src="assets/video/demo.mp4" type="video/mp4">
+              </video>
+              <!-- Shown while no video is present -->
+              <div class="hero-demo-placeholder" id="heroDemoPlaceholder">
+                <div class="hero-demo-placeholder-inner">
+                  <svg viewBox="0 0 48 48" width="36" height="36"><circle cx="24" cy="24" r="22" stroke="rgba(0,207,255,0.4)" stroke-width="2" fill="none"/><polygon points="19,16 35,24 19,32" fill="rgba(0,207,255,0.7)"/></svg>
+                  <span>Demo video coming soon</span>
+                </div>
               </div>
-              <span class="hero-dash-status" id="heroDashStatus">Syncing</span>
-            </div>
-
-            <div class="hero-dash-tasks" id="heroDashTasks">
-              <div class="hero-dash-task"><span class="hero-dash-task-dot"></span><span>AI generated product title</span></div>
-              <div class="hero-dash-task"><span class="hero-dash-task-dot"></span><span>Pricing rule created</span></div>
-              <div class="hero-dash-task"><span class="hero-dash-task-dot"></span><span>Inventory sync active</span></div>
-              <div class="hero-dash-task"><span class="hero-dash-task-dot"></span><span>Marketing feed prepared</span></div>
-              <div class="hero-dash-task hero-dash-task--complete"><span class="hero-dash-task-dot hero-dash-task-dot--done"></span><span>Shopify sync complete</span></div>
-            </div>
-
-            <div class="hero-dash-footer">
-              <span class="hero-dash-result" id="heroDashResult">Storefront automation synced</span>
-              <div class="hero-dash-progress">
-                <div class="hero-dash-progress-bar" id="heroDashProgress"></div>
+              <div class="hero-demo-badge">
+                <span class="hero-demo-dot"></span>Live Preview
               </div>
             </div>
           </div>
-
-          <!-- Metric chip — created/destroyed by JS, positioned above dashboard -->
-          <div class="hero-metric-chip-anchor" id="heroMetricAnchor"></div>
 
           <!-- Marketplace orbit nodes — 9 nodes positioned around the orb -->
           <!-- Positions mirror the SVG connector endpoints, scaled to % of cluster size -->
@@ -395,6 +392,16 @@
         <div class="hermes-status">
           <div class="hermes-dot"></div>
           Active — Running 24/7
+        </div>
+        <!-- AXIS typing feed -->
+        <div class="axis-chat" id="axisChat">
+          <div class="axis-chat-msg axis-chat-msg--visible" id="axisChatMsg">
+            <span class="axis-chat-icon" id="axisChatIcon"></span>
+            <span class="axis-chat-text" id="axisChatText"></span>
+          </div>
+          <div class="axis-typing-indicator" id="axisTyping">
+            <span></span><span></span><span></span>
+          </div>
         </div>
       </div>
       <div class="hermes-content fade-up">

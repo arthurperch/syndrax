@@ -428,11 +428,13 @@ function initHeroAutoplay() {
 
 // Init after DOM ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => { initHeroAutoplay(); initHeroRail(); initMobileScrollFocus(); });
+  document.addEventListener('DOMContentLoaded', () => { initHeroAutoplay(); initHeroRail(); initMobileScrollFocus(); initAxisChat(); initHeroDemoVideo(); });
 } else {
   initHeroAutoplay();
   initHeroRail();
   initMobileScrollFocus();
+  initAxisChat();
+  initHeroDemoVideo();
 }
 
 // ===================== MOBILE SCROLL FOCUS =====================
@@ -668,6 +670,117 @@ function initHeroRail() {
 
   // Kick off after a short delay so layout is settled
   setTimeout(runCycle, 800);
+}
+
+// ===================== AXIS TYPING CHAT =====================
+function initAxisChat() {
+  const msgEl    = document.getElementById('axisChatMsg');
+  const textEl   = document.getElementById('axisChatText');
+  const iconEl   = document.getElementById('axisChatIcon');
+  const typingEl = document.getElementById('axisTyping');
+  if (!msgEl || !textEl) return;
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    textEl.textContent = 'Monitoring all channels...';
+    textEl.classList.add('axis-done');
+    return;
+  }
+
+  const MESSAGES = [
+    { icon: 'assets/icons/marketplaces/shopify.svg',     text: 'Shopify: repriced 14 SKUs within margin rules' },
+    { icon: 'assets/icons/marketplaces/amazon.svg',      text: 'Amazon: suppressed listing repaired automatically' },
+    { icon: 'assets/icons/marketplaces/ebay.svg',        text: 'eBay: item specifics mapped on 31 listings' },
+    { icon: 'assets/icons/marketplaces/walmart.svg',     text: 'Walmart: inventory quantity synced across 3 DCs' },
+    { icon: 'assets/icons/marketplaces/etsy.svg',        text: 'Etsy: SEO titles regenerated for new collection' },
+    { icon: 'assets/icons/marketplaces/tiktok.svg',      text: 'TikTok Shop: feed refreshed, 0 errors detected' },
+    { icon: 'assets/icons/marketplaces/google.svg',      text: 'Google Merchant: feed errors cleared, 100% valid' },
+    { icon: 'assets/icons/marketplaces/facebook.svg',    text: 'Meta Catalog: variant data matched and published' },
+    { icon: 'assets/icons/marketplaces/woocommerce.svg', text: 'WooCommerce: pricing rule triggered on 8 products' },
+    { icon: null, text: 'Monitoring competitors — no action required' },
+    { icon: null, text: 'Compliance scan complete — all listings clean' },
+    { icon: null, text: 'Oversell protection active on all channels' },
+    { icon: null, text: 'Reorder triggered: SKU-2847 below threshold' },
+    { icon: null, text: 'Customer inquiry auto-resolved in 4 seconds' },
+  ];
+
+  let idx = 0;
+  let charIdx = 0;
+  let typeTimer = null;
+  let phaseTimer = null;
+
+  function showTyping(show) {
+    if (show) {
+      typingEl.classList.add('axis-typing-visible');
+    } else {
+      typingEl.classList.remove('axis-typing-visible');
+    }
+  }
+
+  function typeMessage(entry) {
+    // Build icon
+    if (entry.icon) {
+      iconEl.innerHTML = `<img src="${entry.icon}" alt="" width="16" height="16">`;
+    } else {
+      iconEl.innerHTML = `<svg viewBox="0 0 16 16" width="14" height="14" style="opacity:.6"><circle cx="8" cy="8" r="6" stroke="#00CFFF" stroke-width="1.5" fill="none"/><polyline points="5,8 7,10 11,6" stroke="#00CFFF" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`;
+    }
+
+    const full = entry.text;
+    charIdx = 0;
+    textEl.textContent = '';
+    textEl.classList.remove('axis-done');
+    msgEl.classList.add('axis-chat-msg--visible');
+
+    function typeChar() {
+      if (charIdx <= full.length) {
+        textEl.textContent = full.slice(0, charIdx);
+        charIdx++;
+        // Vary typing speed for human feel
+        const delay = charIdx === full.length ? 0 : (30 + Math.random() * 28);
+        typeTimer = setTimeout(typeChar, delay);
+      } else {
+        // Finished typing — mark done (hide cursor), pause, then next
+        textEl.classList.add('axis-done');
+        phaseTimer = setTimeout(() => {
+          // Fade out message
+          msgEl.classList.remove('axis-chat-msg--visible');
+          phaseTimer = setTimeout(nextMessage, 350);
+        }, 2800);
+      }
+    }
+    typeChar();
+  }
+
+  function nextMessage() {
+    idx = (idx + 1) % MESSAGES.length;
+    // Show typing indicator first
+    showTyping(true);
+    phaseTimer = setTimeout(() => {
+      showTyping(false);
+      typeMessage(MESSAGES[idx]);
+    }, 900 + Math.random() * 500);
+  }
+
+  // Kick off
+  typeMessage(MESSAGES[0]);
+}
+
+// ===================== HERO DEMO VIDEO PLACEHOLDER =====================
+function initHeroDemoVideo() {
+  const video = document.getElementById('heroDemoVideo');
+  const placeholder = document.getElementById('heroDemoPlaceholder');
+  if (!video || !placeholder) return;
+
+  // If video actually loads, hide placeholder
+  video.addEventListener('loadeddata', () => {
+    placeholder.style.display = 'none';
+    video.setAttribute('data-loaded', '1');
+  });
+
+  // If src is missing or empty, keep placeholder
+  const source = video.querySelector('source');
+  if (!source || !source.src || source.getAttribute('src') === '') {
+    video.style.display = 'none';
+  }
 }
 
 // ===================== SYNBALL PROXIMITY BEAMS =====================
