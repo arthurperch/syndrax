@@ -428,10 +428,104 @@ function initHeroAutoplay() {
 
 // Init after DOM ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => { initHeroAutoplay(); initHeroRail(); });
+  document.addEventListener('DOMContentLoaded', () => { initHeroAutoplay(); initHeroRail(); initMobileScrollFocus(); });
 } else {
   initHeroAutoplay();
   initHeroRail();
+  initMobileScrollFocus();
+}
+
+// ===================== MOBILE SCROLL FOCUS =====================
+function initMobileScrollFocus() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const CARD_SELECTORS = [
+    '.card',
+    '.trust-card',
+    '.mission-card',
+    '.team-card',
+    '.role-card',
+    '.service-card',
+    '.solution-card',
+    '.onboarding-step',
+    '.gw-step',
+    '.gw-install-card',
+  ].join(',');
+
+  function isMobile() {
+    return window.innerWidth <= 768;
+  }
+
+  function tagCards() {
+    document.querySelectorAll(CARD_SELECTORS).forEach(el => {
+      el.classList.add('scroll-focusable');
+    });
+  }
+
+  function updateFocus() {
+    if (!isMobile()) {
+      // On desktop: clear all mobile states
+      document.querySelectorAll('.scroll-focus-active, .scroll-focus-dimmed, .scroll-in-view').forEach(el => {
+        el.classList.remove('scroll-focus-active', 'scroll-focus-dimmed', 'scroll-in-view');
+      });
+      return;
+    }
+
+    const cards = Array.from(document.querySelectorAll('.scroll-focusable'));
+    if (!cards.length) return;
+
+    const vpMid = window.innerHeight / 2;
+    let closestCard = null;
+    let closestDist = Infinity;
+
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+      card.classList.toggle('scroll-in-view', inView);
+
+      if (inView) {
+        const cardMid = rect.top + rect.height / 2;
+        const dist = Math.abs(cardMid - vpMid);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closestCard = card;
+        }
+      }
+    });
+
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+      if (card === closestCard) {
+        card.classList.add('scroll-focus-active');
+        card.classList.remove('scroll-focus-dimmed');
+      } else if (inView) {
+        card.classList.remove('scroll-focus-active');
+        card.classList.add('scroll-focus-dimmed');
+      } else {
+        card.classList.remove('scroll-focus-active', 'scroll-focus-dimmed');
+      }
+    });
+  }
+
+  tagCards();
+
+  let ticking = false;
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        updateFocus();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+
+  // Initial pass
+  updateFocus();
 }
 
 // ===================== HERO ROBOT RAIL =====================

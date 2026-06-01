@@ -4588,3 +4588,39 @@ html.dark .auth-google {
   .auth-title { font-size: 20px; }
 }
 
+/* ===================== MOBILE SCROLL FOCUS ===================== */
+/* On mobile, cards that are in view get an auto-focus glow.
+   JS adds .scroll-focus-active to the element closest to viewport center. */
+@media (max-width: 768px) {
+  .scroll-focusable {
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease, opacity 0.35s ease;
+  }
+
+  /* Cards scrolled into view get a subtle entrance glow */
+  .scroll-focusable.scroll-in-view {
+    opacity: 1;
+  }
+
+  /* The card nearest to viewport center gets the full focus treatment */
+  .scroll-focusable.scroll-focus-active {
+    transform: translateY(-3px) scale(1.012);
+    border-color: rgba(0,207,255,0.35) !important;
+    box-shadow:
+      0 0 0 1px rgba(0,207,255,0.18),
+      0 0 24px rgba(0,207,255,0.18),
+      0 0 48px rgba(255,0,212,0.08),
+      0 8px 24px rgba(0,0,0,0.12) !important;
+    z-index: 2;
+  }
+
+  .scroll-focusable.scroll-focus-active::before {
+    opacity: 1 !important;
+  }
+
+  /* Non-focused cards that are siblings step back slightly */
+  .scroll-focus-dimmed {
+    opacity: 0.82;
+    transform: scale(0.99);
+  }
+}
+
