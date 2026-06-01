@@ -430,7 +430,7 @@ html:not(.dark) .navbar.scrolled {
 
 /* Navbar wordmark image */
 .nav-logo-wordmark {
-  height: 40px;
+  height: 64px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -442,15 +442,15 @@ html.dark .nav-logo-wordmark {
 }
 
 @media (max-width: 1024px) {
-  .nav-logo-wordmark { height: 36px; }
+  .nav-logo-wordmark { height: 56px; }
 }
 
 @media (max-width: 768px) {
-  .nav-logo-wordmark { height: 32px; }
+  .nav-logo-wordmark { height: 48px; }
 }
 
 @media (max-width: 520px) {
-  .nav-logo-wordmark { height: 30px; }
+  .nav-logo-wordmark { height: 42px; }
 }
 
 .nav-links {
@@ -4174,7 +4174,7 @@ html.dark .auth-card {
   margin-bottom: 28px;
 }
 .auth-logo img {
-  height: 36px;
+  height: 56px;
   width: auto;
   filter: none;
   mix-blend-mode: normal;
