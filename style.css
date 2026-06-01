@@ -2161,19 +2161,128 @@ html.dark .hero-rail-bubble {
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 28px;
-  transition: all 0.3s;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   box-shadow: 0 1px 4px rgba(15,23,42,0.04);
+  position: relative;
+}
+
+/* Glow ring pseudo-element — hidden by default */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,207,255,0.18) 0%, rgba(255,0,212,0.10) 60%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .card:hover {
-  border-color: rgba(2,132,199,0.25);
+  border-color: rgba(0,207,255,0.30);
   transform: translateY(-4px);
-  box-shadow: 0 8px 32px rgba(2,132,199,0.1), 0 16px 48px rgba(109,40,217,0.06);
+  box-shadow: 0 0 0 1px rgba(0,207,255,0.12), 0 8px 28px rgba(0,207,255,0.10), 0 20px 48px rgba(255,0,212,0.06);
 }
 
 .card.cyan-hover:hover {
-  border-color: rgba(2,132,199,0.35);
-  box-shadow: 0 8px 32px rgba(2,132,199,0.15);
+  border-color: rgba(0,207,255,0.38);
+  box-shadow: 0 0 0 1px rgba(0,207,255,0.16), 0 8px 32px rgba(0,207,255,0.15);
+}
+
+/* Shared focus-glow for non-.card card-like elements */
+.trust-card,
+.mission-card,
+.team-card,
+.role-card,
+.service-card,
+.solution-card,
+.onboarding-step,
+.hermes-cap,
+.gw-step,
+.gw-install-card,
+.auth-card,
+.contact-form-card,
+.contact-info-card,
+.pricing-card-featured {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  position: relative;
+}
+
+.trust-card::before,
+.mission-card::before,
+.team-card::before,
+.role-card::before,
+.service-card::before,
+.solution-card::before,
+.onboarding-step::before,
+.gw-step::before,
+.gw-install-card::before,
+.auth-card::before,
+.contact-form-card::before,
+.contact-info-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,207,255,0.15) 0%, rgba(255,0,212,0.08) 60%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.trust-card:hover::before,
+.mission-card:hover::before,
+.team-card:hover::before,
+.role-card:hover::before,
+.service-card:hover::before,
+.solution-card:hover::before,
+.onboarding-step:hover::before,
+.gw-step:hover::before,
+.gw-install-card:hover::before,
+.auth-card:hover::before,
+.contact-form-card:hover::before,
+.contact-info-card:hover::before {
+  opacity: 1;
+}
+
+.trust-card > *,
+.mission-card > *,
+.team-card > *,
+.role-card > *,
+.service-card > *,
+.solution-card > *,
+.onboarding-step > *,
+.gw-step > *,
+.gw-install-card > *,
+.auth-card > *,
+.contact-form-card > *,
+.contact-info-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.trust-card:hover,
+.mission-card:hover,
+.team-card:hover,
+.role-card:hover,
+.service-card:hover,
+.solution-card:hover,
+.onboarding-step:hover,
+.gw-step:hover,
+.gw-install-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 1px rgba(0,207,255,0.12), 0 8px 24px rgba(0,207,255,0.09), 0 16px 40px rgba(255,0,212,0.05);
 }
 
 .card-icon {
