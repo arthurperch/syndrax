@@ -3682,14 +3682,19 @@ html.dark .stat-sub { color: rgba(148,163,184,0.7); }
 
 .hermes-pulse {
   position: absolute;
-  inset: -8px;
+  width: 176px;
+  height: 176px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
   border: 1px solid rgba(0,207,255,0.15);
   animation: hermesPulse 2.5s ease-in-out infinite;
 }
 
 .hermes-pulse-2 {
-  inset: -18px;
+  width: 196px;
+  height: 196px;
   animation-delay: 0.8s;
   border-color: rgba(255,0,212,0.1);
 }
