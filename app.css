@@ -582,5 +582,11 @@ html.dark .wiz-logo img { mix-blend-mode: screen; }
 .dash-content::-webkit-scrollbar-thumb, .ws-left::-webkit-scrollbar-thumb { background: linear-gradient(#1e3a4a,#2a2150); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
 .dash-content::-webkit-scrollbar-track { background: transparent; }
 
+/* Node cluster towers (ported mini-PC chassis) */
+.tower { position: relative; cursor: pointer; transition: transform .2s ease, filter .2s ease; filter: drop-shadow(0 16px 24px rgba(0,0,0,.5)); }
+.tower:hover { transform: translateY(-6px); filter: drop-shadow(0 22px 30px rgba(0,0,0,.6)) drop-shadow(0 0 22px rgba(24,228,255,.18)); }
+.cluster-stats { backdrop-filter: blur(8px); }
+@media (max-width: 720px) { .cluster-stats { grid-template-columns: repeat(3, 1fr) !important; } }
+
 /* Headings use the display font tighter */
 .app-h1, .wf-stage-h span, .dash-top h2 { letter-spacing: -0.4px; }

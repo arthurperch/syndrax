@@ -73,6 +73,7 @@ let jobs = loadJobs();
 let automations = loadAutomations();
 let addedDevices = loadDevices(); // devices you add manually (name + IP)
 let nodes = []; // real cluster nodes synced from the extension
+let thisPcIp = ''; // public IP of this PC (from the extension)
 let activeTab = 'home';
 let selectedTarget = null; // target account id for marketplace-aware scripts
 let selectedJobId = null;
@@ -156,6 +157,7 @@ function syncExtensionAccounts() {
       chrome.runtime.sendMessage(extId, { type: 'SYNDRAX_GET_STATE' }, (resp) => {
         if (chrome.runtime.lastError || !resp || !resp.ok) return resolve();
         if (Array.isArray(resp.nodes)) nodes = resp.nodes;
+        if (resp.ip) thisPcIp = resp.ip;
         const synced = (resp.accounts || []).map(a => ({
           id: 'ext-' + (a.id || a.username), marketplace: a.platform || 'ebay',
           label: a.username || a.platform || 'account', deviceId: a.nodeId || 'this-device',
@@ -725,42 +727,130 @@ function renderJobsTab() {
   $('#content').querySelectorAll('[data-job]').forEach(b => b.onclick = () => { selectedJobId = b.dataset.job; activeTab = 'workspace'; renderShell(); });
 }
 
-function nodeCard(n) {
-  const st = n.status === 'online' ? 'on' : n.status === 'standby' ? 'standby' : 'off';
-  const metric = (label, val, suffix = '') => (val == null ? '' : `<div class="nm"><span>${label}</span><b>${val}${suffix}</b></div>`);
-  return `<div class="node-card">
-    <div class="node-top"><span class="dev-dot ${st}"></span><span class="node-name">${esc(n.name)}</span>${n.local ? '<span class="node-tag">this PC</span>' : (n.id ? `<button class="auto-del" data-deldev="${n.id}" style="margin-left:auto" title="Remove">✕</button>` : '')}</div>
-    <div class="node-role">${esc(n.role || 'node')}${n.ip ? ' · ' + esc(n.ip) : ''}</div>
-    <div class="node-metrics">${metric('CPU', n.cpu, '%')}${metric('RAM', n.ram, '%')}${metric('Disk', n.disk, '%')}${metric('Ping', n.ping_ms, 'ms')}${metric('Stock', n.in_stock)}</div>
-    <div class="node-status ${st}">${esc(n.status || 'unknown')}</div>
+// ── Node cluster (ported mini-PC chassis from the extension's NodeClusterView) ──
+const NODE_W = 168;
+const NODE_TINT = {
+  online: { b: '#18E4FF', d: '#00A9FF', disc: '#123A4D', glow: true, text: '#7FE9FF' },
+  offline: { b: '#5A6B7D', d: '#3A4757', disc: '#16202B', glow: false, text: '#8195A8' },
+};
+
+// Parametric chassis SVG (verbatim from the extension kit) — tints per state.
+function nodeShellSVG(uid, b, d, disc, glow) {
+  const g = glow ? `filter="url(#glow-${uid})"` : '';
+  return `<svg viewBox="0 0 220 620" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="outer-${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#26384B"/><stop offset=".22" stop-color="#0A1421"/><stop offset=".68" stop-color="#111F2D"/><stop offset="1" stop-color="#02070D"/></linearGradient>
+    <linearGradient id="rail-${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6D8297"/><stop offset=".08" stop-color="#192A3A"/><stop offset=".55" stop-color="#08111C"/><stop offset=".92" stop-color="#24394B"/><stop offset="1" stop-color="#8799AA"/></linearGradient>
+    <linearGradient id="glass-${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#102131" stop-opacity=".94"/><stop offset=".45" stop-color="#07111C" stop-opacity=".97"/><stop offset="1" stop-color="#02070C"/></linearGradient>
+    <linearGradient id="bevel-${uid}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E8296"/><stop offset=".13" stop-color="#1A2B3B"/><stop offset=".5" stop-color="#0A131E"/><stop offset=".87" stop-color="#1C3040"/><stop offset="1" stop-color="#8092A4"/></linearGradient>
+    <radialGradient id="powerDisc-${uid}" cx="50%" cy="42%" r="64%"><stop offset="0" stop-color="${disc}"/><stop offset=".5" stop-color="#07121D"/><stop offset="1" stop-color="#010409"/></radialGradient>
+    <linearGradient id="bottomGlow-${uid}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${d}" stop-opacity="0"/><stop offset=".25" stop-color="${d}" stop-opacity=".35"/><stop offset=".5" stop-color="${b}" stop-opacity="1"/><stop offset=".75" stop-color="${d}" stop-opacity=".35"/><stop offset="1" stop-color="${d}" stop-opacity="0"/></linearGradient>
+    <filter id="shadow-${uid}" x="-40%" y="-20%" width="180%" height="160%"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#000" flood-opacity=".6"/></filter>
+    <filter id="glow-${uid}" x="-200%" y="-200%" width="400%" height="400%"><feGaussianBlur stdDeviation="5" result="bl"/><feMerge><feMergeNode in="bl"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="softGlow-${uid}" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="10"/></filter>
+    <pattern id="microGrid-${uid}" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M8 0H0V8" fill="none" stroke="#7CCEFF" stroke-opacity=".025" stroke-width=".6"/></pattern>
+  </defs>
+  <g filter="url(#shadow-${uid})">
+    <ellipse cx="110" cy="606" rx="78" ry="16" fill="${b}" opacity="${glow ? '.10' : '.04'}" filter="url(#softGlow-${uid})"/>
+    <path d="M24 0H196L216 20V600L196 620H24L4 600V20Z" fill="url(#outer-${uid})" stroke="#50657A" stroke-width="1.5"/>
+    <path d="M30 8H190L208 26V594L190 612H30L12 594V26Z" fill="#050B13" stroke="#17283A" stroke-width="2"/>
+    <path d="M16 27L28 15H38V605H28L16 593Z" fill="url(#rail-${uid})" stroke="#536A7F" stroke-width="1"/>
+    <path d="M204 27L192 15H182V605H192L204 593Z" fill="url(#rail-${uid})" stroke="#536A7F" stroke-width="1"/>
+    <path d="M40 22H180L188 31V589L180 598H40L32 589V31Z" fill="url(#glass-${uid})" stroke="#22394C" stroke-width="1.5"/>
+    <path d="M40 22H180L188 31V589L180 598H40L32 589V31Z" fill="url(#microGrid-${uid})"/>
+    <circle cx="110" cy="75" r="34" fill="#02060B" stroke="#33495D" stroke-width="2"/>
+    <circle cx="110" cy="75" r="25" fill="url(#powerDisc-${uid})" stroke="${b}" stroke-opacity=".36"/>
+    <circle cx="110" cy="75" r="19" fill="none" stroke="${b}" stroke-width="3" stroke-dasharray="92 28" stroke-linecap="round" transform="rotate(-35 110 75)" ${g}/>
+    <path d="M110 55V76" stroke="${b}" stroke-width="4" stroke-linecap="round" ${g}/>
+    <path d="M39 535H181V585L174 592H46L39 585Z" fill="#030911" stroke="#173044"/>
+    <circle cx="63" cy="566" r="8" fill="#07131F" stroke="#315069"/>
+    <rect x="101" y="558" width="18" height="15" rx="2" fill="#07131F" stroke="#315069"/>
+    <circle cx="157" cy="562" r="2" fill="#6F8DA4"/><circle cx="157" cy="569" r="2" fill="#6F8DA4"/><circle cx="157" cy="576" r="2" fill="#6F8DA4"/>
+    <rect x="55" y="604" width="110" height="4" rx="2" fill="url(#bottomGlow-${uid})" ${g}/>
+    <path d="M70 607H150" stroke="${b}" stroke-width="2" opacity="${glow ? '.8' : '.3'}" ${g}/>
+  </g></svg>`;
+}
+
+function nodeTower(n) {
+  const on = (n.status === 'online');
+  const t = on ? NODE_TINT.online : NODE_TINT.offline;
+  const uid = String(n.name || 'n').replace(/[^a-z0-9]/gi, '');
+  const loadPct = on ? Math.max(0, Math.min(100, n.cpu != null ? n.cpu : (n.local ? Math.min(100, jobs.filter(j => j.status === 'running' || j.status === 'accepted').length * 22) : (n.tasks || 0) * 22))) : 0;
+  const lit = Math.round(loadPct / 100 * 14);
+  const bars = Array.from({ length: 14 }, (_, i) => `<span style="flex:1;border-radius:1px;height:${i < lit ? (60 + i / 14 * 40) : 60}%;background:${i < lit ? t.b : 'rgba(120,160,190,.12)'};box-shadow:${i < lit && t.glow ? '0 0 6px -1px ' + t.b : 'none'}"></span>`).join('');
+  const statusLabel = on ? (n.local ? 'MAIN · ONLINE' : 'ONLINE') : 'OFFLINE';
+  const h = Math.round(NODE_W * 620 / 220);
+  return `<div class="tower" data-tower="${esc(n.id || n.name)}" style="width:${NODE_W}px;height:${h}px">
+    <div style="position:absolute;inset:0">${nodeShellSVG(uid, t.b, t.d, t.disc, t.glow)}</div>
+    <div style="position:absolute;inset:0;font-family:ui-monospace,monospace">
+      ${n.id ? `<button class="auto-del" data-deldev="${n.id}" style="position:absolute;top:6%;right:10%;z-index:3" title="Remove">✕</button>` : ''}
+      <div style="position:absolute;left:50%;transform:translateX(-50%);top:18.3%;font-size:9px;font-weight:800;letter-spacing:.18em;color:${t.text}">${statusLabel}</div>
+      <div style="position:absolute;left:50%;transform:translateX(-50%);top:22.5%;white-space:nowrap;font-size:14px;font-weight:800;letter-spacing:.06em;color:#e2e8f0">${esc(String(n.name).toUpperCase())}</div>
+      <div style="position:absolute;left:50%;transform:translateX(-50%);top:28.5%;font-size:8.5px;letter-spacing:.15em;color:${on ? t.text : '#6b7c8f'}">⬡ ${esc((n.role || 'NODE').toUpperCase())}</div>
+      <div style="position:absolute;left:18%;right:18%;top:45%;display:flex;justify-content:space-between;font-size:8px;text-transform:uppercase;letter-spacing:.05em;color:#64748b"><span>Task load</span><span style="color:${t.text}">${Math.round(loadPct)}%</span></div>
+      <div style="position:absolute;left:18%;right:18%;top:48.5%;height:11px;display:flex;align-items:flex-end;gap:2px">${bars}</div>
+      <div style="position:absolute;left:50%;transform:translateX(-50%);top:79%;font-size:9.5px;color:#94a3b8">${esc(n.ip || (n.local ? (thisPcIp || 'detecting…') : '—'))}</div>
+      <div style="position:absolute;left:50%;transform:translateX(-50%);top:82.6%;font-size:9.5px;color:#64748b">${on ? ((n.in_stock != null ? n.in_stock + ' in stock' : (n.tasks || 0) + ' jobs')) : '—'}</div>
+    </div>
   </div>`;
 }
 
 function renderDevices() {
   const showFleet = can('multiDevice');
   const limit = PLAN_LIMITS[plan]?.maxDevices;
-  const thisPc = { name: 'This PC', role: 'Main workstation', status: ext.installed ? 'online' : 'offline', local: true };
-  const all = [thisPc, ...nodes, ...addedDevices];
-  const count = all.length;
-  $('#topSub').textContent = `· ${count} device${count === 1 ? '' : 's'}${isUnlimited(limit) ? '' : ' / ' + limit}`;
+  const thisPc = { name: 'root-main', role: 'Main PC', status: ext.installed ? 'online' : 'offline', local: true, ip: thisPcIp };
+  const all = [thisPc, ...nodes.map(n => ({ ...n, status: n.status === 'online' ? 'online' : (n.status || 'offline') })), ...addedDevices.map(d => ({ ...d, status: d.status === 'online' ? 'online' : 'offline' }))];
+  const onlineCount = all.filter(n => n.status === 'online').length;
+  const health = Math.round(onlineCount / all.length * 100);
+  $('#topSub').textContent = `· ${all.length} node${all.length === 1 ? '' : 's'}${isUnlimited(limit) ? '' : ' / ' + limit}`;
+
+  const firstTime = !ext.installed && nodes.length === 0 && addedDevices.length === 0;
 
   $('#content').innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap">
-      <p style="color:#94a3b8;font-size:13px;margin:0">Each device runs on its own IP so accounts stay isolated. ${isUnlimited(limit) ? 'Unlimited devices on Enterprise.' : `Up to <b style="color:#cbd5e1">${limit}</b> on ${PLAN_LABEL[plan]}.`}</p>
-      ${showFleet ? `<button class="app-btn sm" id="addDev">${icon('plus')} Add device</button>` : `<button class="app-btn sm" data-up="growth">Upgrade to add devices</button>`}
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;flex-wrap:wrap">
+      <div><h2 style="font:800 17px var(--nav-font);letter-spacing:.16em;color:#e9f6ff;margin:0">NODE CLUSTER <span style="color:#18E4FF">// SYNDRAX</span></h2>
+      <p style="font-size:11px;color:#64748b;margin:2px 0 0">Your fleet, your control — every node on its own IP.</p></div>
+      <div style="display:flex;gap:8px">
+        ${!ext.installed ? `<button class="app-btn sm" id="useThisPc">Use this PC</button>` : ''}
+        ${showFleet ? `<button class="app-btn sm ghost" id="addDev">${icon('plus')} Add node</button>` : `<button class="app-btn sm" data-up="growth">Upgrade to add nodes</button>`}
+      </div>
     </div>
-    <div class="node-grid">${all.map(nodeCard).join('')}</div>
-    ${showFleet
-      ? `<div class="wf-note" style="margin-top:16px">Power on/off, Wake-on-LAN and live screen control run in the Syndrax extension (it talks to each node's agent). <span class="link" data-openext="1">Open cluster control →</span></div>`
-      : `<div class="wf-note" style="margin-top:16px">Business runs on this one device — safest (one account, one IP). <b>Growth</b> = 3 devices, <b>Enterprise</b> = unlimited fleet + screen control. <span class="link" data-up="growth">Upgrade →</span></div>`}`;
+
+    ${firstTime ? `<div class="wf-note" style="margin-bottom:16px;color:#7FE9FF;border-color:rgba(24,228,255,.3);background:rgba(24,228,255,.06)">First-time setup: connect <b>this PC</b> as your main node. Install the Syndrax extension and click <b>Use this PC</b> — it auto-detects your IP and becomes <b>root-main</b>.</div>` : ''}
+
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;overflow:hidden;margin-bottom:22px" class="cluster-stats">
+      ${clusterStat('Total nodes', all.length)}
+      ${clusterStat('Online', onlineCount, '#7FE9FF')}
+      ${clusterStat('Offline', all.length - onlineCount, all.length - onlineCount ? '#FF8090' : '')}
+      ${clusterStat('Accounts', accounts.length)}
+      ${clusterStat('Active jobs', jobs.filter(j => j.status === 'running' || j.status === 'accepted').length)}
+      ${clusterStat('Health', health + '%', '#7FE9FF')}
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,${NODE_W}px);gap:34px 26px;justify-content:center;padding:6px 0 10px">
+      ${all.map(nodeTower).join('')}
+      ${showFleet ? `<button id="recruit" style="width:${NODE_W}px;height:${Math.round(NODE_W * 620 / 220)}px;border:2px dashed rgba(255,255,255,.15);border-radius:18px;background:none;color:#475569;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font:800 11px var(--nav-font);text-transform:uppercase;letter-spacing:.08em">${icon('plus')}<span>Recruit<br><span style="font-weight:400;font-size:9px">add node</span></span></button>` : ''}
+    </div>
+
+    <div class="wf-note" style="margin-top:10px">Power on/off, Wake-on-LAN and live screen control run in the Syndrax extension (it speaks to each node's agent over the LAN). <span class="link" data-openext="1">Open cluster control →</span></div>`;
 
   $('#content').querySelectorAll('[data-up]').forEach(b => b.onclick = () => startCheckout(b.dataset.up).catch(e => showAlert(e.message)));
-  $('#content').querySelectorAll('[data-deldev]').forEach(b => b.onclick = () => { addedDevices = addedDevices.filter(d => d.id !== b.dataset.deldev); saveDevices(); renderDevices(); });
+  $('#content').querySelectorAll('[data-deldev]').forEach(b => b.onclick = (e) => { e.stopPropagation(); addedDevices = addedDevices.filter(d => d.id !== b.dataset.deldev); saveDevices(); renderDevices(); });
+  $('#content').querySelectorAll('[data-tower]').forEach(b => b.onclick = () => showAlert('Power & live screen for this node open in the Syndrax extension (cluster control).', 'success'));
+  const rec = $('#recruit'); if (rec) rec.onclick = openAddDevice;
+  const add = $('#addDev'); if (add) add.onclick = openAddDevice;
+  const usel = $('#useThisPc'); if (usel) usel.onclick = () => {
+    if (ext.installed) { syncExtensionAccounts().then(renderDevices); }
+    else { showAlert('Install the Syndrax extension on this PC, then click Use this PC — it auto-detects your IP.', 'error'); window.open('https://chromewebstore.google.com/detail/mgapfpdkkihbeehfkgoajhealmgpnglo', '_blank'); }
+  };
   const openExt = $('#content [data-openext]'); if (openExt) openExt.onclick = () => {
     if (ext.installed && ext.id) window.open(`chrome-extension://${ext.id}/dashboard.html`, '_blank');
     else showAlert('Install the Syndrax extension to control the cluster.', 'error');
   };
-  const add = $('#addDev'); if (add) add.onclick = openAddDevice;
+}
+
+function clusterStat(label, value, color) {
+  return `<div style="background:rgba(3,9,20,.5);padding:10px 12px"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#64748b;font-family:ui-monospace,monospace">${label}</div><div style="font:800 19px ui-monospace,monospace;color:${color || '#cbd5e1'};margin-top:3px">${value}</div></div>`;
 }
 
 function openAddDevice() {
