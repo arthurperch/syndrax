@@ -195,7 +195,39 @@ export async function removeAddon(id) {
   }
 }
 
+// ── Sales (real P&L; server is authoritative, never fabricated) ───────────────
+// Shape: { series: { labels, gross, net, grossTotal, netTotal, orders }, empty }
+export async function getSales(weeks = 8) {
+  try {
+    return await api('/api/sales?weeks=' + encodeURIComponent(weeks));
+  } catch (e) {
+    if (isOffline(e)) return null; // caller shows the honest empty state
+    throw e;
+  }
+}
+export async function postSales(payload) {
+  try { return await api('/api/sales', { method: 'POST', body: JSON.stringify(payload) }); }
+  catch (e) { if (isOffline(e)) return { upserted: 0 }; throw e; }
+}
+
+// ── Inventory ─────────────────────────────────────────────────────────────────
+const LS_INVENTORY = 'syndrax_inventory_v1';
+export async function getInventory(params = {}) {
+  const q = new URLSearchParams(params).toString();
+  try { return await api('/api/inventory' + (q ? '?' + q : '')); }
+  catch (e) { if (isOffline(e)) return { items: lsGet(LS_INVENTORY, []) }; throw e; }
+}
+export async function getInventorySummary() {
+  try { return await api('/api/inventory/summary'); }
+  catch (e) { if (isOffline(e)) return { total: 0, inStock: 0, outOfStock: 0, lowStock: 0, byMarketplace: {}, crossSite: [] }; throw e; }
+}
+export async function syncInventory(payload) {
+  try { return await api('/api/inventory/sync', { method: 'POST', body: JSON.stringify(payload) }); }
+  catch (e) { if (isOffline(e)) return { upserted: 0 }; throw e; }
+}
+
 window.SyndraxApp = {
   getProfile, saveProfile, getMarketplaces, addMarketplaceAccount, removeMarketplaceAccount,
   getAudit, startTrial, getNodes, saveNode, updateNode, getAddons, addAddon, removeAddon,
+  getSales, postSales, getInventory, getInventorySummary, syncInventory,
 };

@@ -9,6 +9,7 @@ import {
   getProfile, saveProfile, getMarketplaces, addMarketplaceAccount,
   removeMarketplaceAccount, getAudit, startTrial,
   getNodes, saveNode, updateNode, getAddons, addAddon, removeAddon,
+  getSales, postSales, getInventory, getInventorySummary, syncInventory,
 } from '/app-api.js';
 import {
   PLAN_LABEL, PLAN_PRICE, PLAN_TAGLINE, PLAN_LIMITS,
@@ -79,6 +80,8 @@ let addedDevices = loadDevices(); // devices you add manually (name + IP)
 let nodes = []; // real cluster nodes synced from the extension
 let cloudNodes = []; // workspace nodes persisted server-side (have integer .id for node_id)
 let addons = []; // marketing addons (node- or account-level), server-side
+let salesData = null; // real P&L series from /api/sales (null until loaded)
+let inventorySummary = null; // inventory counts + cross-site ASIN reference
 let thisPcIp = ''; // public IP of this PC (from the extension)
 let currentDeviceId = 'this-device'; // the device this browser's extension runs on
 let lastConnectNode = localStorage.getItem('syndrax_last_node') || ''; // remembered node pick
@@ -103,6 +106,7 @@ const TABS = [
   { id: 'home', label: 'Home', icon: 'home', sec: 'Mission Control' },
   { id: 'workspace', label: 'Workspace', icon: 'rocket', sec: 'Mission Control' },
   { id: 'accounts', label: 'Accounts', icon: 'tag', sec: 'Mission Control' },
+  { id: 'inventory', label: 'Inventory', icon: 'package', sec: 'Mission Control' },
   { id: 'jobs', label: 'Jobs', icon: 'briefcase', sec: 'Operations' },
   { id: 'devices', label: 'Devices', icon: 'monitor', sec: 'Operations', feature: 'multiDevice' },
   { id: 'team', label: 'Team', icon: 'users', sec: 'Operations', feature: 'team' },
@@ -192,6 +196,8 @@ function syncExtensionAccounts() {
         if (resp.deviceId) currentDeviceId = resp.deviceId;
         // Persist the live node list to the cloud (durable, team-shared). Best-effort.
         persistNodes(resp);
+        // Forward any inventory/sales the extension scanners captured → cloud.
+        forwardExtSyncData(resp);
         const synced = (resp.accounts || []).map(a => ({
           id: 'ext-' + (a.id || a.username), marketplace: a.platform || 'ebay',
           label: a.username || a.platform || 'account', deviceId: a.nodeId || 'this-device',
@@ -228,6 +234,27 @@ function persistNodes(resp) {
   });
 }
 
+// The extension scanners run in the background and report captured inventory/sales
+// in their state payload. The website (which holds the Cognito token) forwards them
+// to the cloud — keeping auth on the site, scanners untouched. Best-effort; refreshes
+// the local copies so the Home chart + Inventory tab reflect the latest sync.
+function forwardExtSyncData(resp) {
+  const inv = Array.isArray(resp.inventory) ? resp.inventory : null;
+  const sales = Array.isArray(resp.sales) ? resp.sales : null;
+  const mk = resp.syncMarketplace || 'ebay';
+  const cn = resolveConnectNode();
+  const jobs2 = [];
+  if (inv && inv.length) jobs2.push(syncInventory({ marketplace: mk, nodeId: cn.nodeId, items: inv }).catch(() => null));
+  if (sales && sales.length) jobs2.push(postSales({ marketplace: mk, sales }).catch(() => null));
+  if (!jobs2.length) return;
+  Promise.all(jobs2).then(async () => {
+    try { salesData = await getSales(8); } catch {}
+    try { inventorySummary = await getInventorySummary(); } catch {}
+    if (activeTab === 'home') renderHome();
+    else if (activeTab === 'inventory') renderInventory();
+  });
+}
+
 // Resolve the node a new account should attach to. Returns { nodeId, deviceId }.
 // Defaults to the remembered pick, else the current PC, else the first node.
 function resolveConnectNode() {
@@ -248,6 +275,8 @@ async function boot() {
   try { const mk = await getMarketplaces(); accounts = mk.accounts || []; } catch { accounts = []; }
   try { const nd = await getNodes(); cloudNodes = nd.nodes || []; } catch { cloudNodes = []; }
   try { const ad = await getAddons(); addons = ad.addons || []; } catch { addons = []; }
+  try { salesData = await getSales(8); } catch { salesData = null; }
+  try { inventorySummary = await getInventorySummary(); } catch { inventorySummary = null; }
   await syncExtensionAccounts();
   document.addEventListener('syndrax-ext', () => { ext = window.SyndraxExt || ext; syncExtensionAccounts().then(renderShell); });
   renderShell();
@@ -347,8 +376,8 @@ function renderTab() {
   const t = TABS.find(x => x.id === activeTab);
   if (t?.feature && !can(t.feature)) return renderUpgradeLock(t.feature);
   ({
-    home: renderHome, workspace: renderWorkspace, accounts: renderAccounts, jobs: renderJobsTab,
-    devices: renderDevices, team: renderTeam, audit: renderAudit, plan: renderPlanTab,
+    home: renderHome, workspace: renderWorkspace, accounts: renderAccounts, inventory: renderInventory,
+    jobs: renderJobsTab, devices: renderDevices, team: renderTeam, audit: renderAudit, plan: renderPlanTab,
   }[activeTab] || renderHome)();
 }
 
@@ -379,10 +408,15 @@ function salesSeries() {
     const scale = { trial: 0.6, business: 1, growth: 2.6, enterprise: 6, none: 0.4 }[plan] || 1;
     const gross = [340, 420, 390, 520, 610, 560, 720, 880].map(v => Math.round(v * scale));
     const net = gross.map(v => Math.round(v * 0.42));
-    return { labels, gross, net, grossTotal: gross.reduce((a, b) => a + b, 0), netTotal: net.reduce((a, b) => a + b, 0), sample: true };
+    return { labels, gross, net, grossTotal: gross.reduce((a, b) => a + b, 0), netTotal: net.reduce((a, b) => a + b, 0), orders: Math.round(gross.reduce((a, b) => a + b, 0) / 42), sample: true };
   }
-  // Real view: no live sales pipeline yet → empty. NEVER fabricate numbers here.
-  return { labels, gross: [], net: [], grossTotal: 0, netTotal: 0, empty: true };
+  // Real view: read the live P&L from /api/sales. If there's no data yet, show the
+  // honest empty state. NEVER fabricate numbers here.
+  const s = salesData && salesData.series;
+  if (s && !salesData.empty) {
+    return { labels: s.labels || labels, gross: s.gross || [], net: s.net || [], grossTotal: s.grossTotal || 0, netTotal: s.netTotal || 0, orders: s.orders || 0 };
+  }
+  return { labels, gross: [], net: [], grossTotal: 0, netTotal: 0, orders: 0, empty: true };
 }
 
 function areaChart(labels, sets) {
@@ -427,7 +461,7 @@ function renderHome() {
   const incomplete = accounts.length === 0;
   const s = salesSeries();
   const activeAccts = previewMode() ? ({ trial: 1, business: 1, growth: 3, enterprise: 8 }[plan] || 1) : accounts.length;
-  const orders = s.empty ? 0 : Math.round(s.grossTotal / 42);
+  const orders = s.empty ? 0 : (s.orders || Math.round(s.grossTotal / 42));
   const margin = s.grossTotal ? Math.round(s.netTotal / s.grossTotal * 100) : 0;
   const flat = [0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -1082,6 +1116,76 @@ function trustCard(a) {
     </div>
     ${addonChips}
   </div>`;
+}
+
+// ── INVENTORY ─────────────────────────────────────────────────────────────────
+// Real listed-item tracking fed by the extension scanners (eBay inventory +
+// Amazon ASIN purchase track). Shows stock health, where each item is sourced,
+// and a cross-site reference (same ASIN listed on multiple marketplaces).
+async function renderInventory() {
+  $('#topSub').textContent = '';
+  const content = $('#content');
+  content.innerHTML = `<div class="ws-empty" style="margin-top:40px">${icon('package')}<p>Loading inventory…</p></div>`;
+
+  let items = [], sum = inventorySummary;
+  try { const r = await getInventory(); items = r.items || []; } catch { items = []; }
+  try { sum = await getInventorySummary(); inventorySummary = sum; } catch {}
+  sum = sum || { total: 0, inStock: 0, outOfStock: 0, lowStock: 0, byMarketplace: {}, crossSite: [] };
+
+  if (!items.length && !sum.total) {
+    content.innerHTML = `
+      <div class="setup-strip" style="margin-bottom:18px">
+        <div class="ss-ico">${icon('package')}</div>
+        <div style="flex:1"><div class="ss-title">No inventory synced yet</div><div class="ss-sub">Run a Quick Sync or Full Sync on a connected account — your live listings, stock levels and source ASINs land here automatically.</div></div>
+        <button class="app-btn sm" data-go="workspace">Open Workspace</button>
+      </div>
+      <div class="ws-empty" style="margin-top:10px">${icon('package')}<p>Inventory tracks stock, out-of-stock items, source cost and cross-site listings — updated on each background sync.</p></div>`;
+    content.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { activeTab = b.dataset.go; renderShell(); });
+    return;
+  }
+
+  $('#topSub').textContent = `· ${sum.total} item${sum.total === 1 ? '' : 's'}`;
+  const rows = items.map(it => {
+    const m = marketplace(it.marketplace);
+    const stock = it.inStock
+      ? (it.qty > 0 && it.qty <= 3 ? `<span style="color:#fcd34d">low · ${it.qty}</span>` : `<span style="color:#6ee7b7">in stock${it.qty ? ' · ' + it.qty : ''}</span>`)
+      : `<span style="color:#fca5a5">out of stock</span>`;
+    const margin = (it.price != null && it.cost != null) ? fmt$(it.price - it.cost) : '—';
+    return `<tr>
+      <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.title || it.sku || it.extId)}</td>
+      <td>${esc(m?.name || it.marketplace)}</td>
+      <td>${stock}</td>
+      <td>${it.price != null ? fmt$(it.price) : '—'}</td>
+      <td>${it.cost != null ? fmt$(it.cost) : '—'}</td>
+      <td>${margin}</td>
+      <td>${it.asin ? `<span style="color:#94a3b8">${esc(it.asin)}</span>${it.sourceUrl ? ` <a href="${esc(it.sourceUrl)}" target="_blank" rel="noopener" style="color:#67e8f9">↗</a>` : ''}` : '—'}</td>
+    </tr>`;
+  }).join('');
+
+  const crossRows = (sum.crossSite || []).map(c => `
+    <div class="audit-finding">
+      <div class="f-title">${esc(c.title || c.asin)} <span style="color:#64748b;font-weight:500">· ${esc(c.asin)}</span></div>
+      <div class="f-detail">Listed on <b style="color:#cbd5e1">${(c.marketplaces || []).join(', ')}</b>${c.sourceSite ? ` · sourced from ${esc(c.sourceSite)}` : ''}. Cross-listed items share demand — keep stock in sync to avoid overselling.</div>
+    </div>`).join('');
+
+  content.innerHTML = `
+    <div class="home-grid" style="margin-bottom:16px">
+      ${stat('Total items', String(sum.total), 'package', '', 'tracked')}
+      ${stat('In stock', String(sum.inStock), 'package', sum.inStock ? 'up' : '', 'available')}
+      ${stat('Out of stock', String(sum.outOfStock), 'package', sum.outOfStock ? 'down' : '', sum.outOfStock ? 'needs attention' : 'all good')}
+      ${stat('Low stock', String(sum.lowStock), 'package', sum.lowStock ? 'down' : '', '≤ 3 left')}
+    </div>
+    ${crossRows ? `<div class="audit warn" style="margin-bottom:16px"><div class="audit-head">🔗 ${sum.crossSite.length} cross-listed product${sum.crossSite.length === 1 ? '' : 's'}</div>${crossRows}</div>` : ''}
+    <div class="panel">
+      <div class="panel-h">Items <span style="color:#64748b;font-weight:500;text-transform:none;letter-spacing:0">${items.length} shown · synced from your connected accounts</span></div>
+      <div style="overflow-x:auto">
+        <table class="inv-table">
+          <thead><tr><th>Item</th><th>Marketplace</th><th>Stock</th><th>Price</th><th>Cost</th><th>Margin</th><th>Source ASIN</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  content.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { activeTab = b.dataset.go; renderShell(); });
 }
 
 // ── JOBS / DEVICES / TEAM / AUDIT / PLAN ──────────────────────────────────────

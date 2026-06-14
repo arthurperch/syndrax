@@ -714,6 +714,13 @@ html.dark .wiz-logo img { mix-blend-mode: screen; }
   box-shadow: 0 8px 28px rgba(0,207,255,.18), 0 0 0 1px rgba(34,211,238,.5) inset;
 }
 
+/* Inventory table */
+.inv-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.inv-table th { text-align: left; font-size: 9.5px; text-transform: uppercase; letter-spacing: .05em; color: #64748b; font-weight: 800; padding: 6px 10px; border-bottom: 1px solid rgba(255,255,255,.1); white-space: nowrap; }
+.inv-table td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,.05); color: #cbd5e1; }
+.inv-table tbody tr:hover { background: rgba(255,255,255,.025); }
+.inv-table tbody tr:last-child td { border-bottom: none; }
+
 /* Accounts → sync row heading */
 .acct-sync-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin: 26px 0 4px; }
 .acct-sync-row h3 { margin: 0; font: 700 14px var(--nav-font); color: #f1f5f9; }
