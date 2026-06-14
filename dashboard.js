@@ -71,6 +71,7 @@ let profile = {};
 let accounts = [];
 let jobs = loadJobs();
 let automations = loadAutomations();
+let addedDevices = loadDevices(); // devices you add manually (name + IP)
 let nodes = []; // real cluster nodes synced from the extension
 let activeTab = 'home';
 let selectedTarget = null; // target account id for marketplace-aware scripts
@@ -83,8 +84,9 @@ let connecting = null;  // marketplace id for connect modal
 // ── plan gating ───────────────────────────────────────────────────────────────
 function can(feature) {
   const l = PLAN_LIMITS[plan] || PLAN_LIMITS.none;
-  if (feature === 'multiDevice') return l.maxDevices > 1;
-  if (feature === 'team') return l.teamSeats > 1;
+  // null/Infinity = unlimited → always allowed (this was the Enterprise lockout bug).
+  if (feature === 'multiDevice') return isUnlimited(l.maxDevices) || l.maxDevices > 1;
+  if (feature === 'team') return isUnlimited(l.teamSeats) || l.teamSeats > 1;
   return true;
 }
 
@@ -137,6 +139,8 @@ const RUNNABLE = { lister: 'bulklister', research: 'research' }; // live web→e
 
 function loadAutomations() { try { return JSON.parse(localStorage.getItem('syndrax_automations_v1')) || []; } catch { return []; } }
 function saveAutomations() { try { localStorage.setItem('syndrax_automations_v1', JSON.stringify(automations)); } catch {} }
+function loadDevices() { try { return JSON.parse(localStorage.getItem('syndrax_devices_v1')) || []; } catch { return []; } }
+function saveDevices() { try { localStorage.setItem('syndrax_devices_v1', JSON.stringify(addedDevices)); } catch {} }
 
 // ── boot ────────────────────────────────────────────────────────────────────
 function applyPlan() { plan = (isAdmin && previewPlan) ? previewPlan : realPlan; }
@@ -725,7 +729,7 @@ function nodeCard(n) {
   const st = n.status === 'online' ? 'on' : n.status === 'standby' ? 'standby' : 'off';
   const metric = (label, val, suffix = '') => (val == null ? '' : `<div class="nm"><span>${label}</span><b>${val}${suffix}</b></div>`);
   return `<div class="node-card">
-    <div class="node-top"><span class="dev-dot ${st}"></span><span class="node-name">${esc(n.name)}</span>${n.local ? '<span class="node-tag">this PC</span>' : ''}</div>
+    <div class="node-top"><span class="dev-dot ${st}"></span><span class="node-name">${esc(n.name)}</span>${n.local ? '<span class="node-tag">this PC</span>' : (n.id ? `<button class="auto-del" data-deldev="${n.id}" style="margin-left:auto" title="Remove">✕</button>` : '')}</div>
     <div class="node-role">${esc(n.role || 'node')}${n.ip ? ' · ' + esc(n.ip) : ''}</div>
     <div class="node-metrics">${metric('CPU', n.cpu, '%')}${metric('RAM', n.ram, '%')}${metric('Disk', n.disk, '%')}${metric('Ping', n.ping_ms, 'ms')}${metric('Stock', n.in_stock)}</div>
     <div class="node-status ${st}">${esc(n.status || 'unknown')}</div>
@@ -733,18 +737,60 @@ function nodeCard(n) {
 }
 
 function renderDevices() {
-  $('#topSub').textContent = nodes.length ? `· ${nodes.length} node${nodes.length === 1 ? '' : 's'} + this PC` : '';
-  const thisPc = { name: 'This PC', role: 'Main workstation', status: ext.installed ? 'online' : 'offline', local: true };
-  const all = [thisPc, ...nodes];
   const showFleet = can('multiDevice');
+  const limit = PLAN_LIMITS[plan]?.maxDevices;
+  const thisPc = { name: 'This PC', role: 'Main workstation', status: ext.installed ? 'online' : 'offline', local: true };
+  const all = [thisPc, ...nodes, ...addedDevices];
+  const count = all.length;
+  $('#topSub').textContent = `· ${count} device${count === 1 ? '' : 's'}${isUnlimited(limit) ? '' : ' / ' + limit}`;
+
   $('#content').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+      <p style="color:#94a3b8;font-size:13px;margin:0">Each device runs on its own IP so accounts stay isolated. ${isUnlimited(limit) ? 'Unlimited devices on Enterprise.' : `Up to <b style="color:#cbd5e1">${limit}</b> on ${PLAN_LABEL[plan]}.`}</p>
+      ${showFleet ? `<button class="app-btn sm" id="addDev">${icon('plus')} Add device</button>` : `<button class="app-btn sm" data-up="growth">Upgrade to add devices</button>`}
+    </div>
     <div class="node-grid">${all.map(nodeCard).join('')}</div>
-    ${!showFleet
-      ? `<div class="wf-note" style="margin-top:16px">Business runs on this one device — safest (one account, one IP). <b>Growth</b> adds up to 3 devices; <b>Enterprise</b> the full remote fleet with screen control. <span class="link" data-up="growth">Upgrade →</span></div>`
-      : (nodes.length === 0
-        ? `<div class="wf-note" style="margin-top:16px">No remote nodes synced yet. Install the Syndrax extension on another PC and sign in — it appears here automatically. Nodes from a device running the fleet config sync their cluster here.</div>`
-        : '')}`;
+    ${showFleet
+      ? `<div class="wf-note" style="margin-top:16px">Power on/off, Wake-on-LAN and live screen control run in the Syndrax extension (it talks to each node's agent). <span class="link" data-openext="1">Open cluster control →</span></div>`
+      : `<div class="wf-note" style="margin-top:16px">Business runs on this one device — safest (one account, one IP). <b>Growth</b> = 3 devices, <b>Enterprise</b> = unlimited fleet + screen control. <span class="link" data-up="growth">Upgrade →</span></div>`}`;
+
   $('#content').querySelectorAll('[data-up]').forEach(b => b.onclick = () => startCheckout(b.dataset.up).catch(e => showAlert(e.message)));
+  $('#content').querySelectorAll('[data-deldev]').forEach(b => b.onclick = () => { addedDevices = addedDevices.filter(d => d.id !== b.dataset.deldev); saveDevices(); renderDevices(); });
+  const openExt = $('#content [data-openext]'); if (openExt) openExt.onclick = () => {
+    if (ext.installed && ext.id) window.open(`chrome-extension://${ext.id}/dashboard.html`, '_blank');
+    else showAlert('Install the Syndrax extension to control the cluster.', 'error');
+  };
+  const add = $('#addDev'); if (add) add.onclick = openAddDevice;
+}
+
+function openAddDevice() {
+  const host = document.createElement('div');
+  host.className = 'modal-bg';
+  host.innerHTML = `
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3>${icon('monitor')} Add a device</h3>
+      <p class="modal-sub">Install the Syndrax extension on the other PC and sign in with this account — it auto-joins your fleet. Or register a node here by name/IP so it shows in your cluster.</p>
+      <label>Device name</label>
+      <input id="dName" placeholder="e.g. root168 or Warehouse-PC">
+      <label>IP address (optional)</label>
+      <input id="dIp" placeholder="e.g. 50.190.39.168">
+      <label>Role (optional)</label>
+      <input id="dRole" placeholder="e.g. Lister node">
+      <div class="app-btn-row" style="margin-top:16px">
+        <button class="app-btn" id="dAdd">Add to cluster</button>
+        <button class="app-btn ghost" id="dCancel">Cancel</button>
+      </div>
+    </div>`;
+  host.onclick = () => host.remove();
+  document.body.appendChild(host);
+  $('#dCancel', host).onclick = () => host.remove();
+  $('#dAdd', host).onclick = () => {
+    const name = $('#dName', host).value.trim();
+    if (!name) { $('#dName', host).style.borderColor = '#f87171'; return; }
+    addedDevices.push({ id: 'dev-' + Date.now().toString(36), name, ip: $('#dIp', host).value.trim(), role: $('#dRole', host).value.trim() || 'Added node', status: 'standby' });
+    saveDevices(); host.remove(); renderDevices();
+    showAlert(`${name} added to your cluster.`, 'success');
+  };
 }
 
 function renderTeam() {
