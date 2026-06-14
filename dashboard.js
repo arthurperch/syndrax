@@ -853,34 +853,105 @@ function clusterStat(label, value, color) {
   return `<div style="background:rgba(3,9,20,.5);padding:10px 12px"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#64748b;font-family:ui-monospace,monospace">${label}</div><div style="font:800 19px ui-monospace,monospace;color:${color || '#cbd5e1'};margin-top:3px">${value}</div></div>`;
 }
 
+function existingIps() {
+  const ips = [];
+  if (thisPcIp) ips.push(thisPcIp);
+  nodes.forEach(n => n.ip && ips.push(n.ip));
+  addedDevices.forEach(d => d.ip && ips.push(d.ip));
+  return ips;
+}
+
 function openAddDevice() {
+  // A remote node is meant to live on an OUTSIDE PC, on its OWN IP. Primary path
+  // is a one-line PowerShell that force-installs the Web Store extension as a
+  // locked endpoint (no reverse-connect to other nodes). Manual register is the
+  // fallback. IP is required (audit needs it) and checked for cross-IP overlap.
+  const token = 'sx_' + Math.random().toString(36).slice(2, 10);
+  const ps1 = `powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://www.syndrax.io/connect.ps1 | iex" # token ${token}`;
+  let method = 'remote';
   const host = document.createElement('div');
   host.className = 'modal-bg';
-  host.innerHTML = `
-    <div class="modal" onclick="event.stopPropagation()">
-      <h3>${icon('monitor')} Add a device</h3>
-      <p class="modal-sub">Install the Syndrax extension on the other PC and sign in with this account — it auto-joins your fleet. Or register a node here by name/IP so it shows in your cluster.</p>
-      <label>Device name</label>
-      <input id="dName" placeholder="e.g. root168 or Warehouse-PC">
-      <label>IP address (optional)</label>
-      <input id="dIp" placeholder="e.g. 50.190.39.168">
-      <label>Role (optional)</label>
-      <input id="dRole" placeholder="e.g. Lister node">
-      <div class="app-btn-row" style="margin-top:16px">
-        <button class="app-btn" id="dAdd">Add to cluster</button>
-        <button class="app-btn ghost" id="dCancel">Cancel</button>
+
+  function body() {
+    return `<div class="modal wide" onclick="event.stopPropagation()">
+      <h3>${icon('monitor')} Add a remote node</h3>
+      <p class="modal-sub">Spin up a node on an outside PC — its own machine, its own IP. Run the secure connector on that PC, or register it by name + IP.</p>
+      <div class="add-dev">
+        <div class="add-visual">
+          <div class="scan"></div>
+          <div class="tower" style="width:120px;height:${Math.round(120 * 620 / 220)}px;position:relative">
+            <div style="position:absolute;inset:0">${nodeShellSVG('addviz', '#18E4FF', '#00A9FF', '#123A4D', true)}</div>
+          </div>
+        </div>
+        <div>
+          <div class="method-tabs">
+            <button class="method-tab ${method === 'remote' ? 'on' : ''}" data-m="remote">⚡ Quick connect (PowerShell)</button>
+            <button class="method-tab ${method === 'manual' ? 'on' : ''}" data-m="manual">Register manually</button>
+          </div>
+          <div id="mBody"></div>
+        </div>
       </div>
     </div>`;
+  }
+
+  function remoteBody() {
+    return `
+      <p style="font-size:12.5px;color:#94a3b8;margin:0 0 8px">On the <b style="color:#cbd5e1">remote PC</b>, open PowerShell <b>as Administrator</b> and paste:</p>
+      <div class="ps1-box"><code id="ps1code">${esc(ps1)}</code><button class="app-btn sm" id="ps1copy">Copy</button></div>
+      <div class="sec-note">🔒 Installs the <b>Chrome Web Store</b> build only, as a <b>locked endpoint</b> — it takes jobs from your main PC but can’t reverse-connect or read other nodes’ IPs. Secure by default for outside machines.</div>
+      <p style="font-size:11.5px;color:#64748b;margin-top:10px">After it runs, the node signs in and appears here automatically — its MAC + static IP sync from the endpoint. IP is required for the safety audit.</p>`;
+  }
+
+  function manualBody() {
+    return `
+      <label>Device name</label>
+      <input id="dName" placeholder="e.g. root168 or Warehouse-PC">
+      <label>IP address <span style="color:#fca5a5">(required — audit)</span></label>
+      <div class="ip-row"><input id="dIp" placeholder="e.g. 50.190.39.168"><button class="app-btn ghost sm" id="dAuto">Auto-detect</button></div>
+      <div id="ipWarn"></div>
+      <div class="app-btn-row" style="margin-top:16px">
+        <button class="app-btn" id="dAdd">Add to cluster</button>
+        <button class="app-btn ghost" id="dCancel2">Cancel</button>
+      </div>`;
+  }
+
+  function paint() {
+    host.innerHTML = body();
+    $('#mBody', host).innerHTML = method === 'remote' ? remoteBody() : manualBody();
+    host.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { method = b.dataset.m; paint(); });
+    if (method === 'remote') {
+      $('#ps1copy', host).onclick = () => { navigator.clipboard?.writeText(ps1); $('#ps1copy', host).textContent = 'Copied ✓'; };
+    } else {
+      const ipInput = $('#dIp', host);
+      const warn = $('#ipWarn', host);
+      const checkIp = () => {
+        const v = ipInput.value.trim();
+        warn.innerHTML = v && existingIps().includes(v)
+          ? `<div class="ip-warn">⚠️ <b>Cross-IP contamination:</b> this IP already runs another node. Marketplaces can link accounts that share an IP — allowed, but it <b>raises your audit risk</b>. Best practice: one node = one IP.</div>`
+          : '';
+      };
+      ipInput.oninput = checkIp;
+      $('#dAuto', host).onclick = () => {
+        if (thisPcIp) { ipInput.value = thisPcIp; checkIp(); }
+        else showAlert('Auto-detect needs the extension on this PC (it reports the IP). For a remote node, use Quick connect.', 'error');
+      };
+      $('#dCancel2', host).onclick = () => host.remove();
+      $('#dAdd', host).onclick = () => {
+        const name = $('#dName', host).value.trim();
+        const ip = ipInput.value.trim();
+        if (!name) { $('#dName', host).style.borderColor = '#f87171'; return; }
+        if (!ip) { ipInput.style.borderColor = '#f87171'; return; }
+        const dup = existingIps().includes(ip);
+        addedDevices.push({ id: 'dev-' + Date.now().toString(36), name, ip, status: 'offline', sharedIp: dup });
+        saveDevices(); host.remove(); renderDevices();
+        showAlert(dup ? `${name} added — ⚠️ shares an IP with another node (audit risk raised).` : `${name} added to your cluster.`, dup ? 'error' : 'success');
+      };
+    }
+  }
+
   host.onclick = () => host.remove();
   document.body.appendChild(host);
-  $('#dCancel', host).onclick = () => host.remove();
-  $('#dAdd', host).onclick = () => {
-    const name = $('#dName', host).value.trim();
-    if (!name) { $('#dName', host).style.borderColor = '#f87171'; return; }
-    addedDevices.push({ id: 'dev-' + Date.now().toString(36), name, ip: $('#dIp', host).value.trim(), role: $('#dRole', host).value.trim() || 'Added node', status: 'standby' });
-    saveDevices(); host.remove(); renderDevices();
-    showAlert(`${name} added to your cluster.`, 'success');
-  };
+  paint();
 }
 
 function renderTeam() {
@@ -899,10 +970,28 @@ function buildAuditInput() {
   return { plan, accountsByMarketplace, accountsPerDevice, devices };
 }
 
+// Cross-IP contamination: nodes sharing one IP raise marketplace linking risk.
+function ipContaminationFindings() {
+  const map = {};
+  const add = (name, ip) => { if (ip) (map[ip] = map[ip] || []).push(name); };
+  if (thisPcIp) add('root-main', thisPcIp);
+  nodes.forEach(n => add(n.name, n.ip));
+  addedDevices.forEach(d => add(d.name, d.ip));
+  const findings = [];
+  Object.entries(map).forEach(([ip, names]) => {
+    if (names.length > 1) findings.push({ level: 'warn', upgradeTo: null,
+      title: `Cross-IP contamination on ${ip}`,
+      detail: `${names.join(', ')} share IP ${ip}. Marketplaces flag accounts that share an IP as linked — this raises restriction risk and your audit score. Best practice: one node = one IP (a remote node on its own connection).` });
+  });
+  return findings;
+}
+
 async function renderAudit() {
   $('#topSub').textContent = '';
   let audit = null; try { audit = await getAudit(); } catch {}
   if (!audit) audit = runAudit(buildAuditInput());
+  const ipFindings = ipContaminationFindings();
+  if (ipFindings.length) audit = { level: 'warn', findings: [...ipFindings, ...(audit.findings || [])] };
   const ok = audit.level === 'ok';
   $('#content').innerHTML = `<div style="max-width:680px"><div class="audit ${ok ? 'ok' : 'warn'}">
     <div class="audit-head">${ok ? '✓ You’re running safely' : '⚠️ ' + audit.findings.length + ' to review'}</div>
