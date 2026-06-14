@@ -79,24 +79,33 @@ export const MARKETPLACES = [
 
 export function marketplace(id) { return MARKETPLACES.find((m) => m.id === id) || null; }
 
-// Inline brand marks (CSP-safe — inline SVG, no external img). Returned as an
-// HTML string to drop inside a brand-colored chip. Falls back to a monogram
-// (handled by the caller) when a brand has no bespoke glyph.
+// Full-color inline brand marks (CSP-safe — inline SVG, no external img). Each
+// carries its own brand colors so it reads as the real logo on a neutral chip.
 export const MARKETPLACE_LOGOS = {
-  amazon:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15.5c4.6 3 11.4 3 16 0"/><path d="M16.8 14.7l2.4.2-.5 2.4"/></svg>',
-  walmart:
-    '<svg viewBox="0 0 24 24" fill="#fff"><g><rect x="11" y="2" width="2" height="7" rx="1"/><rect x="11" y="15" width="2" height="7" rx="1"/><rect x="2" y="11" width="7" height="2" rx="1"/><rect x="15" y="11" width="7" height="2" rx="1"/><rect x="5.4" y="5.4" width="2" height="7" rx="1" transform="rotate(-45 6.4 8.9)"/><rect x="16.6" y="11.1" width="2" height="7" rx="1" transform="rotate(-45 17.6 14.6)"/></g></svg>',
-  shopify:
-    '<svg viewBox="0 0 24 24" fill="#fff"><path d="M8 7V6a4 4 0 0 1 8 0v1h2.2l1.3 13.5a1 1 0 0 1-1 1.1H5.5a1 1 0 0 1-1-1.1L5.8 7H8zm2 0h4V6a2 2 0 1 0-4 0v1z"/></svg>',
-  facebook:
-    '<svg viewBox="0 0 24 24" fill="#fff"><path d="M13.5 21v-8h2.5l.5-3h-3V8.2c0-.9.3-1.5 1.6-1.5H17V4.1A21 21 0 0 0 14.7 4C12.4 4 10.8 5.4 10.8 8v2H8.3v3h2.5v8h2.7z"/></svg>',
   ebay:
-    '<svg viewBox="0 0 48 20"><text x="0" y="15" font-family="Arial, sans-serif" font-size="16" font-weight="800" font-style="italic"><tspan fill="#e53238">e</tspan><tspan fill="#0064d2">b</tspan><tspan fill="#f5af02">a</tspan><tspan fill="#86b817">y</tspan></text></svg>',
+    '<svg viewBox="0 0 60 24" xmlns="http://www.w3.org/2000/svg"><text x="2" y="19" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="800" font-style="italic"><tspan fill="#e53238">e</tspan><tspan fill="#0064d2">b</tspan><tspan fill="#f5af02">a</tspan><tspan fill="#86b817">y</tspan></text></svg>',
+  amazon:
+    '<svg viewBox="0 0 56 30" xmlns="http://www.w3.org/2000/svg"><text x="28" y="16" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700" fill="#fff">amazon</text><path d="M12 21c8 4.5 24 4.5 32 0" stroke="#ff9900" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M41 18.6l3.4 1-1.4 3.1" stroke="#ff9900" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   etsy:
-    '<svg viewBox="0 0 24 24" fill="#fff"><path d="M9 5.5h7.5v2H14v9h2.5v2H9v-2h2.3v-9H9z" opacity="0"/><text x="12" y="17" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="800" fill="#fff">E</text></svg>',
+    '<svg viewBox="0 0 44 24" xmlns="http://www.w3.org/2000/svg"><text x="2" y="19" font-family="Georgia,\'Times New Roman\',serif" font-size="20" font-weight="800" fill="#f1641e">Etsy</text></svg>',
+  walmart:
+    '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="#ffc220" transform="translate(12 12)"><rect x="-1.1" y="-9.2" width="2.2" height="6.2" rx="1.1"/><rect x="-1.1" y="3" width="2.2" height="6.2" rx="1.1"/><g transform="rotate(60)"><rect x="-1.1" y="-9.2" width="2.2" height="6.2" rx="1.1"/><rect x="-1.1" y="3" width="2.2" height="6.2" rx="1.1"/></g><g transform="rotate(120)"><rect x="-1.1" y="-9.2" width="2.2" height="6.2" rx="1.1"/><rect x="-1.1" y="3" width="2.2" height="6.2" rx="1.1"/></g></g></svg>',
+  shopify:
+    '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 6.6C16 4 14.2 2 12 2S8 4 8 6.6V7H5.4L4.2 21.1c0 .5.4.9.9.9h13.7c.5 0 .9-.4.9-.9L18.6 7H16zM10 6.6C10 5.1 10.9 4 12 4s2 1.1 2 2.6V7h-4z" fill="#95bf47"/><text x="12" y="16.2" text-anchor="middle" font-family="Arial" font-size="9" font-weight="800" fill="#fff">S</text></svg>',
   poshmark:
-    '<svg viewBox="0 0 24 24"><text x="12" y="17" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="800" fill="#fff">P</text></svg>',
+    '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" fill="#7b2a3a"/><text x="12" y="17" text-anchor="middle" font-family="Georgia,serif" font-size="13" font-weight="800" fill="#fff">P</text></svg>',
+  mercari:
+    '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" fill="#ff5b49"/><text x="12" y="16.5" text-anchor="middle" font-family="Arial" font-size="13" font-weight="800" fill="#fff">m</text></svg>',
+  depop:
+    '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" fill="#ff2300"/><text x="12" y="16.5" text-anchor="middle" font-family="Arial" font-size="13" font-weight="800" fill="#fff">d</text></svg>',
+  grailed:
+    '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="4" fill="#111"/><text x="12" y="16.5" text-anchor="middle" font-family="Arial" font-size="13" font-weight="800" fill="#fff">G</text></svg>',
+  vinted:
+    '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><text x="12" y="17" text-anchor="middle" font-family="Arial" font-size="15" font-weight="800" fill="#09b1ba">V</text></svg>',
+  whatnot:
+    '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="6" fill="#fbe04b"/><text x="12" y="16.5" text-anchor="middle" font-family="Arial" font-size="12" font-weight="800" fill="#111">W</text></svg>',
+  facebook:
+    '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" fill="#1877f2"/><path d="M14.2 8.6h1.9V5.7c-.4-.05-1.4-.1-2.3-.1-2.2 0-3.7 1.4-3.7 3.8V11H8.2v3h1.9v7h3v-7h2l.4-3h-2.4V9.6c0-.8.2-1 1.1-1z" fill="#fff"/></svg>',
 };
 
 export function marketplaceLogo(id) { return MARKETPLACE_LOGOS[id] || null; }
