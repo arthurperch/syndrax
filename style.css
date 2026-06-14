@@ -509,6 +509,21 @@ html:not(.dark) .nav-links a { color: #5a6a7e; }
 html:not(.dark) .nav-links a:hover { color: #0f172a; }
 html:not(.dark) .nav-links a.active { color: #0099cc; }
 
+.nav-login {
+  font-family: var(--nav-font);
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  transition: color .2s, background .2s;
+  white-space: nowrap;
+}
+.nav-login:hover { color: #fff; background: rgba(255,255,255,0.06); }
+html:not(.dark) .nav-login { color: #475569; }
+html:not(.dark) .nav-login:hover { color: #0f172a; background: rgba(0,0,0,0.05); }
+
 .nav-cta {
   font-family: var(--nav-font) !important;
   background: linear-gradient(90deg, #00CFFF, #0099cc, #FF00D4) !important;

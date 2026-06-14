@@ -47,7 +47,7 @@
     <div class="auth-field">
       <label for="password">Password</label>
       <div class="auth-field-wrap">
-        <input type="password" id="password" name="password" placeholder="At least 8 characters" autocomplete="new-password" required>
+        <input type="password" id="password" name="password" placeholder="At least 12 characters" autocomplete="new-password" required>
         <button type="button" class="auth-pw-toggle" id="pwToggle" aria-label="Toggle password visibility">
           <svg class="eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           <svg class="eye-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
@@ -65,11 +65,10 @@
 </div>
 
 <script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  import { signUp, confirmSignUp, googleRedirect, getSession, MIN_PASSWORD }
+    from '/auth-cognito.js';
 
-  const SUPABASE_URL = 'https://0ec90b57d6e95fcbda19832f.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJib2x0IiwicmVmIjoiMGVjOTBiNTdkNmU5NWZjYmRhMTk4MzJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4ODE1NzQsImV4cCI6MTc1ODg4MTU3NH0.9I8-U0x86Ak8t2DGaIk0HfvTSLsAyzdnz-Nw00mMkKw';
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (getSession()) window.location.replace('/');
 
   const alertEl = document.getElementById('authAlert');
   const signupBtn = document.getElementById('signupBtn');
@@ -89,7 +88,7 @@
       : 'Create Account <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
   }
 
-  // Email signup
+  // Email signup (Cognito). Sends a confirmation code, then reveals the code step.
   document.getElementById('signupForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     clearAlert();
@@ -97,28 +96,45 @@
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     if (!fullName || !email || !password) { showAlert('Please fill in all fields.'); return; }
-    if (password.length < 8) { showAlert('Password must be at least 8 characters.'); return; }
+    if (password.length < MIN_PASSWORD) { showAlert('Password must be at least ' + MIN_PASSWORD + ' characters.'); return; }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName } }
-    });
-    setLoading(false);
-    if (error) { showAlert(error.message); return; }
-    showAlert('Account created! Check your email to confirm, then sign in.', 'success');
-    setTimeout(() => { window.location.href = '/login'; }, 3000);
+    try {
+      await signUp(email, password, fullName);
+      revealConfirmStep(email);
+      showAlert('We sent a confirmation code to your email. Enter it below to finish.', 'success');
+    } catch (err) {
+      showAlert(err.message);
+    } finally {
+      setLoading(false);
+    }
   });
 
-  // Google OAuth
-  document.getElementById('googleBtn').addEventListener('click', async () => {
-    clearAlert();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin + '/' }
+  // Google (Cognito hosted UI redirect)
+  document.getElementById('googleBtn').addEventListener('click', () => googleRedirect('/'));
+
+  function revealConfirmStep(email) {
+    if (document.getElementById('confirmStep')) return;
+    const form = document.getElementById('signupForm');
+    form.style.display = 'none';
+    const div = document.createElement('div');
+    div.id = 'confirmStep';
+    div.innerHTML =
+      '<div class="auth-field"><label for="confirmCode">Confirmation code</label>' +
+      '<input id="confirmCode" inputmode="numeric" autocomplete="one-time-code" placeholder="Code from your email"></div>' +
+      '<button type="button" id="confirmBtn" class="auth-submit">Confirm account</button>';
+    form.after(div);
+    document.getElementById('confirmBtn').addEventListener('click', async () => {
+      const code = document.getElementById('confirmCode').value.trim();
+      if (!code) { showAlert('Enter the confirmation code from your email.'); return; }
+      try {
+        await confirmSignUp(email, code);
+        showAlert('Account confirmed! Redirecting to sign in…', 'success');
+        setTimeout(() => { window.location.href = '/login'; }, 1500);
+      } catch (err) {
+        showAlert(err.message);
+      }
     });
-    if (error) showAlert(error.message);
-  });
+  }
 
   // Password toggle
   const pwToggle = document.getElementById('pwToggle');

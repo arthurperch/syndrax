@@ -61,22 +61,22 @@
 </div>
 
 <script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  import { login, forgotPassword, confirmForgotPassword, googleRedirect, getSession, MIN_PASSWORD }
+    from '/auth-cognito.js';
 
-  const SUPABASE_URL = 'https://0ec90b57d6e95fcbda19832f.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJib2x0IiwicmVmIjoiMGVjOTBiNTdkNmU5NWZjYmRhMTk4MzJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4ODE1NzQsImV4cCI6MTc1ODg4MTU3NH0.9I8-U0x86Ak8t2DGaIk0HfvTSLsAyzdnz-Nw00mMkKw';
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // Already signed in → straight to the app.
+  if (getSession()) window.location.replace('/');
 
-  const alert = document.getElementById('authAlert');
+  const alertEl = document.getElementById('authAlert');
   const loginBtn = document.getElementById('loginBtn');
 
   function showAlert(msg, type = 'error') {
-    alert.textContent = msg;
-    alert.className = 'auth-alert ' + type;
+    alertEl.textContent = msg;
+    alertEl.className = 'auth-alert ' + type;
   }
   function clearAlert() {
-    alert.className = 'auth-alert';
-    alert.textContent = '';
+    alertEl.className = 'auth-alert';
+    alertEl.textContent = '';
   }
   function setLoading(loading) {
     loginBtn.disabled = loading;
@@ -85,7 +85,7 @@
       : 'Sign In <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
   }
 
-  // Email/password login
+  // Email/password login (Cognito). Generic errors — no account enumeration.
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     clearAlert();
@@ -93,34 +93,59 @@
     const password = document.getElementById('password').value;
     if (!email || !password) { showAlert('Please enter your email and password.'); return; }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) { showAlert(error.message); return; }
-    window.location.href = '/';
+    try {
+      await login(email, password);
+      window.location.href = '/';
+    } catch (err) {
+      showAlert(err.message);
+    } finally {
+      setLoading(false);
+    }
   });
 
-  // Google OAuth
-  document.getElementById('googleBtn').addEventListener('click', async () => {
-    clearAlert();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin + '/' }
-    });
-    if (error) showAlert(error.message);
-  });
+  // Google (Cognito hosted UI redirect)
+  document.getElementById('googleBtn').addEventListener('click', () => googleRedirect('/'));
 
-  // Forgot password
+  // Forgot password — sends a code, then reveals an inline reset step.
+  // Always shows the same message so it can't be used to probe for accounts.
   document.getElementById('forgotLink').addEventListener('click', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value.trim();
-    if (!email) { showAlert('Enter your email address first, then click Forgot password.'); return; }
+    if (!email) { showAlert('Enter your email first, then click Forgot password.'); return; }
     clearAlert();
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/login'
-    });
-    if (error) { showAlert(error.message); return; }
-    showAlert('Password reset email sent. Check your inbox.', 'success');
+    await forgotPassword(email);
+    revealResetStep(email);
+    showAlert('If an account exists for that email, we sent a reset code. Enter it below.', 'success');
   });
+
+  function revealResetStep(email) {
+    if (document.getElementById('resetStep')) return;
+    const form = document.getElementById('loginForm');
+    const div = document.createElement('div');
+    div.id = 'resetStep';
+    div.innerHTML =
+      '<div class="auth-field"><label for="resetCode">Reset code</label>' +
+      '<input id="resetCode" inputmode="numeric" autocomplete="one-time-code" placeholder="Code from your email"></div>' +
+      '<div class="auth-field"><label for="newPassword">New password</label>' +
+      '<input id="newPassword" type="password" autocomplete="new-password" placeholder="At least ' + MIN_PASSWORD + ' characters"></div>' +
+      '<button type="button" id="resetBtn" class="auth-submit">Set new password</button>';
+    form.after(div);
+    document.getElementById('resetBtn').addEventListener('click', async () => {
+      const code = document.getElementById('resetCode').value.trim();
+      const np = document.getElementById('newPassword').value;
+      if (!code || np.length < MIN_PASSWORD) {
+        showAlert('Enter the code and a new password of at least ' + MIN_PASSWORD + ' characters.');
+        return;
+      }
+      try {
+        await confirmForgotPassword(email, code, np);
+        div.remove();
+        showAlert('Password updated. You can sign in now.', 'success');
+      } catch (err) {
+        showAlert(err.message);
+      }
+    });
+  }
 
   // Password toggle
   const pwToggle = document.getElementById('pwToggle');
