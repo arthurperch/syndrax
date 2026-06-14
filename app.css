@@ -296,6 +296,25 @@ html.dark .dash-rail-logo { mix-blend-mode: screen; }
 .admin-bar .ab-note { font-size: 11px; color: #64748b; }
 .admin-bar .ab-reset { background: none; border: none; color: #f0abfc; font-size: 11px; cursor: pointer; }
 
+/* Trust / warm-up journey (per connected account, marketplace-specific) */
+.trust-card { border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.03); border-radius: 15px; padding: 16px; margin-bottom: 14px; }
+.trust-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.trust-est { margin-left: auto; font-size: 11px; color: #94a3b8; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.trust-est input { accent-color: #22d3ee; }
+.trust-note { font-size: 12px; color: #94a3b8; line-height: 1.5; margin-bottom: 14px; }
+.trust-track { display: flex; gap: 6px; flex-wrap: wrap; }
+.trust-step { flex: 1; min-width: 92px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 5px; padding: 11px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,.07); background: rgba(255,255,255,.02); }
+.trust-step .ts-dot { width: 30px; height: 30px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; border: 2px solid rgba(255,255,255,.12); color: #64748b; }
+.trust-step.done { border-color: rgba(16,185,129,.3); }
+.trust-step.done .ts-dot { border-color: #34d399; color: #6ee7b7; background: rgba(16,185,129,.12); }
+.trust-step.active { border-color: rgba(34,211,238,.5); }
+.trust-step.active .ts-dot { border-color: #22d3ee; color: #67e8f9; background: rgba(34,211,238,.12); animation: sx-pulse-add 2.4s ease-in-out infinite; }
+.trust-step.locked { opacity: .55; }
+.trust-step .ts-label { font-size: 11.5px; font-weight: 700; color: #e2e8f0; }
+.trust-step .ts-desc { font-size: 9.5px; color: #64748b; line-height: 1.25; }
+.trust-gate { margin-top: 12px; padding: 10px 14px; border-radius: 11px; font-size: 12px; font-weight: 600; border: 1px solid rgba(251,191,36,.3); background: rgba(251,191,36,.06); color: #fcd34d; }
+.trust-gate.open { border-color: rgba(16,185,129,.3); background: rgba(16,185,129,.07); color: #6ee7b7; }
+
 /* Neutral logo chip (real brand SVGs carry their own color) */
 .mk-tile .mk-chip.neutral { background: rgba(255,255,255,.06) !important; border: 1px solid rgba(255,255,255,.08); }
 

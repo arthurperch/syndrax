@@ -12,6 +12,7 @@ import {
 import {
   PLAN_LABEL, PLAN_PRICE, PLAN_TAGLINE, PLAN_LIMITS,
   MARKETPLACES, marketplace, marketplaceLogo, eligibility, runAudit, nextPlan, isUnlimited,
+  trustJourney,
 } from '/plans.js';
 
 // ── extension (sync backend) ─────────────────────────────────────────────────
@@ -96,10 +97,10 @@ const TABS = [
 ];
 
 const SCRIPTS = [
-  { key: 'bulklister', label: 'BulkLister', desc: 'Bulk-list ASINs to eBay', icon: 'upload', ready: true },
+  { key: 'bulklister', label: 'Lister', desc: 'Flexible lister — adapts to the marketplace', icon: 'upload', ready: true },
   { key: 'inventory', label: 'Inventory Sync', desc: 'Stock & lifecycle sync', icon: 'package', ready: false },
   { key: 'quicksync', label: 'Quick Sync', desc: 'Fast price/stock pass', icon: 'refresh', ready: false },
-  { key: 'sniper', label: 'Sniper', desc: 'Targeted competitive lister', icon: 'crosshair', ready: false },
+  { key: 'sniper', label: 'Competitor Research', desc: 'Find winners + price intel', icon: 'crosshair', ready: false },
 ];
 
 // ── boot ────────────────────────────────────────────────────────────────────
@@ -412,8 +413,8 @@ function openScriptModal() {
   host.className = 'modal-bg'; host.id = 'scriptModal';
   host.innerHTML = `
     <div class="modal" onclick="event.stopPropagation()">
-      <h3>${icon('upload')} Run BulkLister on This PC</h3>
-      <p class="modal-sub">Paste Amazon URLs or ASINs — the extension lists them to your connected eBay account.</p>
+      <h3>${icon('upload')} Run Lister on This PC</h3>
+      <p class="modal-sub">Paste source URLs or product IDs — the Lister adapts to your connected marketplace and lists them via the extension.</p>
       <label>Amazon URLs or ASINs</label>
       <textarea id="bArgs" rows="5" placeholder="B00RW5OWLE&#10;https://amazon.com/dp/B0..." style="font-family:ui-monospace,monospace;font-size:12px"></textarea>
       <div class="modal-row">
@@ -438,7 +439,7 @@ function openScriptModal() {
       listingType: $('#bType', host).value, minPrice: 0, maxPrice: 0, fbaOnly: false,
     };
     host.remove();
-    dispatch('bulklister', 'BulkLister', args);
+    dispatch('bulklister', 'Lister', args);
   };
 }
 
@@ -455,10 +456,14 @@ function renderAccounts() {
       ${audit.findings.map(f => `<div class="audit-finding"><div class="f-title">${esc(f.title)}</div><div class="f-detail">${esc(f.detail)}</div>${f.upgradeTo ? `<div class="app-btn-row"><button class="app-btn sm" data-up="${f.upgradeTo}">Upgrade to ${PLAN_LABEL[f.upgradeTo]}</button></div>` : ''}</div>`).join('')}
     </div>` : ''}
     <p style="color:#94a3b8;font-size:13px;margin-bottom:14px">Connect the marketplaces you sell on. The extension keeps each account on its own device/IP. ${isUnlimited(limit) ? 'Unlimited accounts.' : `Up to <b style="color:#cbd5e1">${limit}</b> account${limit === 1 ? '' : 's'} per marketplace on ${PLAN_LABEL[plan]}.`}</p>
-    <div class="mk-grid big">${MARKETPLACES.map(m => acctTile(m, counts[m.id] || 0, limit)).join('')}</div>`;
+    <div class="mk-grid big">${MARKETPLACES.map(m => acctTile(m, counts[m.id] || 0, limit)).join('')}</div>
+    ${accounts.length ? `<h3 style="font:700 14px var(--nav-font);color:#f1f5f9;margin:26px 0 4px">Account trust & warm-up</h3>
+      <p style="color:#94a3b8;font-size:12.5px;margin-bottom:14px">Each marketplace bans new accounts differently — Syndrax warms each one up to its own rules, then an audit gate unlocks growth scripts. Established accounts skip warm-up.</p>
+      ${accounts.map(trustCard).join('')}` : ''}`;
 
   $('#content').querySelectorAll('[data-connect]').forEach(b => b.onclick = () => { connecting = b.dataset.connect; openConnectModal(); });
   $('#content').querySelectorAll('[data-up]').forEach(b => b.onclick = () => startCheckout(b.dataset.up).catch(e => showAlert(e.message)));
+  $('#content').querySelectorAll('[data-est]').forEach(b => b.onclick = () => { toggleEstablished(b.dataset.est); });
 }
 
 function acctTile(m, n, limit) {
@@ -508,6 +513,35 @@ function openConnectModal() {
       host.remove(); renderAccounts(); showAlert(`${m.name} account connected.`, 'success');
     } catch (e) { showAlert(e.message || 'Could not connect.'); host.remove(); }
   };
+}
+
+// ── Trust / warm-up per connected account (marketplace-specific) ──────────────
+function establishedSet() { try { return new Set(JSON.parse(localStorage.getItem('syndrax_established') || '[]')); } catch { return new Set(); } }
+function toggleEstablished(id) {
+  const s = establishedSet(); s.has(id) ? s.delete(id) : s.add(id);
+  localStorage.setItem('syndrax_established', JSON.stringify([...s])); renderAccounts();
+}
+
+function trustCard(a) {
+  const m = marketplace(a.marketplace);
+  const j = trustJourney(a.marketplace);
+  const est = establishedSet().has(a.id);
+  const logo = marketplaceLogo(a.marketplace) || `<span style="font:800 15px var(--nav-font);color:#fff">${(m?.name || '?')[0]}</span>`;
+  const current = 1; // new account: phase 0 done, phase 1 active (real progress tracking later)
+  const steps = j.phases.map((p, i) => {
+    const state = est || i < current ? 'done' : (i === current ? 'active' : 'locked');
+    return `<div class="trust-step ${state}"><span class="ts-dot">${state === 'done' ? '✓' : state === 'locked' ? '🔒' : i + 1}</span><span class="ts-label">${esc(p.label)}</span><span class="ts-desc">${esc(p.desc)}</span></div>`;
+  }).join('');
+  return `<div class="trust-card">
+    <div class="trust-head">
+      <span class="mk-chip neutral" style="width:34px;height:34px">${logo}</span>
+      <div><div class="ac-name">${esc(a.label || m?.name || a.marketplace)}</div><div class="ac-sub">${esc(m?.name || a.marketplace)}${est ? ' · established' : ' · warming up'}</div></div>
+      <label class="trust-est"><input type="checkbox" ${est ? 'checked' : ''} data-est="${a.id}"> Established account</label>
+    </div>
+    <div class="trust-note">${esc(j.note)}</div>
+    <div class="trust-track">${steps}</div>
+    <div class="trust-gate ${est ? 'open' : ''}">${est ? '✓ Audit passed — growth scripts unlocked' : '🛡️ Audit gate — finish warm-up to unlock growth scripts (Research, Bulk list, Inventory)'}</div>
+  </div>`;
 }
 
 // ── JOBS / DEVICES / TEAM / AUDIT / PLAN ──────────────────────────────────────

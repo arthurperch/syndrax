@@ -110,6 +110,86 @@ export const MARKETPLACE_LOGOS = {
 
 export function marketplaceLogo(id) { return MARKETPLACE_LOGOS[id] || null; }
 
+// ── Trust / warm-up journeys (per marketplace) ────────────────────────────────
+// Every marketplace bans/limits NEW accounts differently. Syndrax warms each
+// account up to that marketplace's own rules (researched from seller community
+// guidance) before unlocking growth scripts. Established accounts skip warm-up.
+// An "audit gate" runs between warm-up and growth on every marketplace.
+export const TRUST_PHASES = {
+  ebay: {
+    note: 'eBay caps new sellers (~10 items / $500 a month) and holds funds up to 21 days until you build feedback. Warm up like a human, make a real sale, clear funds before scaling.',
+    phases: [
+      { label: 'Warm up', desc: 'browse & buy like a human' },
+      { label: 'First listing', desc: 'cheap item + eBay label' },
+      { label: 'First sale', desc: 'ship fast' },
+      { label: 'First feedback', desc: 'earn the star' },
+      { label: 'Funds clear', desc: 'account trusted' },
+    ],
+  },
+  etsy: {
+    note: 'Etsy holds a payment reserve for new shops and limits payouts until orders ship and reviews land. Fill the shop, fulfil fast, gather reviews.',
+    phases: [
+      { label: 'Open shop', desc: 'profile + policies' },
+      { label: 'First listings', desc: '10+ quality items' },
+      { label: 'First sale', desc: 'ship on time' },
+      { label: 'First reviews', desc: 'build rating' },
+      { label: 'Reserve lifts', desc: 'normal payouts' },
+    ],
+  },
+  poshmark: {
+    note: 'Poshmark rewards active, social sellers. Complete your closet, share daily and earn ratings to build trust.',
+    phases: [
+      { label: 'Complete profile', desc: 'photo + bio' },
+      { label: 'List & share', desc: 'share daily' },
+      { label: 'First sale', desc: 'ship in time' },
+      { label: 'Ratings', desc: 'love notes' },
+      { label: 'Ambassador', desc: 'trusted seller' },
+    ],
+  },
+  mercari: {
+    note: 'Mercari speeds payouts and trust as you complete sales with good ratings. Verify, list, sell, rate up.',
+    phases: [
+      { label: 'Verify identity', desc: 'unlock selling' },
+      { label: 'List items', desc: 'good photos' },
+      { label: 'First sale', desc: 'ship fast' },
+      { label: 'Ratings', desc: '5-star reviews' },
+      { label: 'Faster payouts', desc: 'account trusted' },
+    ],
+  },
+  depop: {
+    note: 'Depop favours active shops with great photos and quick shipping. Build the shop, sell, gather reviews.',
+    phases: [
+      { label: 'Set up shop', desc: 'bio + style' },
+      { label: 'List items', desc: 'bright photos' },
+      { label: 'First sale', desc: 'ship quick' },
+      { label: 'Reviews', desc: 'build rep' },
+      { label: 'Trusted', desc: 'boosted reach' },
+    ],
+  },
+  walmart: {
+    note: 'Walmart Marketplace is application-gated and metric-driven (≥90% on-time, low defect rate). Get approved, list, hit targets to scale.',
+    phases: [
+      { label: 'Approved', desc: 'LLC + sales history' },
+      { label: 'First listings', desc: 'catalog match' },
+      { label: 'First orders', desc: 'fulfil fast' },
+      { label: 'Metrics', desc: 'on-time + low defect' },
+      { label: 'Scale', desc: 'good standing' },
+    ],
+  },
+  default: {
+    note: 'New accounts earn trust gradually. Warm up to this marketplace’s rules, make real sales and gather reviews before scaling.',
+    phases: [
+      { label: 'Set up account', desc: 'profile ready' },
+      { label: 'First listing', desc: 'start small' },
+      { label: 'First sale', desc: 'ship fast' },
+      { label: 'First reviews', desc: 'build rating' },
+      { label: 'Trusted', desc: 'unlock growth' },
+    ],
+  },
+};
+
+export function trustJourney(id) { return TRUST_PHASES[id] || TRUST_PHASES.default; }
+
 // Eligibility guidance for gated marketplaces. `profile` carries { ein, salesProof }.
 export function eligibility(marketplaceId, profile = {}) {
   const mk = marketplace(marketplaceId);
@@ -191,5 +271,6 @@ if (typeof window !== 'undefined') {
   window.SyndraxPlans = {
     PLAN_ORDER, PLAN_LABEL, PLAN_PRICE, PLAN_LIMITS, PLAN_TAGLINE, UNLIMITED,
     MARKETPLACES, marketplace, marketplaceLogo, eligibility, runAudit, nextPlan, isUnlimited,
+    TRUST_PHASES, trustJourney,
   };
 }
