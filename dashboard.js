@@ -70,6 +70,8 @@ let statusRow = { plan: 'none' };
 let profile = {};
 let accounts = [];
 let jobs = loadJobs();
+let automations = loadAutomations();
+let nodes = []; // real cluster nodes synced from the extension
 let activeTab = 'home';
 let selectedTarget = null; // target account id for marketplace-aware scripts
 let selectedJobId = null;
@@ -97,12 +99,44 @@ const TABS = [
   { id: 'plan', label: 'Plan & Billing', icon: 'card', sec: 'Control' },
 ];
 
-const SCRIPTS = [
-  { key: 'bulklister', label: 'Lister', desc: 'Flexible lister — adapts to the marketplace', icon: 'upload', ready: true },
-  { key: 'inventory', label: 'Inventory Sync', desc: 'Stock & lifecycle sync', icon: 'package', ready: false },
-  { key: 'quicksync', label: 'Quick Sync', desc: 'Fast price/stock pass', icon: 'refresh', ready: false },
-  { key: 'sniper', label: 'Competitor Research', desc: 'Find winners + price intel', icon: 'crosshair', ready: false },
+// The real toolset (mirrors the extension's modules), grouped into the universal
+// workflow: Sync → Research → List → Manage → (Repeat via automations). Same page
+// everywhere; scripts auto-scope to the selected marketplace. run: keys that have
+// a live web→extension run path today (eBay). Everything else is real but its
+// per-marketplace runner is still being wired.
+const WORKFLOW = [
+  { stage: 'Sync', icon: 'refresh', modules: [
+    { key: 'dashboard', label: 'Overview', desc: 'Active listings • price changes • stock • alerts' },
+    { key: 'quicksync', label: 'Quick Sync', desc: 'Fast price & stock pass' },
+    { key: 'lifecycle', label: 'Inventory Lifecycle', desc: '90-day lifecycle • markdown • clearance' },
+    { key: 'finance', label: 'eBay P&L', desc: 'Earnings • reconciliation • profit' },
+  ]},
+  { stage: 'Research', icon: 'crosshair', modules: [
+    { key: 'research', label: 'Research', desc: 'Product discovery • research queue', run: 'research' },
+    { key: 'compliance', label: 'Compliance Check', desc: '7 risk filters • VERO • banned • fragile' },
+    { key: 'reverse', label: 'Reverse Search', desc: 'eBay reverse image • existing dropshippers' },
+    { key: 'seller', label: 'Seller Verification', desc: 'Age • feedback % • units • match rate' },
+    { key: 'dna', label: 'DNA Match', desc: 'AI vision • brand • model • color' },
+  ]},
+  { stage: 'List', icon: 'upload', modules: [
+    { key: 'seo', label: 'SEO Generator', desc: 'Keywords • competitor titles • optimized copy' },
+    { key: 'description', label: 'Description Builder', desc: 'HTML templates • 5 styles' },
+    { key: 'images', label: 'Image Pipeline', desc: 'Fetch • resize • optimize' },
+    { key: 'lister', label: 'Lister', desc: 'List in bulk • pricing • markup • margin', run: 'lister' },
+  ]},
+  { stage: 'Manage', icon: 'tag', modules: [
+    { key: 'optimizer', label: 'Listing Optimizer', desc: 'End & sell similar • price drops' },
+    { key: 'pricing', label: 'Pricing Strategy', desc: 'Rules engine • dynamic pricing • margin' },
+    { key: 'accounts', label: 'Account Manager', desc: 'Tiers • warmup • daily limits • risk' },
+    { key: 'warmup', label: 'Warmup Agent', desc: 'Daily limits • safe listing schedule' },
+    { key: 'trust', label: 'Trust Audit', desc: 'Trust score • defects • feedback • holds' },
+    { key: 'messages', label: 'Message Tool', desc: '5 buyer templates • OOS • shipping • returns' },
+  ]},
 ];
+const RUNNABLE = { lister: 'bulklister', research: 'research' }; // live web→extension run today
+
+function loadAutomations() { try { return JSON.parse(localStorage.getItem('syndrax_automations_v1')) || []; } catch { return []; } }
+function saveAutomations() { try { localStorage.setItem('syndrax_automations_v1', JSON.stringify(automations)); } catch {} }
 
 // ── boot ────────────────────────────────────────────────────────────────────
 function applyPlan() { plan = (isAdmin && previewPlan) ? previewPlan : realPlan; }
@@ -117,6 +151,7 @@ function syncExtensionAccounts() {
     try {
       chrome.runtime.sendMessage(extId, { type: 'SYNDRAX_GET_STATE' }, (resp) => {
         if (chrome.runtime.lastError || !resp || !resp.ok) return resolve();
+        if (Array.isArray(resp.nodes)) nodes = resp.nodes;
         const synced = (resp.accounts || []).map(a => ({
           id: 'ext-' + (a.id || a.username), marketplace: a.platform || 'ebay',
           label: a.username || a.platform || 'account', deviceId: a.nodeId || 'this-device',
@@ -351,76 +386,124 @@ let wsTarget = null;
 
 function renderWorkspace() {
   $('#topSub').textContent = ext.installed ? '· running on this device' : '· install the extension to run jobs';
-  const job = jobs.find(j => j.jobId === selectedJobId) || null;
-
-  // Resolve the current target account (what scripts will act on).
   wsTarget = accounts.find(a => a.id === selectedTarget) || accounts[0] || null;
-  const targetMk = wsTarget ? wsTarget.marketplace : null;
-  const scriptsLive = !!targetMk && LIVE_MARKETPLACES.includes(targetMk);
-  const mkName = targetMk ? (marketplace(targetMk)?.name || targetMk) : null;
+  const targetMk = wsTarget ? wsTarget.marketplace : 'ebay';
+  const live = LIVE_MARKETPLACES.includes(targetMk);
+  const mkName = marketplace(targetMk)?.name || targetMk;
+
+  const stages = WORKFLOW.map(st => `
+    <section class="wf-stage">
+      <div class="wf-stage-h">${icon(st.icon)} <span>${st.stage}</span></div>
+      <div class="script-grid">
+        ${st.modules.map(m => {
+          const runnable = live && !!RUNNABLE[m.run];
+          return `<button class="script-card ${live ? 'ready' : 'soon'}" data-mod="${m.key}" title="${esc(m.label)} → ${esc(mkName)}">
+            <span class="sc-name">${esc(m.label)}${runnable ? '<span class="sc-live">live</span>' : ''}</span>
+            <span class="sc-desc">${esc(m.desc)}</span>
+          </button>`;
+        }).join('')}
+      </div>
+    </section>`).join('');
 
   $('#content').innerHTML = `
-    <div class="ws">
-      <div class="ws-left">
-        <div class="panel">
-          <div class="panel-h">Run on device</div>
-          <div class="dev-row sel">
-            <span class="dev-dot ${ext.installed ? 'on' : 'off'}"></span>
-            <span class="dev-name">This PC</span>
-            <span class="dev-meta">${ext.installed ? 'Extension v' + (ext.version || '') : 'main workstation'}</span>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-h">Target account ${mkName ? `<span style="color:#64748b;font-weight:500;text-transform:none;letter-spacing:0">scripts act on ${esc(mkName)}</span>` : ''}</div>
-          ${accounts.length === 0
-            ? `<p style="font-size:12px;color:#64748b">No accounts yet. <span class="link" data-go="accounts">Connect one →</span></p>`
-            : accounts.map(a => {
-              const m = marketplace(a.marketplace);
-              const logo = marketplaceLogo(a.marketplace) || `<span style="font:800 13px var(--nav-font);color:#fff">${(m?.name || '?')[0]}</span>`;
-              const on = wsTarget && wsTarget.id === a.id;
-              const live = LIVE_MARKETPLACES.includes(a.marketplace);
-              return `<div class="dev-row ${on ? 'sel' : ''}" data-target="${a.id}">
-                <span class="mk-chip neutral" style="width:26px;height:26px">${logo}</span>
-                <span class="dev-name">${esc(a.label || m?.name || a.marketplace)}</span>
-                <span class="dev-meta">${esc(m?.name || a.marketplace)}${live ? ' · live' : ' · building'}${a.synced ? ' · synced' : ''}</span>
-              </div>`;
-            }).join('')}
-        </div>
-
-        <div class="panel">
-          <div class="panel-h">Scripts ${mkName ? `<span style="color:#64748b;font-weight:500;text-transform:none;letter-spacing:0">for ${esc(mkName)}</span>` : ''}</div>
-          ${!wsTarget ? `<p style="font-size:12px;color:#64748b">Connect a marketplace account to run scripts.</p>` : `
-          ${!scriptsLive ? `<p style="font-size:11.5px;color:#fcd34d;margin-bottom:10px">${esc(mkName)} scripts are being built — eBay is live today. The same tools will light up here once ${esc(mkName)} sync ships.</p>` : ''}
-          <div class="script-grid">
-            ${SCRIPTS.map(s => {
-              const enabled = s.ready && scriptsLive;
-              return `<button class="script-card ${enabled ? 'ready' : 'soon'}" data-script="${s.key}" ${enabled ? '' : 'disabled'} title="${enabled ? 'Run ' + s.label + ' on ' + mkName : (!scriptsLive ? mkName + ' — building' : 'coming soon')}">
-                ${icon(s.icon)}
-                <span class="sc-name">${s.label}</span>
-                <span class="sc-desc">${enabled ? esc(s.desc) : (!scriptsLive ? 'building for ' + esc(mkName) : 'coming soon')}</span>
-              </button>`;
-            }).join('')}
-          </div>`}
-        </div>
-
-        <div class="panel" style="flex:1">
-          <div class="panel-h">Jobs (${jobs.length}) ${jobs.length ? '<span class="link" id="clearJobs">clear</span>' : ''}</div>
-          ${jobs.length === 0 ? `<p style="font-size:12px;color:#64748b">No jobs yet — pick a script above.</p>`
-            : jobs.map(jobRow).join('')}
-        </div>
+    <div class="wf-bar">
+      <div class="wf-target">
+        <span class="wf-lbl">Marketplace</span>
+        ${accounts.length === 0
+          ? `<span class="link" data-go="accounts">Connect an account →</span>`
+          : `<div class="wf-accs">${accounts.map(a => { const m = marketplace(a.marketplace); const lg = marketplaceLogo(a.marketplace) || `<span style="font:800 12px var(--nav-font);color:#fff">${(m?.name || '?')[0]}</span>`; const on = wsTarget && wsTarget.id === a.id; return `<button class="wf-acc ${on ? 'on' : ''}" data-target="${a.id}"><span class="mk-chip neutral" style="width:22px;height:22px">${lg}</span>${esc(a.label || m?.name || a.marketplace)}</button>`; }).join('')}</div>`}
       </div>
-
-      <div class="ws-right">
-        ${job ? jobDetail(job) : `<div class="ws-empty">${icon('briefcase')}<p style="font-size:13px">Select a job to see its progress and log</p></div>`}
+      <div class="wf-right">
+        <span class="relay-pill ${ext.installed ? 'on' : 'off'}">${icon(ext.installed ? 'wifi' : 'monitor')} ${ext.installed ? 'This PC' : 'No device'}</span>
+        <span class="wf-audit">${icon('shield')} Audit agent <b>on</b></span>
       </div>
+    </div>
+
+    <div class="wf-flow">${['Sync', 'Research', 'List', 'Manage', 'Repeat'].map((s, i) => `<span class="wf-step${i === 4 ? ' loop' : ''}">${s}</span>${i < 4 ? '<span class="wf-arrow">→</span>' : ''}`).join('')}</div>
+
+    ${!live ? `<div class="wf-note">${esc(mkName)} runners are being built — <b>eBay is live today</b>. The same workflow lights up here once ${esc(mkName)} ships. You can still schedule automations now.</div>` : ''}
+
+    ${stages}
+
+    <div class="ws2-cols">
+      <div class="panel"><div class="panel-h">Recent jobs (${jobs.length}) ${jobs.length ? '<span class="link" id="clearJobs">clear</span>' : ''}</div>
+        ${jobs.length === 0 ? `<p style="font-size:12px;color:#64748b">No jobs yet — click a tool above.</p>` : jobs.slice(0, 6).map(jobRow).join('')}</div>
+      <div class="panel"><div class="panel-h">Automations (${automations.length}) <span style="color:#64748b;font-weight:500;text-transform:none;letter-spacing:0">audit-gated</span></div>
+        ${renderAutomationsList()}</div>
     </div>`;
 
   $('#content').querySelectorAll('[data-target]').forEach(b => b.onclick = () => { selectedTarget = b.dataset.target; renderWorkspace(); });
   $('#content').querySelectorAll('[data-go]').forEach(b => b.onclick = () => { activeTab = b.dataset.go; renderShell(); });
-  $('#content').querySelectorAll('[data-script]').forEach(b => b.onclick = () => { configuring = b.dataset.script; openScriptModal(); });
-  $('#content').querySelectorAll('[data-job]').forEach(b => b.onclick = () => { selectedJobId = b.dataset.job; renderWorkspace(); });
+  $('#content').querySelectorAll('[data-mod]').forEach(b => b.onclick = () => openModuleModal(b.dataset.mod));
+  $('#content').querySelectorAll('[data-job]').forEach(b => b.onclick = () => { selectedJobId = b.dataset.job; activeTab = 'jobs'; renderShell(); });
+  $('#content').querySelectorAll('[data-autorun]').forEach(b => b.onclick = () => runAutomation(b.dataset.autorun));
+  $('#content').querySelectorAll('[data-autodel]').forEach(b => b.onclick = () => { automations = automations.filter(a => a.id !== b.dataset.autodel); saveAutomations(); renderWorkspace(); });
   const cj = $('#clearJobs'); if (cj) cj.onclick = () => { jobs = []; saveJobs(); selectedJobId = null; renderWorkspace(); };
+}
+
+function renderAutomationsList() {
+  if (!automations.length) return `<p style="font-size:12px;color:#64748b">No automations yet. Open a tool → <b>Schedule</b> to run it on a timer with the audit agent.</p>`;
+  return automations.map(a => `<div class="auto-row">
+    <div style="flex:1"><div class="ac-name">${esc(a.label)} <span style="color:#64748b;font-weight:500">→ ${esc(marketplace(a.marketplace)?.name || a.marketplace)}</span></div>
+      <div class="ac-sub">${esc(a.interval)}${a.auditAgent ? ' · 🛡️ audit' : ''}${a.rule ? ' · ' + esc(a.rule) : ''}</div></div>
+    <button class="app-btn ghost sm" data-autorun="${a.id}">Run</button>
+    <button class="auto-del" data-autodel="${a.id}" title="Delete">✕</button>
+  </div>`).join('');
+}
+
+function openModuleModal(key) {
+  const mod = WORKFLOW.flatMap(s => s.modules).find(m => m.key === key); if (!mod) return;
+  const mk = wsTarget ? wsTarget.marketplace : 'ebay';
+  const mkName = marketplace(mk)?.name || mk;
+  const runnable = LIVE_MARKETPLACES.includes(mk) && !!RUNNABLE[mod.run];
+  const host = document.createElement('div');
+  host.className = 'modal-bg';
+  host.innerHTML = `
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3>${esc(mod.label)} → ${esc(mkName)}</h3>
+      <p class="modal-sub">${esc(mod.desc)}. Target: <b style="color:#cbd5e1">${esc(wsTarget?.label || 'your account')}</b>.</p>
+      ${runnable
+        ? `<button class="app-btn" id="mRun" style="width:100%">${icon('play')} Run now on This PC</button>`
+        : `<div class="eligibility" style="margin:0 0 4px">${esc(mkName)} runner for ${esc(mod.label)} is being wired — schedule it now and it runs as soon as it ships.</div>`}
+      <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px">
+        <label>Schedule (repeat)</label>
+        <select id="mInt"><option>Every hour</option><option selected>Every 6 hours</option><option>Daily</option><option>Every 3 days</option><option>Weekly</option></select>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:12px;text-transform:none;letter-spacing:0;font-size:13px;color:#cbd5e1"><input type="checkbox" id="mAudit" checked style="width:auto;accent-color:#22d3ee"> Run the audit agent first (recommended — keeps the account human & safe)</label>
+        <label>Rule (optional)</label>
+        <input id="mRule" placeholder="e.g. only when trust score > 90, max 30 listings/day">
+        <div class="app-btn-row" style="margin-top:14px">
+          <button class="app-btn" id="mSave">${icon('refresh')} Save automation</button>
+          <button class="app-btn ghost" id="mCancel">Close</button>
+        </div>
+      </div>
+    </div>`;
+  host.onclick = () => host.remove();
+  document.body.appendChild(host);
+  $('#mCancel', host).onclick = () => host.remove();
+  const runBtn = $('#mRun', host);
+  if (runBtn) runBtn.onclick = () => {
+    host.remove();
+    if (mod.run === 'lister') { configuring = 'bulklister'; openScriptModal(); }
+    else dispatch(mod.run || mod.key, mod.label, {});
+  };
+  $('#mSave', host).onclick = () => {
+    automations.unshift({
+      id: 'auto-' + Date.now().toString(36), key: mod.key, label: mod.label,
+      marketplace: mk, account: wsTarget?.label || '', interval: $('#mInt', host).value,
+      auditAgent: $('#mAudit', host).checked, rule: $('#mRule', host).value.trim(), createdAt: Date.now(),
+    });
+    saveAutomations(); host.remove(); renderWorkspace();
+    showAlert(`Automation saved — ${mod.label} will run on schedule with the audit agent.`, 'success');
+  };
+}
+
+function runAutomation(id) {
+  const a = automations.find(x => x.id === id); if (!a) return;
+  const mod = WORKFLOW.flatMap(s => s.modules).find(m => m.key === a.key);
+  selectedTarget = (accounts.find(x => x.marketplace === a.marketplace) || {}).id || selectedTarget;
+  wsTarget = accounts.find(x => x.id === selectedTarget) || wsTarget;
+  if (mod && mod.run === 'lister') { configuring = 'bulklister'; openScriptModal(); }
+  else if (mod) dispatch(mod.run || mod.key, mod.label, {});
 }
 
 function jobRow(j) {
@@ -634,14 +717,30 @@ function renderJobsTab() {
   $('#content').querySelectorAll('[data-job]').forEach(b => b.onclick = () => { selectedJobId = b.dataset.job; activeTab = 'workspace'; renderShell(); });
 }
 
+function nodeCard(n) {
+  const st = n.status === 'online' ? 'on' : n.status === 'standby' ? 'standby' : 'off';
+  const metric = (label, val, suffix = '') => (val == null ? '' : `<div class="nm"><span>${label}</span><b>${val}${suffix}</b></div>`);
+  return `<div class="node-card">
+    <div class="node-top"><span class="dev-dot ${st}"></span><span class="node-name">${esc(n.name)}</span>${n.local ? '<span class="node-tag">this PC</span>' : ''}</div>
+    <div class="node-role">${esc(n.role || 'node')}${n.ip ? ' · ' + esc(n.ip) : ''}</div>
+    <div class="node-metrics">${metric('CPU', n.cpu, '%')}${metric('RAM', n.ram, '%')}${metric('Disk', n.disk, '%')}${metric('Ping', n.ping_ms, 'ms')}${metric('Stock', n.in_stock)}</div>
+    <div class="node-status ${st}">${esc(n.status || 'unknown')}</div>
+  </div>`;
+}
+
 function renderDevices() {
-  $('#topSub').textContent = '';
+  $('#topSub').textContent = nodes.length ? `· ${nodes.length} node${nodes.length === 1 ? '' : 's'} + this PC` : '';
+  const thisPc = { name: 'This PC', role: 'Main workstation', status: ext.installed ? 'online' : 'offline', local: true };
+  const all = [thisPc, ...nodes];
+  const showFleet = can('multiDevice');
   $('#content').innerHTML = `
-    <div style="max-width:560px"><div class="panel">
-      <div class="panel-h">Your devices</div>
-      <div class="dev-row sel"><span class="dev-dot ${ext.installed ? 'on' : 'off'}"></span><span class="dev-name">This PC</span><span class="dev-meta">${ext.installed ? 'connected' : 'extension not detected'}</span></div>
-      <p style="font-size:12px;color:#64748b;margin-top:12px">Add another device by installing the Syndrax extension on it and signing in with this account. Each device gets its own IP so accounts stay isolated.</p>
-    </div></div>`;
+    <div class="node-grid">${all.map(nodeCard).join('')}</div>
+    ${!showFleet
+      ? `<div class="wf-note" style="margin-top:16px">Business runs on this one device — safest (one account, one IP). <b>Growth</b> adds up to 3 devices; <b>Enterprise</b> the full remote fleet with screen control. <span class="link" data-up="growth">Upgrade →</span></div>`
+      : (nodes.length === 0
+        ? `<div class="wf-note" style="margin-top:16px">No remote nodes synced yet. Install the Syndrax extension on another PC and sign in — it appears here automatically. Nodes from a device running the fleet config sync their cluster here.</div>`
+        : '')}`;
+  $('#content').querySelectorAll('[data-up]').forEach(b => b.onclick = () => startCheckout(b.dataset.up).catch(e => showAlert(e.message)));
 }
 
 function renderTeam() {
