@@ -10,6 +10,7 @@ import {
   removeMarketplaceAccount, getAudit, startTrial,
   getNodes, saveNode, updateNode, getAddons, addAddon, removeAddon,
   getSales, postSales, getInventory, getInventorySummary, syncInventory, deleteInventoryItem,
+  getTrackingBalance, getTrackingOrders, postTrackingOrders, updateTrackingOrder, claimTracking,
 } from '/app-api.js';
 import {
   PLAN_LABEL, PLAN_PRICE, PLAN_TAGLINE, PLAN_LIMITS,
@@ -50,6 +51,7 @@ const ICONS = {
   invlist: `<svg viewBox="0 0 24 24" ${P}><rect x="3" y="3.5" width="18" height="17" rx="2.5"/><path d="M3 8.5h18"/><path d="M6.5 12.5h5M6.5 16h7.5"/><path d="M15.5 12l1.3 1.3L19 11"/></svg>`,
   filter: `<svg viewBox="0 0 24 24" ${P}><path d="M3 5h18l-7 8.2V20l-4 1.5v-8.3z"/></svg>`,
   trash: `<svg viewBox="0 0 24 24" ${P}><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>`,
+  truck: `<svg viewBox="0 0 24 24" ${P}><path d="M3 6h11v9H3zM14 9h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/></svg>`,
 };
 const icon = (n) => ICONS[n] || '';
 
@@ -88,6 +90,7 @@ let inventorySummary = null; // inventory counts + cross-site ASIN reference
 let homeChartView = 'sales'; // 'sales' | 'inventory' — Home chart toggle
 let invItems = []; // loaded inventory rows (filtered client-side)
 let invFilter = { marketplace: 'all', stock: 'all', q: '' }; // inventory sheet filters
+let trackingBalance = null; // { credits, configured, claims, allotment }
 let thisPcIp = ''; // public IP of this PC (from the extension)
 let currentDeviceId = 'this-device'; // the device this browser's extension runs on
 let lastConnectNode = localStorage.getItem('syndrax_last_node') || ''; // remembered node pick
@@ -114,6 +117,7 @@ const TABS = [
   { id: 'accounts', label: 'Accounts', icon: 'tag', sec: 'Mission Control' },
   { id: 'inventory', label: 'Inventory', icon: 'invlist', sec: 'Mission Control' },
   { id: 'jobs', label: 'Jobs', icon: 'briefcase', sec: 'Operations' },
+  { id: 'tracking', label: 'Tracking', icon: 'truck', sec: 'Operations' },
   { id: 'devices', label: 'Devices', icon: 'monitor', sec: 'Operations', feature: 'multiDevice' },
   { id: 'team', label: 'Team', icon: 'users', sec: 'Operations', feature: 'team' },
   { id: 'audit', label: 'Safety Audit', icon: 'shield', sec: 'Control' },
@@ -247,17 +251,21 @@ function persistNodes(resp) {
 function forwardExtSyncData(resp) {
   const inv = Array.isArray(resp.inventory) ? resp.inventory : null;
   const sales = Array.isArray(resp.sales) ? resp.sales : null;
+  const pendingTracking = Array.isArray(resp.pendingTracking) ? resp.pendingTracking : null;
   const mk = resp.syncMarketplace || 'ebay';
   const cn = resolveConnectNode();
   const jobs2 = [];
   if (inv && inv.length) jobs2.push(syncInventory({ marketplace: mk, nodeId: cn.nodeId, items: inv }).catch(() => null));
   if (sales && sales.length) jobs2.push(postSales({ marketplace: mk, sales }).catch(() => null));
+  // Orders the Amazon fulfill script captured (destination + delivery date) → cloud.
+  if (pendingTracking && pendingTracking.length) jobs2.push(postTrackingOrders({ orders: pendingTracking }).catch(() => null));
   if (!jobs2.length) return;
   Promise.all(jobs2).then(async () => {
     try { salesData = await getSales(8); } catch {}
     try { inventorySummary = await getInventorySummary(); } catch {}
     if (activeTab === 'home') renderHome();
     else if (activeTab === 'inventory') renderInventory();
+    else if (activeTab === 'tracking') renderTracking();
   });
 }
 
@@ -383,7 +391,8 @@ function renderTab() {
   if (t?.feature && !can(t.feature)) return renderUpgradeLock(t.feature);
   ({
     home: renderHome, workspace: renderWorkspace, accounts: renderAccounts, inventory: renderInventory,
-    jobs: renderJobsTab, devices: renderDevices, team: renderTeam, audit: renderAudit, plan: renderPlanTab,
+    jobs: renderJobsTab, tracking: renderTracking, devices: renderDevices, team: renderTeam,
+    audit: renderAudit, plan: renderPlanTab,
   }[activeTab] || renderHome)();
 }
 
@@ -1307,6 +1316,115 @@ function renderJobsTab() {
     ? `<div class="ws-empty" style="margin-top:40px">${icon('briefcase')}<p>No jobs yet — run a script from the Workspace.</p></div>`
     : `<div style="max-width:680px">${jobs.map(jobRow).join('')}</div>`;
   $('#content').querySelectorAll('[data-job]').forEach(b => b.onclick = () => { selectedJobId = b.dataset.job; activeTab = 'workspace'; renderShell(); });
+}
+
+// ── TRACKING (Feature M — TrackCaptain via cloud credits) ─────────────────────
+// Orders flow pending → (claim spends 1 credit) → claimed → (push to marketplace) →
+// synced. Marketplace-agnostic; eBay is wired in the extension first.
+async function renderTracking() {
+  $('#topSub').textContent = '';
+  const content = $('#content');
+  content.innerHTML = `<div class="ws-empty" style="margin-top:40px">${icon('truck')}<p>Loading tracking…</p></div>`;
+  let orders = [];
+  try { trackingBalance = await getTrackingBalance(); } catch { trackingBalance = { credits: 0, configured: false, claims: [], allotment: 0 }; }
+  try { const r = await getTrackingOrders(); orders = r.orders || []; } catch { orders = []; }
+  paintTracking(content, orders);
+}
+
+function paintTracking(content, orders) {
+  const bal = trackingBalance || { credits: 0, configured: false, claims: [], allotment: 0 };
+  const pending = orders.filter(o => o.status === 'pending');
+  const claimed = orders.filter(o => o.status === 'claimed');
+  const synced = orders.filter(o => o.status === 'synced');
+  const extOk = ext.installed;
+
+  const orderRow = (o) => {
+    const m = marketplace(o.marketplace);
+    const dest = [o.buyerCity, o.buyerState, o.buyerZip].filter(Boolean).join(', ') || '—';
+    const dd = o.deliveryDate ? new Date(o.deliveryDate).toLocaleDateString() : '—';
+    let action = '';
+    if (o.status === 'pending') action = `<button class="app-btn sm" data-claim="${esc(o.id)}" ${bal.configured && bal.credits > 0 ? '' : 'disabled'}>${icon('truck')} Claim (1)</button>`;
+    else if (o.status === 'claimed') action = `<button class="app-btn sm" data-push="${esc(o.id)}" ${extOk ? '' : 'disabled title="Install extension"'}>Push to ${esc(m?.name || o.marketplace)}</button>`;
+    else if (o.status === 'synced') action = `<span class="jb complete" style="font-size:9px">SYNCED</span>`;
+    return `<tr>
+      <td>${esc(m?.name || o.marketplace)}</td>
+      <td style="font-family:ui-monospace,monospace;font-size:11px">${esc(o.orderId)}</td>
+      <td>${esc(dest)}</td>
+      <td>${dd}</td>
+      <td>${o.trackingNumber ? `<span style="font-family:ui-monospace,monospace;font-size:11px;color:#6ee7b7">${esc(o.trackingNumber)}</span>` : '<span style="color:#64748b">—</span>'}</td>
+      <td style="text-align:right">${action}</td>
+    </tr>`;
+  };
+
+  const ordersTable = (rows, label) => rows.length ? `
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-h">${label} (${rows.length})</div>
+      <div style="overflow-x:auto"><table class="inv-table">
+        <thead><tr><th>Marketplace</th><th>Order</th><th>Destination</th><th>Delivery</th><th>Tracking #</th><th></th></tr></thead>
+        <tbody>${rows.map(orderRow).join('')}</tbody>
+      </table></div>
+    </div>` : '';
+
+  const claimsList = (bal.claims || []).slice(0, 10).map(c => `
+    <div class="audit-finding"><div class="f-title" style="font-family:ui-monospace,monospace;font-size:12px;color:#6ee7b7">${esc(c.trackingNumber)}</div>
+    <div class="f-detail">${esc(marketplace(c.marketplace)?.name || c.marketplace || '—')} · ${esc(c.carrier || 'carrier')} · order ${esc(c.orderId || '—')} · ${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : ''}</div></div>`).join('');
+
+  content.innerHTML = `
+    <div class="home-grid" style="margin-bottom:16px">
+      ${stat('Credits', String(bal.credits), 'truck', bal.credits ? 'up' : 'down', bal.configured ? `${bal.allotment}/mo on ${PLAN_LABEL[plan]}` : 'API not configured')}
+      ${stat('Pending', String(pending.length), 'truck', '', 'awaiting tracking')}
+      ${stat('Claimed', String(claimed.length), 'truck', '', 'ready to push')}
+      ${stat('Synced', String(synced.length), 'truck', synced.length ? 'up' : '', 'pushed to buyer')}
+    </div>
+    ${!bal.configured ? `<div class="wf-note" style="margin-bottom:16px">Tracking isn't live yet — add your <b>TrackCaptain</b> API key to the cloud and credits start flowing. Until then, orders collect here as <b>pending</b>.</div>` : ''}
+    ${bal.configured && bal.credits === 0 ? `<div class="wf-note" style="margin-bottom:16px;color:#fca5a5;border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.06)">Out of tracking credits. Your ${PLAN_LABEL[plan]} plan grants ${bal.allotment}/month${can('team') ? '' : ' — upgrade for more'}.</div>` : ''}
+    ${ordersTable(pending, 'Pending orders')}
+    ${ordersTable(claimed, 'Claimed — ready to push')}
+    ${ordersTable(synced, 'Synced')}
+    ${!orders.length ? `<div class="ws-empty" style="margin-top:10px">${icon('truck')}<p>No orders yet. When the Amazon fulfill script finishes an order, it captures the delivery date + destination and lands here — then one click claims a tracking number and pushes it to the buyer's marketplace.</p></div>` : ''}
+    ${claimsList ? `<div class="panel" style="margin-top:6px"><div class="panel-h">Recent claims</div>${claimsList}</div>` : ''}`;
+
+  content.querySelectorAll('[data-claim]').forEach(b => b.onclick = () => claimForOrder(orders.find(o => String(o.id) === b.dataset.claim), content));
+  content.querySelectorAll('[data-push]').forEach(b => b.onclick = () => pushTrackingToMarketplace(orders.find(o => String(o.id) === b.dataset.push), content));
+}
+
+async function claimForOrder(o, content) {
+  if (!o) return;
+  try {
+    showToast('Claiming a tracking number…', 'info');
+    const r = await claimTracking({
+      orderId: o.orderId, marketplace: o.marketplace,
+      city: o.buyerCity, state: o.buyerState, zip: o.buyerZip, country: o.buyerCountry,
+      deliveryDate: o.deliveryDate,
+    });
+    trackingBalance = { ...(trackingBalance || {}), credits: r.credits };
+    showToast(`Claimed ${r.trackingNumber} (${r.carrier || 'carrier'}). ${trackingBalance.credits} credits left.`, 'success');
+    renderTracking();
+  } catch (e) {
+    showAlert(e.message || 'Could not claim a tracking number.');
+  }
+}
+
+// Hand a claimed tracking number to the extension to drive the marketplace's
+// "add tracking" flow (eBay mesh/ord first). Marks the order synced on success.
+function pushTrackingToMarketplace(o, content) {
+  if (!o || !o.trackingNumber) return;
+  const extId = ext.id || EXT_IDS[0];
+  if (!(window.chrome && chrome.runtime && chrome.runtime.sendMessage && ext.installed)) {
+    showAlert('Install the Syndrax extension to push tracking to the marketplace.'); return;
+  }
+  showToast(`Pushing tracking to ${marketplace(o.marketplace)?.name || o.marketplace}…`, 'info');
+  chrome.runtime.sendMessage(extId, {
+    type: 'SYNDRAX_PUSH_TRACKING', marketplace: o.marketplace, orderId: o.orderId,
+    trackingNumber: o.trackingNumber, carrier: o.carrier,
+  }, async (resp) => {
+    if (chrome.runtime.lastError || !resp || !resp.ok) {
+      showAlert((resp && resp.error) || 'Extension could not push the tracking number.'); return;
+    }
+    try { await updateTrackingOrder(o.id, { status: 'synced' }); } catch {}
+    showToast('Tracking pushed to the buyer’s order ✓', 'success');
+    renderTracking();
+  });
 }
 
 // ── Node cluster (ported mini-PC chassis from the extension's NodeClusterView) ──

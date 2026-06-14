@@ -230,8 +230,32 @@ export async function deleteInventoryItem(id) {
   catch (e) { if (isOffline(e)) return { ok: true }; throw e; }
 }
 
+// ── Tracking (Feature M — TrackCaptain via the cloud, metered by credits) ─────
+export async function getTrackingBalance() {
+  try { return await api('/api/tracking/balance'); }
+  catch (e) { if (isOffline(e)) return { credits: 0, configured: false, claims: [], allotment: 0 }; throw e; }
+}
+export async function getTrackingOrders(params = {}) {
+  const q = new URLSearchParams(params).toString();
+  try { return await api('/api/tracking/orders' + (q ? '?' + q : '')); }
+  catch (e) { if (isOffline(e)) return { orders: [] }; throw e; }
+}
+export async function postTrackingOrders(payload) {
+  try { return await api('/api/tracking/orders', { method: 'POST', body: JSON.stringify(payload) }); }
+  catch (e) { if (isOffline(e)) return { upserted: 0 }; throw e; }
+}
+export async function updateTrackingOrder(id, patch) {
+  try { return await api('/api/tracking/orders/' + encodeURIComponent(id), { method: 'PATCH', body: JSON.stringify(patch) }); }
+  catch (e) { if (isOffline(e)) return null; throw e; }
+}
+export async function claimTracking(payload) {
+  // No offline fallback — claiming spends a real credit and must hit the server.
+  return await api('/api/tracking/claim', { method: 'POST', body: JSON.stringify(payload) });
+}
+
 window.SyndraxApp = {
   getProfile, saveProfile, getMarketplaces, addMarketplaceAccount, removeMarketplaceAccount,
   getAudit, startTrial, getNodes, saveNode, updateNode, getAddons, addAddon, removeAddon,
   getSales, postSales, getInventory, getInventorySummary, syncInventory, deleteInventoryItem,
+  getTrackingBalance, getTrackingOrders, postTrackingOrders, updateTrackingOrder, claimTracking,
 };
