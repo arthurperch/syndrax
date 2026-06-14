@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex">
   <link rel="icon" type="image/png" href="assets/images/synball.png">
   <link rel="stylesheet" href="style.css?v=26">
-  <link rel="stylesheet" href="app.css?v=1">
+  <link rel="stylesheet" href="app.css?v=2">
   <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.remove("dark");}</script>
 </head>
 <body class="app-shell">
@@ -19,48 +19,26 @@
   <div class="wiz-card" id="wizCard"><!-- step renders here --></div>
 </div>
 
-<!-- Extension handshake (sets window.SyndraxExt) -->
 <script src="/extension-check.js"></script>
 
 <script type="module">
-  import { getSession, googleRedirect } from '/auth-cognito.js';
-  import { startCheckout, getStatus } from '/billing.js';
-  import { getProfile, saveProfile, addMarketplaceAccount, getMarketplaces } from '/app-api.js';
-  import {
-    PLAN_LABEL, PLAN_PRICE, PLAN_TAGLINE, PLAN_LIMITS,
-    MARKETPLACES, marketplace, eligibility, nextPlan,
-  } from '/plans.js';
+  import { getSession } from '/auth-cognito.js';
+  import { saveProfile, addMarketplaceAccount, getMarketplaces, startTrial } from '/app-api.js';
+  import { MARKETPLACES, marketplace, marketplaceLogo } from '/plans.js';
 
   const session = getSession();
   if (!session) location.replace('/login');
 
-  // ── wizard state ────────────────────────────────────────────────────────────
-  const TOTAL = 5;
+  const TOTAL = 2;
   let step = 0;
-  const state = {
-    role: '', goals: [], volume: '',
-    business_name: '', ein: '', address: '',
-    plan: 'business',
-    marketplaces: [],          // selected ids
-    onboarding_complete: false,
-  };
+  const state = { marketplaces: [] };
 
-  // Hydrate from any saved progress + current billing plan.
+  // Resume any earlier selection.
   (async () => {
     try {
-      const p = await getProfile();
-      Object.assign(state, {
-        role: p.role || '', goals: p.goals || [], volume: p.volume || '',
-        business_name: p.business_name || '', ein: p.ein || '', address: p.address || '',
-        plan: p.intended_plan || state.plan,
-      });
       const mk = await getMarketplaces();
       if (mk.accounts?.length) state.marketplaces = [...new Set(mk.accounts.map(a => a.marketplace))];
-    } catch { /* offline → defaults */ }
-    try {
-      const s = await getStatus();
-      if (s.plan && s.plan !== 'none') state.plan = s.plan;
-    } catch { /* ignore */ }
+    } catch { /* offline */ }
     render();
   })();
 
@@ -76,12 +54,82 @@
     }
   }
 
-  function planLimit() { return PLAN_LIMITS[state.plan] || PLAN_LIMITS.business; }
+  function render() { renderSteps(); [stepMarkets, stepGo][step](); }
 
-  // ── step renderers ────────────────────────────────────────────────────────
-  function render() {
-    renderSteps();
-    [stepWho, stepBusiness, stepPlan, stepMarkets, stepConnect][step]();
+  // Brand tile markup (shared look with the dashboard).
+  function tile(m, selected) {
+    const logo = marketplaceLogo(m.id);
+    const mark = logo || `<span style="font:800 18px var(--nav-font);color:#fff">${m.name[0]}</span>`;
+    const badge = m.access === 'gated' ? ['gated','Gated'] : m.status === 'live' ? ['live','Live'] : m.status === 'beta' ? ['beta','Beta'] : ['soon','Soon'];
+    return `
+      <button class="mk-tile big${selected ? ' selected' : ''}" data-id="${m.id}">
+        <span class="mk-badge ${badge[0]}">${badge[1]}</span>
+        <span class="mk-chip" style="background:linear-gradient(135deg, ${m.color}, ${m.color}cc)">${mark}</span>
+        <span class="mk-name">${m.name}</span>
+        ${selected ? '<span class="mk-check">✓</span>' : ''}
+      </button>`;
+  }
+
+  // STEP 1 — where do you sell (visual, multi-select, no questions)
+  function stepMarkets() {
+    const count = state.marketplaces.length;
+    card.innerHTML = `
+      <div class="wiz-step-num">Step 1 of ${TOTAL}</div>
+      <div class="wiz-h">Where do you sell?</div>
+      <p class="wiz-p">Tap the marketplaces you sell on — we’ll connect them on this device. Add or remove any anytime.</p>
+      <div class="mk-grid big" id="mkGrid">${MARKETPLACES.map(m => tile(m, state.marketplaces.includes(m.id))).join('')}</div>
+    `;
+    card.querySelectorAll('.mk-tile').forEach(el => {
+      el.onclick = () => {
+        const id = el.dataset.id;
+        state.marketplaces = state.marketplaces.includes(id)
+          ? state.marketplaces.filter(x => x !== id)
+          : [...state.marketplaces, id];
+        stepMarkets(); // re-render with updated selection + button label
+      };
+    });
+    nav({
+      back: false,
+      next: count ? `Continue with ${count} marketplace${count === 1 ? '' : 's'}` : 'Continue',
+      onNext: async () => {
+        try {
+          for (const id of state.marketplaces) {
+            await addMarketplaceAccount({ marketplace: id, label: marketplace(id)?.name || id, deviceId: 'this-device' });
+          }
+        } catch { /* offline mirror */ }
+        step++; render();
+      },
+      skip: { label: 'I’ll pick later', onClick: () => { step++; render(); } },
+    });
+  }
+
+  // STEP 2 — you're in: connect device + start free trial (NO card)
+  function stepGo() {
+    const ext = window.SyndraxExt || { installed: false };
+    const connected = !!ext.installed;
+    card.innerHTML = `
+      <div class="wiz-step-num">Step 2 of ${TOTAL}</div>
+      <div class="wiz-h">You’re in — start free 🚀</div>
+      <p class="wiz-p">No card required. Explore the full dashboard free for 7 days; add your details and upgrade whenever you’re ready.</p>
+      <div class="device-status ${connected ? 'connected' : 'missing'}">
+        <div class="ds-icon">${connected ? '✓' : '🧩'}</div>
+        <div>
+          <div class="ds-title">${connected ? 'This device is connected' : 'Install the Syndrax extension'}</div>
+          <div class="ds-sub">${connected ? 'Ready to run automations on this device — your accounts stay on their trusted IP.' : 'Optional now — the extension runs automations safely on this device. You can add it from the dashboard.'}</div>
+        </div>
+      </div>
+      ${connected ? '' : '<div class="app-btn-row"><a class="app-btn ghost" href="https://chromewebstore.google.com/detail/mgapfpdkkihbeehfkgoajhealmgpnglo" target="_blank" rel="noopener">Add to Chrome</a></div>'}
+    `;
+    nav({
+      back: true,
+      next: 'Start free trial →',
+      onNext: async (btn) => {
+        if (btn) { btn.disabled = true; btn.textContent = 'Setting up…'; }
+        try { await startTrial(); } catch { /* offline mirror */ }
+        try { await saveProfile({ onboarding_complete: true, marketplaces: state.marketplaces }); } catch {}
+        location.href = '/app';
+      },
+    });
   }
 
   function nav({ back = true, next = 'Continue', onNext, skip } = {}) {
@@ -95,282 +143,19 @@
       left.appendChild(b);
     }
     const right = document.createElement('div');
-    right.style.display = 'flex'; right.style.gap = '12px'; right.style.alignItems = 'center';
+    right.style.display = 'flex'; right.style.gap = '14px'; right.style.alignItems = 'center';
     if (skip) {
       const s = document.createElement('button');
-      s.className = 'wiz-skip'; s.textContent = skip.label;
-      s.onclick = skip.onClick;
+      s.className = 'wiz-skip'; s.textContent = skip.label; s.onclick = skip.onClick;
       right.appendChild(s);
     }
     const n = document.createElement('button');
-    n.className = 'app-btn'; n.textContent = next;
-    n.onclick = onNext;
+    n.className = 'app-btn'; n.textContent = next; n.setAttribute('data-next', '1');
+    n.onclick = () => onNext(n);
     right.appendChild(n);
     wrap.appendChild(left); wrap.appendChild(right);
     card.appendChild(wrap);
   }
-
-  async function persistAndNext(patch) {
-    Object.assign(state, patch);
-    try { await saveProfile(patch); } catch { /* offline mirror handles it */ }
-    step++; render();
-  }
-
-  // STEP 1 — who you are / what you want
-  function stepWho() {
-    const roles = [
-      { id: 'reseller', title: 'Reseller / arbitrage', desc: 'Source and flip across marketplaces.' },
-      { id: 'brand', title: 'Brand / wholesaler', desc: 'Sell your own catalog at scale.' },
-      { id: 'agency', title: 'Agency / manager', desc: 'Run stores for multiple clients.' },
-    ];
-    const goals = [
-      { id: 'bulk', label: 'Bulk listing' },
-      { id: 'pricing', label: 'Automated repricing' },
-      { id: 'inventory', label: 'Inventory sync' },
-      { id: 'expand', label: 'Expand to more marketplaces' },
-      { id: 'safety', label: 'Avoid account restrictions' },
-    ];
-    card.innerHTML = `
-      <div class="wiz-step-num">Step 1 of ${TOTAL}</div>
-      <div class="wiz-h">Welcome to Syndrax 👋</div>
-      <p class="wiz-p">Tell us a little about you so we can set up the right dashboard. This takes about a minute.</p>
-      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">What best describes you?</div>
-      <div class="wiz-choices" id="roleChoices"></div>
-      <div style="font-size:13px;font-weight:700;color:var(--text);margin:20px 0 8px">What do you want to automate? <span style="font-weight:400;color:var(--text-muted)">(pick any)</span></div>
-      <div class="wiz-choices" id="goalChoices" style="grid-template-columns:repeat(2,1fr)"></div>
-    `;
-    const rc = card.querySelector('#roleChoices');
-    roles.forEach(r => {
-      const el = document.createElement('button');
-      el.className = 'wiz-choice' + (state.role === r.id ? ' selected' : '');
-      el.innerHTML = `<span class="c-check">${state.role === r.id ? '✓' : ''}</span><span><span class="c-title">${r.title}</span><span class="c-desc">${r.desc}</span></span>`;
-      el.onclick = () => { state.role = r.id; stepWho(); };
-      rc.appendChild(el);
-    });
-    const gc = card.querySelector('#goalChoices');
-    goals.forEach(g => {
-      const on = state.goals.includes(g.id);
-      const el = document.createElement('button');
-      el.className = 'wiz-choice' + (on ? ' selected' : '');
-      el.innerHTML = `<span class="c-check">${on ? '✓' : ''}</span><span class="c-title">${g.label}</span>`;
-      el.onclick = () => {
-        state.goals = on ? state.goals.filter(x => x !== g.id) : [...state.goals, g.id];
-        stepWho();
-      };
-      gc.appendChild(el);
-    });
-    nav({
-      onNext: () => persistAndNext({ role: state.role, goals: state.goals }),
-      skip: { label: 'Skip', onClick: () => { step++; render(); } },
-    });
-  }
-
-  // STEP 2 — business identity (LLC / EIN)
-  function stepBusiness() {
-    card.innerHTML = `
-      <div class="wiz-step-num">Step 2 of ${TOTAL}</div>
-      <div class="wiz-h">Your business identity</div>
-      <p class="wiz-p">Optional now, but required to apply for gated marketplaces like <b>Walmart</b>. Your EIN lets us verify your business and help you get approved. Stored securely and never shared.</p>
-      <div class="auth-field" style="margin-bottom:14px">
-        <label for="bizName">Legal business name (LLC)</label>
-        <input id="bizName" placeholder="Acme Resale LLC" value="${escapeHtml(state.business_name)}">
-      </div>
-      <div class="field-row" style="margin-bottom:14px">
-        <div class="auth-field">
-          <label for="ein">EIN</label>
-          <input id="ein" placeholder="12-3456789" value="${escapeHtml(state.ein)}">
-        </div>
-        <div class="auth-field">
-          <label for="addr">Business address</label>
-          <input id="addr" placeholder="City, State" value="${escapeHtml(state.address)}">
-        </div>
-      </div>
-      <div class="safety-note">
-        <span>🛡️</span>
-        <span><b>Why we ask:</b> Walmart and other gated marketplaces require a registered business with proof of sales. Add your EIN and grow your eBay sales — Syndrax then guides you through the application and approval.</span>
-      </div>
-    `;
-    nav({
-      next: 'Continue',
-      onNext: () => persistAndNext({
-        business_name: card.querySelector('#bizName').value.trim(),
-        ein: card.querySelector('#ein').value.trim(),
-        address: card.querySelector('#addr').value.trim(),
-      }),
-      skip: { label: 'Skip for now', onClick: () => { step++; render(); } },
-    });
-  }
-
-  // STEP 3 — plan
-  function stepPlan() {
-    const tiles = ['business', 'growth', 'enterprise'].map(p => {
-      const rec = p === 'growth';
-      const sel = state.plan === p;
-      const l = PLAN_LIMITS[p];
-      const accts = l.maxAccountsPerMarketplace === null ? 'Unlimited' : l.maxAccountsPerMarketplace;
-      const devs = l.maxDevices === null ? 'Unlimited' : l.maxDevices;
-      return `
-        <div class="plan-tile${sel ? ' selected' : ''}" data-plan="${p}">
-          ${rec ? '<span class="pt-rec">Most popular</span>' : ''}
-          <div class="pt-top"><span class="pt-name">${PLAN_LABEL[p]}</span><span class="pt-price">${PLAN_PRICE[p]}</span></div>
-          <div class="pt-tag">${PLAN_TAGLINE[p]}</div>
-          <div class="pt-tag" style="margin-top:8px;color:var(--text-muted)">${devs} device${devs===1?'':'s'} · ${accts} account${accts===1?'':'s'} per marketplace${l.remote?' · remote dispatch':''}</div>
-        </div>`;
-    }).join('');
-    card.innerHTML = `
-      <div class="wiz-step-num">Step 3 of ${TOTAL}</div>
-      <div class="wiz-h">Choose how you'll scale</div>
-      <p class="wiz-p">Start free — explore the dashboard on a 7-day trial. You can change plans anytime.</p>
-      <div class="plan-tiles">${tiles}</div>
-      <div class="safety-note">
-        <span>🛡️</span>
-        <span><b>Why limits exist:</b> running multiple marketplace accounts from one device/IP is the #1 cause of linked-account bans. Each tier gives you more isolated devices/IPs so you can scale <b>without</b> getting restricted — that's the Syndrax edge.</span>
-      </div>
-    `;
-    card.querySelectorAll('.plan-tile').forEach(t => {
-      t.onclick = () => { state.plan = t.dataset.plan; stepPlan(); };
-    });
-    nav({
-      next: state.plan === 'business' ? 'Start 7-day free trial' : `Continue with ${PLAN_LABEL[state.plan]}`,
-      onNext: async () => {
-        await saveProfile({ intended_plan: state.plan });
-        // Trial / Business → kick off Stripe (7-day free trial). Others → checkout too.
-        try {
-          // Offer checkout, but don't block onboarding if billing isn't ready.
-          await startCheckout(state.plan);
-          return; // redirects to Stripe; returns to /app after success
-        } catch (e) {
-          // Billing not configured / cancelled → continue exploring on trial.
-          state.plan = state.plan; step++; render();
-        }
-      },
-      skip: { label: 'Explore first', onClick: () => { step++; render(); } },
-    });
-  }
-
-  // STEP 4 — marketplaces
-  function stepMarkets() {
-    const limit = planLimit().maxAccountsPerMarketplace; // per-marketplace; null=∞
-    const multi = state.plan === 'growth' || state.plan === 'enterprise';
-    card.innerHTML = `
-      <div class="wiz-step-num">Step 4 of ${TOTAL}</div>
-      <div class="wiz-h">Connect your marketplaces</div>
-      <p class="wiz-p">${multi
-        ? 'Pick the marketplaces you sell on — stack as many as you like.'
-        : 'On ' + PLAN_LABEL[state.plan] + ', start with <b>one</b> primary marketplace on this device. Adding more is where restrictions creep in — we’ll show you the safe way to scale.'}</p>
-      <div class="mk-grid" id="mkGrid"></div>
-      <div id="mkWarn"></div>
-    `;
-    const grid = card.querySelector('#mkGrid');
-    MARKETPLACES.forEach(m => {
-      const on = state.marketplaces.includes(m.id);
-      const el = document.createElement('button');
-      el.className = 'mk-tile' + (on ? ' selected' : '');
-      const badge = m.access === 'gated' ? 'gated' : m.status;
-      const badgeLabel = m.access === 'gated' ? 'Gated' : m.status === 'live' ? 'Live' : m.status === 'beta' ? 'Beta' : 'Soon';
-      el.innerHTML = `
-        <span class="mk-badge ${badge}">${badgeLabel}</span>
-        <span class="mk-dot" style="background:${m.color}">${m.name[0]}</span>
-        <div class="mk-name">${m.name}</div>
-        <div class="mk-status">${on ? 'Selected ✓' : (m.access === 'source' ? 'Sourcing' : 'Tap to select')}</div>`;
-      el.onclick = () => toggleMarket(m.id, multi);
-      grid.appendChild(el);
-    });
-    nav({
-      next: 'Continue',
-      onNext: async () => {
-        // Record each selected marketplace as a connection intent.
-        try {
-          for (const id of state.marketplaces) {
-            await addMarketplaceAccount({ marketplace: id, label: marketplace(id)?.name || id, deviceId: 'this-device' });
-          }
-        } catch { /* offline mirror handles it */ }
-        await saveProfile({ marketplaces: state.marketplaces });
-        step++; render();
-      },
-      skip: { label: 'Skip', onClick: () => { step++; render(); } },
-    });
-  }
-
-  function toggleMarket(id, multi) {
-    const on = state.marketplaces.includes(id);
-    const mk = marketplace(id);
-    const warn = document.getElementById('mkWarn');
-    warn.innerHTML = '';
-    if (on) {
-      state.marketplaces = state.marketplaces.filter(x => x !== id);
-    } else if (!multi && state.marketplaces.length >= 1) {
-      // Business/trial: trying to add a 2nd marketplace → risk warning + upgrade nudge.
-      const np = nextPlan(state.plan);
-      warn.innerHTML = `
-        <div class="audit warn" style="margin-top:16px">
-          <div class="audit-head">⚠️ Adding a second marketplace raises restriction risk</div>
-          <div class="audit-finding">
-            <div class="f-detail">On ${PLAN_LABEL[state.plan]} you run one account on this device/IP — the safest setup. Stacking another marketplace account on the same IP is exactly what gets sellers linked and restricted. <b>${PLAN_LABEL[np]}</b> isolates each account on its own device/IP so you can scale safely.</div>
-            <div class="app-btn-row"><button class="app-btn sm" id="upWarn">Upgrade to ${PLAN_LABEL[np]}</button></div>
-          </div>
-        </div>`;
-      warn.querySelector('#upWarn').onclick = () => { state.plan = np; stepPlan(); };
-      return;
-    } else if (mk?.access === 'gated') {
-      // Gated marketplace → show eligibility guidance instead of instant connect.
-      const elig = eligibility(id, { ein: state.ein });
-      state.marketplaces.push(id);
-      warn.innerHTML = `<div class="eligibility ${elig.status === 'eligible' ? 'eligible' : ''}" style="margin-top:16px"><b>${mk.name}:</b> ${elig.message}</div>`;
-      stepMarketsRefreshTiles();
-      return;
-    } else {
-      state.marketplaces.push(id);
-    }
-    stepMarketsRefreshTiles();
-  }
-
-  function stepMarketsRefreshTiles() {
-    const grid = document.getElementById('mkGrid');
-    if (!grid) return;
-    [...grid.children].forEach((el, i) => {
-      const m = MARKETPLACES[i];
-      const on = state.marketplaces.includes(m.id);
-      el.className = 'mk-tile' + (on ? ' selected' : '');
-      el.querySelector('.mk-status').textContent = on ? 'Selected ✓' : (m.access === 'source' ? 'Sourcing' : 'Tap to select');
-    });
-  }
-
-  // STEP 5 — connect this device + finish
-  function stepConnect() {
-    const ext = window.SyndraxExt || { installed: false };
-    const connected = !!ext.installed;
-    card.innerHTML = `
-      <div class="wiz-step-num">Step 5 of ${TOTAL}</div>
-      <div class="wiz-h">Connect this device</div>
-      <p class="wiz-p">Syndrax runs automations on your own device, using your existing marketplace logins — so your account stays on its trusted IP. This is your ${state.plan === 'business' || state.plan === 'trial' ? 'one Business device' : 'first device'}.</p>
-      <div class="device-status ${connected ? 'connected' : 'missing'}" id="devStatus">
-        <div class="ds-icon">${connected ? '✓' : '🧩'}</div>
-        <div>
-          <div class="ds-title">${connected ? 'This device is connected' : 'Install the Syndrax extension'}</div>
-          <div class="ds-sub">${connected ? 'Version ' + (ext.version || '') + ' detected — you’re ready to run automations here.' : 'The Chrome extension is how Syndrax drives your marketplace sessions safely on this device.'}</div>
-        </div>
-      </div>
-      ${connected ? '' : '<div class="app-btn-row"><a class="app-btn" href="https://chromewebstore.google.com/detail/mgapfpdkkihbeehfkgoajhealmgpnglo" target="_blank" rel="noopener">Add to Chrome</a><button class="app-btn ghost" id="recheck">I installed it — recheck</button></div>'}
-    `;
-    if (!connected) {
-      const rc = card.querySelector('#recheck');
-      if (rc) rc.onclick = async () => {
-        if (window.SyndraxExt?.detect) { await window.SyndraxExt.detect(); }
-        location.reload();
-      };
-    }
-    nav({
-      next: 'Finish — go to dashboard',
-      onNext: async () => {
-        await saveProfile({ onboarding_complete: true, intended_plan: state.plan });
-        location.href = '/app';
-      },
-      skip: connected ? null : { label: 'Do this later', onClick: async () => { await saveProfile({ onboarding_complete: true }); location.href = '/app'; } },
-    });
-  }
-
-  function escapeHtml(s) { return String(s || '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
 </script>
 </body>
 </html>

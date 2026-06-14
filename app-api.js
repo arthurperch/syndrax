@@ -98,6 +98,21 @@ export async function removeMarketplaceAccount(id) {
   }
 }
 
+// ── No-card trial ─────────────────────────────────────────────────────────────
+export async function startTrial() {
+  try {
+    return await api('/api/billing/start-trial', { method: 'POST' });
+  } catch (e) {
+    if (isOffline(e)) {
+      // Offline mirror so onboarding still completes; dashboard shows a local trial.
+      const ends = new Date(Date.now() + 7 * 86400000).toISOString();
+      lsSet('syndrax_trial_v1', { plan: 'trial', status: 'trialing', trial_ends_at: ends });
+      return { plan: 'trial', status: 'trialing', trial_ends_at: ends };
+    }
+    throw e;
+  }
+}
+
 // ── Audit (server is authoritative; local is the fallback) ────────────────────
 export async function getAudit() {
   try {
@@ -108,4 +123,4 @@ export async function getAudit() {
   }
 }
 
-window.SyndraxApp = { getProfile, saveProfile, getMarketplaces, addMarketplaceAccount, removeMarketplaceAccount, getAudit };
+window.SyndraxApp = { getProfile, saveProfile, getMarketplaces, addMarketplaceAccount, removeMarketplaceAccount, getAudit, startTrial };

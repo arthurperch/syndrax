@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex">
   <link rel="icon" type="image/png" href="assets/images/synball.png">
   <link rel="stylesheet" href="style.css?v=26">
-  <link rel="stylesheet" href="app.css?v=1">
+  <link rel="stylesheet" href="app.css?v=2">
   <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.remove("dark");}</script>
 </head>
 <body class="app-shell">
@@ -27,6 +27,9 @@
   <p class="app-sub" id="subline">Here’s everything running under your account.</p>
 
   <div class="auth-alert" id="appAlert" style="margin-bottom:18px"></div>
+
+  <!-- Optional account-completion recommendation (filled by dashboard.js) -->
+  <div id="recSlot" style="margin-bottom:18px"></div>
 
   <div class="app-grid">
     <!-- Plan -->

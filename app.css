@@ -121,6 +121,44 @@ html.dark .app-topbar .app-brand img { mix-blend-mode: screen; }
 .mk-badge.beta { background: rgba(168,85,247,.14); color: #d8b4fe; border: 1px solid rgba(168,85,247,.3); }
 .mk-count { font-size: 11px; color: var(--cyan); margin-top: 4px; font-weight: 600; }
 
+/* Big visual marketplace picker (onboarding + dashboard) */
+.mk-grid.big { grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 14px; }
+.mk-tile.big {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 20px 14px 16px; text-align: center; min-height: 132px; justify-content: center;
+}
+.mk-tile.big .mk-chip {
+  width: 56px; height: 56px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,.35); overflow: hidden;
+}
+.mk-tile.big .mk-chip svg { width: 30px; height: 30px; }
+.mk-tile.big .mk-name { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; }
+.mk-tile.big.selected { border-color: rgba(0,207,255,.7); background: rgba(0,207,255,.07); box-shadow: 0 8px 28px rgba(0,207,255,.14); }
+.mk-check {
+  position: absolute; top: 9px; left: 10px;
+  width: 20px; height: 20px; border-radius: 999px;
+  background: var(--cyan); color: #02121d; font-weight: 800; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Account-completion recommendation card */
+.rec-card {
+  display: flex; gap: 14px; align-items: flex-start;
+  border: 1px solid rgba(0,207,255,.22); background: rgba(0,207,255,.04);
+  border-radius: 14px; padding: 16px 18px;
+}
+.rec-card .rec-icon {
+  flex-shrink: 0; width: 38px; height: 38px; border-radius: 11px;
+  background: rgba(0,207,255,.12); color: #7fe3ff;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.rec-card .rec-title { font-weight: 700; color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.rec-pill { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 2px 8px; border-radius: 999px; background: rgba(0,207,255,.14); color: #7fe3ff; }
+.rec-card .rec-body { color: var(--text-gray); font-size: 12.5px; line-height: 1.55; margin-top: 4px; }
+.rec-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+@media (max-width: 560px) { .rec-fields { grid-template-columns: 1fr; } }
+
 /* Risk audit */
 .audit { border-radius: 13px; padding: 16px; border: 1px solid var(--border); }
 .audit.ok   { background: rgba(16,185,129,.07); border-color: rgba(16,185,129,.28); }

@@ -3,10 +3,10 @@
 // shared risk audit (server authoritative, local fallback via plans.js).
 import { getSession, signOut } from '/auth-cognito.js';
 import { getStatus, openPortal, startCheckout } from '/billing.js';
-import { getProfile, getMarketplaces, getAudit } from '/app-api.js';
+import { getProfile, saveProfile, getMarketplaces, getAudit, startTrial } from '/app-api.js';
 import {
   PLAN_LABEL, PLAN_PRICE, PLAN_TAGLINE, PLAN_LIMITS,
-  MARKETPLACES, marketplace, eligibility, runAudit, nextPlan, isUnlimited,
+  MARKETPLACES, marketplace, marketplaceLogo, eligibility, runAudit, nextPlan, isUnlimited,
 } from '/plans.js';
 
 const session = getSession();
@@ -49,6 +49,9 @@ async function load() {
   document.getElementById('topPlan').className = 'app-plan-chip plan-' + plan;
   document.getElementById('subline').textContent = PLAN_TAGLINE[plan] || 'Here’s everything running under your account.';
 
+  // Account-completion recommendation (optional, not required)
+  renderRecommendation();
+
   // Marketplaces
   try { const mk = await getMarketplaces(); accounts = mk.accounts || []; } catch { accounts = []; }
   renderMarketplaces();
@@ -89,16 +92,63 @@ function renderPlan(s) {
 
   const btns = document.getElementById('planBtns');
   btns.innerHTML = '';
-  const has = s.plan && s.plan !== 'none';
   const np = nextPlan(s.plan);
-  if (!has) {
-    const b = mkBtn('Start 7-day free trial', () => startCheckout('business').catch(e => showAlert(e.message)));
-    btns.appendChild(b);
+  if (s.plan === 'none') {
+    // No plan yet → start the no-card trial right here.
+    btns.appendChild(mkBtn('Start 7-day free trial', async (b) => {
+      b.disabled = true; b.textContent = 'Starting…';
+      try { await startTrial(); location.reload(); } catch (e) { showAlert(e.message); b.disabled = false; }
+    }));
+  } else if (s.plan === 'trial') {
+    // On a no-card trial → upgrade paths (no Stripe customer yet, so no portal).
+    if (np) btns.appendChild(mkBtn(`Upgrade to ${PLAN_LABEL[np]}`, () => startCheckout(np).catch(e => showAlert(e.message))));
+    btns.appendChild(mkBtn('Compare plans', () => { location.href = '/pricing'; }, 'ghost'));
   } else {
+    // Paid plan → manage billing + upgrade to next tier.
     btns.appendChild(mkBtn('Manage billing', () => openPortal().catch(e => showAlert(e.message)), 'ghost'));
+    if (np) btns.appendChild(mkBtn(`Upgrade to ${PLAN_LABEL[np]}`, () => startCheckout(np).catch(e => showAlert(e.message))));
   }
-  if (np) btns.appendChild(mkBtn(`Upgrade to ${PLAN_LABEL[np]}`, () => startCheckout(np).catch(e => showAlert(e.message))));
 }
+
+// Optional account-completion nudge. Not required — recommended. Explains the
+// payoff (gated marketplaces like Walmart + a sharper safety audit). Inline-saves.
+function renderRecommendation() {
+  const slot = document.getElementById('recSlot');
+  if (!slot) return;
+  const haveEin = !!(profile.ein && String(profile.ein).trim());
+  const haveBiz = !!(profile.business_name && String(profile.business_name).trim());
+  if (haveEin && haveBiz) { slot.innerHTML = ''; return; } // nothing to recommend
+
+  slot.innerHTML = `
+    <div class="rec-card">
+      <div class="rec-icon">💡</div>
+      <div style="flex:1">
+        <div class="rec-title">Complete your business profile <span class="rec-pill">Recommended · optional</span></div>
+        <div class="rec-body">Add your LLC name and EIN to unlock <b>gated marketplaces like Walmart</b> (they require a registered business + proof of sales — we’ll help you apply) and to sharpen your account-safety audit. You can do this anytime — it’s not required to use Syndrax.</div>
+        <div class="rec-fields">
+          <input id="recBiz" placeholder="Legal business name (LLC)" value="${escapeAttr(profile.business_name || '')}"
+            style="height:42px;padding:0 13px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13.5px;outline:none">
+          <input id="recEin" placeholder="EIN (12-3456789)" value="${escapeAttr(profile.ein || '')}"
+            style="height:42px;padding:0 13px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13.5px;outline:none">
+        </div>
+        <div class="app-btn-row"><button class="app-btn sm" id="recSave">Save</button><button class="app-btn ghost sm" id="recDismiss">Maybe later</button></div>
+      </div>
+    </div>`;
+  slot.querySelector('#recSave').onclick = async () => {
+    const business_name = slot.querySelector('#recBiz').value.trim();
+    const ein = slot.querySelector('#recEin').value.trim();
+    try {
+      await saveProfile({ business_name, ein });
+      profile.business_name = business_name; profile.ein = ein;
+      slot.innerHTML = '';
+      renderMarketplaces(); // refresh Walmart eligibility now that EIN may exist
+      showAlert('Saved — business profile updated.', 'success');
+    } catch (e) { showAlert(e.message || 'Could not save.', 'error'); }
+  };
+  slot.querySelector('#recDismiss').onclick = () => { slot.innerHTML = ''; };
+}
+
+function escapeAttr(s) { return String(s || '').replace(/"/g, '&quot;'); }
 
 function renderMarketplaces() {
   const limit = PLAN_LIMITS[plan]?.maxAccountsPerMarketplace;
@@ -109,21 +159,24 @@ function renderMarketplaces() {
     : '· none yet';
 
   const grid = document.getElementById('mkGrid');
+  grid.className = 'mk-grid big';
   grid.innerHTML = '';
   MARKETPLACES.forEach(m => {
     const n = counts[m.id] || 0;
     const el = document.createElement('a');
-    el.className = 'mk-tile' + (n ? ' selected' : '');
+    el.className = 'mk-tile big' + (n ? ' selected' : '');
     el.href = '/onboarding';
     const badge = m.access === 'gated' ? 'gated' : m.status;
     const badgeLabel = m.access === 'gated' ? 'Gated' : m.status === 'live' ? 'Live' : m.status === 'beta' ? 'Beta' : 'Soon';
     const overLimit = !isUnlimited(limit) && n > limit;
+    const logo = marketplaceLogo(m.id);
+    const mark = logo || `<span style="font:800 18px var(--nav-font);color:#fff">${m.name[0]}</span>`;
     el.innerHTML = `
       <span class="mk-badge ${badge}">${badgeLabel}</span>
-      <span class="mk-dot" style="background:${m.color}">${m.name[0]}</span>
+      ${n ? '<span class="mk-check">✓</span>' : ''}
+      <span class="mk-chip" style="background:linear-gradient(135deg, ${m.color}, ${m.color}cc)">${mark}</span>
       <div class="mk-name">${m.name}</div>
-      <div class="mk-status">${n ? '' : (m.access === 'source' ? 'Sourcing' : 'Connect →')}</div>
-      ${n ? `<div class="mk-count" style="${overLimit ? 'color:#fcd34d' : ''}">${n}${isUnlimited(limit) ? '' : ' / ' + limit} account${n === 1 ? '' : 's'}${overLimit ? ' ⚠️' : ''}</div>` : ''}`;
+      ${n ? `<div class="mk-count" style="${overLimit ? 'color:#fcd34d' : ''}">${n}${isUnlimited(limit) ? '' : ' / ' + limit}${overLimit ? ' ⚠️' : ''}</div>` : `<div class="mk-status">${m.access === 'source' ? 'Sourcing' : 'Connect →'}</div>`}`;
     grid.appendChild(el);
     if (m.access === 'gated' && (n || profile.ein)) {
       const elig = eligibility(m.id, { ein: profile.ein });
@@ -180,7 +233,7 @@ function renderAudit(audit) {
 function mkBtn(label, onClick, variant) {
   const b = document.createElement('button');
   b.className = 'app-btn' + (variant === 'ghost' ? ' ghost' : '');
-  b.textContent = label; b.onclick = onClick;
+  b.textContent = label; b.onclick = () => onClick(b);
   return b;
 }
 

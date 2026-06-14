@@ -79,6 +79,28 @@ export const MARKETPLACES = [
 
 export function marketplace(id) { return MARKETPLACES.find((m) => m.id === id) || null; }
 
+// Inline brand marks (CSP-safe — inline SVG, no external img). Returned as an
+// HTML string to drop inside a brand-colored chip. Falls back to a monogram
+// (handled by the caller) when a brand has no bespoke glyph.
+export const MARKETPLACE_LOGOS = {
+  amazon:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15.5c4.6 3 11.4 3 16 0"/><path d="M16.8 14.7l2.4.2-.5 2.4"/></svg>',
+  walmart:
+    '<svg viewBox="0 0 24 24" fill="#fff"><g><rect x="11" y="2" width="2" height="7" rx="1"/><rect x="11" y="15" width="2" height="7" rx="1"/><rect x="2" y="11" width="7" height="2" rx="1"/><rect x="15" y="11" width="7" height="2" rx="1"/><rect x="5.4" y="5.4" width="2" height="7" rx="1" transform="rotate(-45 6.4 8.9)"/><rect x="16.6" y="11.1" width="2" height="7" rx="1" transform="rotate(-45 17.6 14.6)"/></g></svg>',
+  shopify:
+    '<svg viewBox="0 0 24 24" fill="#fff"><path d="M8 7V6a4 4 0 0 1 8 0v1h2.2l1.3 13.5a1 1 0 0 1-1 1.1H5.5a1 1 0 0 1-1-1.1L5.8 7H8zm2 0h4V6a2 2 0 1 0-4 0v1z"/></svg>',
+  facebook:
+    '<svg viewBox="0 0 24 24" fill="#fff"><path d="M13.5 21v-8h2.5l.5-3h-3V8.2c0-.9.3-1.5 1.6-1.5H17V4.1A21 21 0 0 0 14.7 4C12.4 4 10.8 5.4 10.8 8v2H8.3v3h2.5v8h2.7z"/></svg>',
+  ebay:
+    '<svg viewBox="0 0 48 20"><text x="0" y="15" font-family="Arial, sans-serif" font-size="16" font-weight="800" font-style="italic"><tspan fill="#e53238">e</tspan><tspan fill="#0064d2">b</tspan><tspan fill="#f5af02">a</tspan><tspan fill="#86b817">y</tspan></text></svg>',
+  etsy:
+    '<svg viewBox="0 0 24 24" fill="#fff"><path d="M9 5.5h7.5v2H14v9h2.5v2H9v-2h2.3v-9H9z" opacity="0"/><text x="12" y="17" text-anchor="middle" font-family="Georgia, serif" font-size="15" font-weight="800" fill="#fff">E</text></svg>',
+  poshmark:
+    '<svg viewBox="0 0 24 24"><text x="12" y="17" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="800" fill="#fff">P</text></svg>',
+};
+
+export function marketplaceLogo(id) { return MARKETPLACE_LOGOS[id] || null; }
+
 // Eligibility guidance for gated marketplaces. `profile` carries { ein, salesProof }.
 export function eligibility(marketplaceId, profile = {}) {
   const mk = marketplace(marketplaceId);
@@ -159,6 +181,6 @@ export function runAudit({ plan = 'none', accountsByMarketplace = {}, devices = 
 if (typeof window !== 'undefined') {
   window.SyndraxPlans = {
     PLAN_ORDER, PLAN_LABEL, PLAN_PRICE, PLAN_LIMITS, PLAN_TAGLINE, UNLIMITED,
-    MARKETPLACES, marketplace, eligibility, runAudit, nextPlan, isUnlimited,
+    MARKETPLACES, marketplace, marketplaceLogo, eligibility, runAudit, nextPlan, isUnlimited,
   };
 }
