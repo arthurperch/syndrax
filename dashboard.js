@@ -171,6 +171,9 @@ function syncExtensionAccounts() {
 
 async function boot() {
   try { statusRow = await getStatus(); realPlan = statusRow.plan || 'none'; } catch { realPlan = 'none'; }
+  // The owner/admin account is real Enterprise with full access to every tool.
+  // Preview mode is the sandbox (any plan, incl. a free/trial new-user, sample data).
+  if (isAdmin) { realPlan = 'enterprise'; statusRow = { plan: 'enterprise', status: 'active' }; }
   applyPlan();
   try { profile = await getProfile(); } catch { profile = {}; }
   if (!profile.onboarding_complete && realPlan === 'none' && !isAdmin) { location.replace('/onboarding'); return; }
@@ -234,13 +237,14 @@ function navBtn(t) {
 }
 
 function adminBar() {
+  const segs = [['trial', 'Free / Trial'], ['business', 'Business'], ['growth', 'Growth'], ['enterprise', 'Enterprise']];
   return `<div class="admin-bar">
-    <span class="ab-label">★ Admin preview</span>
+    <span class="ab-label">★ Admin sandbox</span>
     <div class="admin-seg">
-      ${['business', 'growth', 'enterprise'].map(p => `<button data-pp="${p}" class="${plan === p && previewPlan ? 'on' : ''}">${PLAN_LABEL[p]}</button>`).join('')}
+      ${segs.map(([p, lbl]) => `<button data-pp="${p}" class="${plan === p && previewPlan ? 'on' : ''}">${lbl}</button>`).join('')}
     </div>
-    <span class="ab-note">real plan: ${PLAN_LABEL[realPlan]}${previewPlan ? ` · previewing ${PLAN_LABEL[plan]}` : ' · viewing your real plan'}</span>
-    ${previewPlan ? '<button class="ab-reset" id="ppReset">exit preview</button>' : ''}
+    <span class="ab-note">${previewPlan ? `previewing <b style="color:#67e8f9">${PLAN_LABEL[plan]}</b> with sample data (testing)` : 'your real account · <b style="color:#fcd34d">Enterprise</b> · full access'}</span>
+    ${previewPlan ? '<button class="ab-reset" id="ppReset">exit to real account</button>' : ''}
   </div>`;
 }
 
