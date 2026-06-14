@@ -225,9 +225,13 @@ export async function syncInventory(payload) {
   try { return await api('/api/inventory/sync', { method: 'POST', body: JSON.stringify(payload) }); }
   catch (e) { if (isOffline(e)) return { upserted: 0 }; throw e; }
 }
+export async function deleteInventoryItem(id) {
+  try { return await api('/api/inventory/' + encodeURIComponent(id), { method: 'DELETE' }); }
+  catch (e) { if (isOffline(e)) return { ok: true }; throw e; }
+}
 
 window.SyndraxApp = {
   getProfile, saveProfile, getMarketplaces, addMarketplaceAccount, removeMarketplaceAccount,
   getAudit, startTrial, getNodes, saveNode, updateNode, getAddons, addAddon, removeAddon,
-  getSales, postSales, getInventory, getInventorySummary, syncInventory,
+  getSales, postSales, getInventory, getInventorySummary, syncInventory, deleteInventoryItem,
 };

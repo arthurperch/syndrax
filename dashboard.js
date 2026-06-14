@@ -9,7 +9,7 @@ import {
   getProfile, saveProfile, getMarketplaces, addMarketplaceAccount,
   removeMarketplaceAccount, getAudit, startTrial,
   getNodes, saveNode, updateNode, getAddons, addAddon, removeAddon,
-  getSales, postSales, getInventory, getInventorySummary, syncInventory,
+  getSales, postSales, getInventory, getInventorySummary, syncInventory, deleteInventoryItem,
 } from '/app-api.js';
 import {
   PLAN_LABEL, PLAN_PRICE, PLAN_TAGLINE, PLAN_LIMITS,
@@ -47,6 +47,9 @@ const ICONS = {
   wifi: `<svg viewBox="0 0 24 24" ${P}><path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01"/></svg>`,
   sound: `<svg viewBox="0 0 24 24" ${P}><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>`,
   mute: `<svg viewBox="0 0 24 24" ${P}><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>`,
+  invlist: `<svg viewBox="0 0 24 24" ${P}><rect x="3" y="3.5" width="18" height="17" rx="2.5"/><path d="M3 8.5h18"/><path d="M6.5 12.5h5M6.5 16h7.5"/><path d="M15.5 12l1.3 1.3L19 11"/></svg>`,
+  filter: `<svg viewBox="0 0 24 24" ${P}><path d="M3 5h18l-7 8.2V20l-4 1.5v-8.3z"/></svg>`,
+  trash: `<svg viewBox="0 0 24 24" ${P}><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>`,
 };
 const icon = (n) => ICONS[n] || '';
 
@@ -82,6 +85,9 @@ let cloudNodes = []; // workspace nodes persisted server-side (have integer .id 
 let addons = []; // marketing addons (node- or account-level), server-side
 let salesData = null; // real P&L series from /api/sales (null until loaded)
 let inventorySummary = null; // inventory counts + cross-site ASIN reference
+let homeChartView = 'sales'; // 'sales' | 'inventory' — Home chart toggle
+let invItems = []; // loaded inventory rows (filtered client-side)
+let invFilter = { marketplace: 'all', stock: 'all', q: '' }; // inventory sheet filters
 let thisPcIp = ''; // public IP of this PC (from the extension)
 let currentDeviceId = 'this-device'; // the device this browser's extension runs on
 let lastConnectNode = localStorage.getItem('syndrax_last_node') || ''; // remembered node pick
@@ -106,7 +112,7 @@ const TABS = [
   { id: 'home', label: 'Home', icon: 'home', sec: 'Mission Control' },
   { id: 'workspace', label: 'Workspace', icon: 'rocket', sec: 'Mission Control' },
   { id: 'accounts', label: 'Accounts', icon: 'tag', sec: 'Mission Control' },
-  { id: 'inventory', label: 'Inventory', icon: 'package', sec: 'Mission Control' },
+  { id: 'inventory', label: 'Inventory', icon: 'invlist', sec: 'Mission Control' },
   { id: 'jobs', label: 'Jobs', icon: 'briefcase', sec: 'Operations' },
   { id: 'devices', label: 'Devices', icon: 'monitor', sec: 'Operations', feature: 'multiDevice' },
   { id: 'team', label: 'Team', icon: 'users', sec: 'Operations', feature: 'team' },
@@ -437,6 +443,37 @@ function areaChart(labels, sets) {
   return svg + '</svg>';
 }
 
+// Simple, readable vertical bars (used for the Inventory chart view). One bar per
+// label with its value on top — deliberately plain, no axes math to parse.
+function barChart(data) {
+  const W = 760, H = 200, pl = 10, pr = 10, pt = 16, pb = 30;
+  const max = Math.max(1, ...data.map(d => d.value));
+  const n = Math.max(1, data.length);
+  const bw = (W - pl - pr) / n;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">`;
+  for (let g = 0; g <= 3; g++) { const gy = pt + (g / 3) * (H - pt - pb); svg += `<line x1="${pl}" y1="${gy}" x2="${W - pr}" y2="${gy}" stroke="rgba(255,255,255,.06)"/>`; }
+  data.forEach((d, i) => {
+    const h = (d.value / max) * (H - pt - pb);
+    const x = pl + i * bw + bw * 0.24, w = bw * 0.52, y = H - pb - h;
+    const c = d.color || '#22d3ee';
+    svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(2, h).toFixed(1)}" rx="5" fill="${c}" opacity=".9"/>`;
+    svg += `<text x="${(x + w / 2).toFixed(1)}" y="${(y - 6).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="800" fill="#e2e8f0">${d.value}</text>`;
+    svg += `<text x="${(x + w / 2).toFixed(1)}" y="${H - 9}" text-anchor="middle" font-size="10" fill="#8295a8">${esc(d.label)}</text>`;
+  });
+  return svg + '</svg>';
+}
+
+// Connected marketplaces (deduped from accounts) — the only ones we count/show.
+function connectedMarketplaces() { return [...new Set(accounts.map(a => a.marketplace))]; }
+// Whole-number days since an ISO timestamp (null → never).
+function daysSince(iso) { if (!iso) return null; const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000); return d < 0 ? 0 : d; }
+function syncAgeLabel(iso) {
+  const d = daysSince(iso);
+  if (d === null) return 'not synced yet';
+  if (d === 0) return 'synced today';
+  return `${d} day${d === 1 ? '' : 's'} ago`;
+}
+
 function stat(label, val, ic, dir, sub) {
   return `<div class="stat"><div class="s-label">${icon(ic)} ${label}</div><div class="s-val">${val}</div><div class="s-sub ${dir || ''}">${sub}</div></div>`;
 }
@@ -465,6 +502,21 @@ function renderHome() {
   const margin = s.grossTotal ? Math.round(s.netTotal / s.grossTotal * 100) : 0;
   const flat = [0, 0, 0, 0, 0, 0, 0, 0];
 
+  // Inventory chart view — in-stock per CONNECTED marketplace that has synced data.
+  const invSum = inventorySummary || {};
+  const inStockByMk = invSum.inStockByMarketplace || {};
+  const lastSyncByMk = invSum.lastSyncByMarketplace || {};
+  const conn = connectedMarketplaces();
+  const invBars = conn.filter(mk => inStockByMk[mk] != null)
+    .map(mk => ({ label: marketplace(mk)?.name || mk, value: inStockByMk[mk] || 0, color: '#22d3ee' }));
+  // Days-since-sync chips for connected marketplaces (only count what's connected).
+  const syncChips = conn.map(mk => {
+    const age = daysSince(lastSyncByMk[mk]);
+    const stale = age === null || age >= 1;
+    const col = age === null ? '#94a3b8' : age === 0 ? '#6ee7b7' : '#fcd34d';
+    return `<span class="sync-chip" style="border-color:${col}55;color:${col}"><b>${esc(marketplace(mk)?.name || mk)}</b> · ${syncAgeLabel(lastSyncByMk[mk])}</span>`;
+  }).join('');
+
   content.innerHTML = `
     ${incomplete ? `<div class="setup-strip">
       <div class="ss-ico">${icon('rocket')}</div>
@@ -482,13 +534,26 @@ function renderHome() {
 
     <div class="chart-card">
       <div class="chart-head">
-        <h3>Performance ${s.sample ? '<span class="mk-badge soon" style="position:static;margin-left:6px">admin sample</span>' : ''}</h3>
-        <div class="chart-legend"><span><i style="background:#22d3ee"></i>Gross</span><span><i style="background:#d946ef"></i>Net</span></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <h3>${homeChartView === 'inventory' ? 'Inventory' : 'Performance'} ${s.sample && homeChartView === 'sales' ? '<span class="mk-badge soon" style="position:static;margin-left:6px">admin sample</span>' : ''}</h3>
+          <div class="chart-toggle">
+            <button class="${homeChartView === 'sales' ? 'on' : ''}" data-chartview="sales">Sales</button>
+            <button class="${homeChartView === 'inventory' ? 'on' : ''}" data-chartview="inventory">Inventory</button>
+          </div>
+        </div>
+        ${homeChartView === 'sales'
+          ? `<div class="chart-legend"><span><i style="background:#22d3ee"></i>Gross</span><span><i style="background:#d946ef"></i>Net</span></div>`
+          : `<div class="chart-legend"><span><i style="background:#22d3ee"></i>In stock</span></div>`}
       </div>
-      ${s.empty
-        ? `<div style="position:relative">${areaChart(s.labels, [{ name: 'Gross', color: '#22d3ee', data: flat }])}<div class="chart-empty">${icon('chart')}<div style="font-weight:700;color:#cbd5e1">No sales data yet</div><div style="font-size:12px">Connect an account and run a sync — your real net &amp; gross appear here.</div></div></div>`
-        : areaChart(s.labels, [{ name: 'Gross', color: '#22d3ee', data: s.gross }, { name: 'Net', color: '#d946ef', data: s.net }])}
-      ${s.sample ? '<div style="font-size:11px;color:#475569;margin-top:6px">Admin preview only — sample numbers to show how this plan looks. Real accounts always show real data.</div>' : ''}
+      ${homeChartView === 'sales'
+        ? (s.empty
+            ? `<div style="position:relative">${areaChart(s.labels, [{ name: 'Gross', color: '#22d3ee', data: flat }])}<div class="chart-empty">${icon('chart')}<div style="font-weight:700;color:#cbd5e1">No sales data yet</div><div style="font-size:12px">Connect an account and run a sync — your real net &amp; gross appear here.</div></div></div>`
+            : areaChart(s.labels, [{ name: 'Gross', color: '#22d3ee', data: s.gross }, { name: 'Net', color: '#d946ef', data: s.net }]))
+        : (invBars.length
+            ? barChart(invBars)
+            : `<div style="position:relative">${barChart([{ label: '—', value: 0 }])}<div class="chart-empty">${icon('invlist')}<div style="font-weight:700;color:#cbd5e1">No inventory synced yet</div><div style="font-size:12px">Run a sync on a connected account — in-stock counts appear here.</div></div></div>`)}
+      ${homeChartView === 'sales' && s.sample ? '<div style="font-size:11px;color:#475569;margin-top:6px">Admin preview only — sample numbers to show how this plan looks. Real accounts always show real data.</div>' : ''}
+      ${homeChartView === 'inventory' && syncChips ? `<div class="sync-chips">${syncChips}</div>` : ''}
     </div>
 
     <div class="panel">
@@ -502,6 +567,7 @@ function renderHome() {
   content.querySelectorAll('[data-connect]').forEach(b => b.onclick = () => { connecting = b.dataset.connect; openConnectModal(); });
   content.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { activeTab = b.dataset.go; renderShell(); });
   content.querySelectorAll('[data-setup]').forEach(b => b.onclick = () => { location.href = '/onboarding'; });
+  content.querySelectorAll('[data-chartview]').forEach(b => b.onclick = () => { homeChartView = b.dataset.chartview; renderHome(); });
   const hs = $('#homeSyncBtn', content); if (hs) hs.onclick = openSyncModal;
 }
 
@@ -1125,40 +1191,56 @@ function trustCard(a) {
 async function renderInventory() {
   $('#topSub').textContent = '';
   const content = $('#content');
-  content.innerHTML = `<div class="ws-empty" style="margin-top:40px">${icon('package')}<p>Loading inventory…</p></div>`;
+  content.innerHTML = `<div class="ws-empty" style="margin-top:40px">${icon('invlist')}<p>Loading inventory…</p></div>`;
+  try { const r = await getInventory(); invItems = r.items || []; } catch { invItems = []; }
+  try { inventorySummary = await getInventorySummary(); } catch {}
+  paintInventory(content);
+}
 
-  let items = [], sum = inventorySummary;
-  try { const r = await getInventory(); items = r.items || []; } catch { items = []; }
-  try { sum = await getInventorySummary(); inventorySummary = sum; } catch {}
-  sum = sum || { total: 0, inStock: 0, outOfStock: 0, lowStock: 0, byMarketplace: {}, crossSite: [] };
+function paintInventory(content) {
+  const sum = inventorySummary || { total: 0, inStock: 0, outOfStock: 0, lowStock: 0, byMarketplace: {}, crossSite: [] };
 
-  if (!items.length && !sum.total) {
+  if (!invItems.length && !sum.total) {
     content.innerHTML = `
       <div class="setup-strip" style="margin-bottom:18px">
-        <div class="ss-ico">${icon('package')}</div>
+        <div class="ss-ico">${icon('invlist')}</div>
         <div style="flex:1"><div class="ss-title">No inventory synced yet</div><div class="ss-sub">Run a Quick Sync or Full Sync on a connected account — your live listings, stock levels and source ASINs land here automatically.</div></div>
         <button class="app-btn sm" data-go="workspace">Open Workspace</button>
       </div>
-      <div class="ws-empty" style="margin-top:10px">${icon('package')}<p>Inventory tracks stock, out-of-stock items, source cost and cross-site listings — updated on each background sync.</p></div>`;
+      <div class="ws-empty" style="margin-top:10px">${icon('invlist')}<p>Inventory is a live sheet of every listing — stock, source cost, margin and where it's cross-listed. Updated on each background sync.</p></div>`;
     content.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { activeTab = b.dataset.go; renderShell(); });
     return;
   }
 
+  // Only show marketplaces that actually have synced inventory (hide the rest).
+  const syncedMks = Object.keys(sum.byMarketplace || {});
+  // Apply filters client-side.
+  const q = invFilter.q.trim().toLowerCase();
+  const filtered = invItems.filter(it => {
+    if (invFilter.marketplace !== 'all' && it.marketplace !== invFilter.marketplace) return false;
+    if (invFilter.stock === 'in' && !it.inStock) return false;
+    if (invFilter.stock === 'out' && it.inStock) return false;
+    if (invFilter.stock === 'low' && !(it.inStock && it.qty > 0 && it.qty <= 3)) return false;
+    if (q && !((it.title || '') + (it.sku || '') + (it.asin || '') + (it.extId || '')).toLowerCase().includes(q)) return false;
+    return true;
+  });
+
   $('#topSub').textContent = `· ${sum.total} item${sum.total === 1 ? '' : 's'}`;
-  const rows = items.map(it => {
+  const rows = filtered.map(it => {
     const m = marketplace(it.marketplace);
     const stock = it.inStock
       ? (it.qty > 0 && it.qty <= 3 ? `<span style="color:#fcd34d">low · ${it.qty}</span>` : `<span style="color:#6ee7b7">in stock${it.qty ? ' · ' + it.qty : ''}</span>`)
       : `<span style="color:#fca5a5">out of stock</span>`;
     const margin = (it.price != null && it.cost != null) ? fmt$(it.price - it.cost) : '—';
     return `<tr>
-      <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.title || it.sku || it.extId)}</td>
+      <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(it.title || '')}">${esc(it.title || it.sku || it.extId)}</td>
       <td>${esc(m?.name || it.marketplace)}</td>
       <td>${stock}</td>
       <td>${it.price != null ? fmt$(it.price) : '—'}</td>
       <td>${it.cost != null ? fmt$(it.cost) : '—'}</td>
       <td>${margin}</td>
       <td>${it.asin ? `<span style="color:#94a3b8">${esc(it.asin)}</span>${it.sourceUrl ? ` <a href="${esc(it.sourceUrl)}" target="_blank" rel="noopener" style="color:#67e8f9">↗</a>` : ''}` : '—'}</td>
+      <td style="text-align:right">${it.id ? `<button class="inv-del" data-delinv="${esc(it.id)}" title="Remove this product">${icon('trash')}</button>` : ''}</td>
     </tr>`;
   }).join('');
 
@@ -1168,24 +1250,54 @@ async function renderInventory() {
       <div class="f-detail">Listed on <b style="color:#cbd5e1">${(c.marketplaces || []).join(', ')}</b>${c.sourceSite ? ` · sourced from ${esc(c.sourceSite)}` : ''}. Cross-listed items share demand — keep stock in sync to avoid overselling.</div>
     </div>`).join('');
 
+  const stockSegs = [['all', 'All'], ['in', 'In stock'], ['out', 'Out'], ['low', 'Low']];
+  const mkChips = `<button class="inv-chip ${invFilter.marketplace === 'all' ? 'on' : ''}" data-invmk="all">All stores</button>` +
+    syncedMks.map(mk => `<button class="inv-chip ${invFilter.marketplace === mk ? 'on' : ''}" data-invmk="${esc(mk)}">${esc(marketplace(mk)?.name || mk)}</button>`).join('');
+
   content.innerHTML = `
     <div class="home-grid" style="margin-bottom:16px">
-      ${stat('Total items', String(sum.total), 'package', '', 'tracked')}
-      ${stat('In stock', String(sum.inStock), 'package', sum.inStock ? 'up' : '', 'available')}
-      ${stat('Out of stock', String(sum.outOfStock), 'package', sum.outOfStock ? 'down' : '', sum.outOfStock ? 'needs attention' : 'all good')}
-      ${stat('Low stock', String(sum.lowStock), 'package', sum.lowStock ? 'down' : '', '≤ 3 left')}
+      ${stat('Total items', String(sum.total), 'invlist', '', 'tracked')}
+      ${stat('In stock', String(sum.inStock), 'invlist', sum.inStock ? 'up' : '', 'available')}
+      ${stat('Out of stock', String(sum.outOfStock), 'invlist', sum.outOfStock ? 'down' : '', sum.outOfStock ? 'needs attention' : 'all good')}
+      ${stat('Low stock', String(sum.lowStock), 'invlist', sum.lowStock ? 'down' : '', '≤ 3 left')}
     </div>
     ${crossRows ? `<div class="audit warn" style="margin-bottom:16px"><div class="audit-head">🔗 ${sum.crossSite.length} cross-listed product${sum.crossSite.length === 1 ? '' : 's'}</div>${crossRows}</div>` : ''}
     <div class="panel">
-      <div class="panel-h">Items <span style="color:#64748b;font-weight:500;text-transform:none;letter-spacing:0">${items.length} shown · synced from your connected accounts</span></div>
+      <div class="inv-toolbar">
+        <span class="inv-tool-ico">${icon('filter')}</span>
+        <div class="inv-chips">${mkChips}</div>
+        <div class="inv-seg">${stockSegs.map(([v, l]) => `<button class="${invFilter.stock === v ? 'on' : ''}" data-invstock="${v}">${l}</button>`).join('')}</div>
+        <input class="inv-search" id="invSearch" placeholder="Search title, SKU, ASIN…" value="${esc(invFilter.q)}">
+      </div>
       <div style="overflow-x:auto">
         <table class="inv-table">
-          <thead><tr><th>Item</th><th>Marketplace</th><th>Stock</th><th>Price</th><th>Cost</th><th>Margin</th><th>Source ASIN</th></tr></thead>
-          <tbody>${rows}</tbody>
+          <thead><tr><th>Item</th><th>Marketplace</th><th>Stock</th><th>Price</th><th>Cost</th><th>Margin</th><th>Source ASIN</th><th></th></tr></thead>
+          <tbody>${rows || `<tr><td colspan="8" style="text-align:center;color:#64748b;padding:20px">No items match this filter.</td></tr>`}</tbody>
         </table>
       </div>
+      <div style="font-size:11px;color:#64748b;margin-top:8px">${filtered.length} of ${invItems.length} shown</div>
     </div>`;
+
   content.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { activeTab = b.dataset.go; renderShell(); });
+  content.querySelectorAll('[data-invmk]').forEach(b => b.onclick = () => { invFilter.marketplace = b.dataset.invmk; paintInventory(content); });
+  content.querySelectorAll('[data-invstock]').forEach(b => b.onclick = () => { invFilter.stock = b.dataset.invstock; paintInventory(content); });
+  const search = $('#invSearch', content);
+  if (search) search.oninput = () => { invFilter.q = search.value; applyInvFilterToTable(content); };
+  content.querySelectorAll('[data-delinv]').forEach(b => b.onclick = async () => {
+    const id = b.dataset.delinv;
+    b.disabled = true;
+    try { await deleteInventoryItem(id); invItems = invItems.filter(x => String(x.id) !== String(id)); if (inventorySummary) inventorySummary.total = Math.max(0, (inventorySummary.total || 1) - 1); paintInventory(content); showToast('Product removed from inventory.', 'success'); }
+    catch (e) { b.disabled = false; showAlert(e.message || 'Could not remove item.'); }
+  });
+}
+
+// Live search repaint without losing focus: just re-filter the tbody.
+function applyInvFilterToTable(content) {
+  const q = invFilter.q.trim().toLowerCase();
+  content.querySelectorAll('.inv-table tbody tr').forEach((tr) => {
+    const txt = tr.textContent.toLowerCase();
+    tr.style.display = (!q || txt.includes(q)) ? '' : 'none';
+  });
 }
 
 // ── JOBS / DEVICES / TEAM / AUDIT / PLAN ──────────────────────────────────────
