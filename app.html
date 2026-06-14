@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Syndrax</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" href="assets/images/synball.png">
+  <link rel="stylesheet" href="style.css?v=26">
+  <link rel="stylesheet" href="app.css?v=1">
+  <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.remove("dark");}</script>
+</head>
+<body class="app-shell">
+<div class="auth-grid-bg"></div>
+
+<header class="app-topbar">
+  <a class="app-brand" href="/"><img src="assets/TOPLOGO/BANNEREFFECT.png" alt="Syndrax"></a>
+  <div class="app-id">
+    <span id="topEmail">…</span>
+    <span class="app-plan-chip plan-none" id="topPlan">…</span>
+    <button class="app-signout" id="signOut">Sign out</button>
+  </div>
+</header>
+
+<main class="app-wrap">
+  <h1 class="app-h1" id="greeting">Your dashboard</h1>
+  <p class="app-sub" id="subline">Here’s everything running under your account.</p>
+
+  <div class="auth-alert" id="appAlert" style="margin-bottom:18px"></div>
+
+  <div class="app-grid">
+    <!-- Plan -->
+    <section class="app-card" id="planCard">
+      <div class="card-kicker">Your plan</div>
+      <div class="plan-name" id="planName">…</div>
+      <div class="plan-meta" id="planMeta"></div>
+      <div class="app-btn-row" id="planBtns"></div>
+    </section>
+
+    <!-- Devices -->
+    <section class="app-card" id="deviceCard">
+      <div class="card-kicker">This device</div>
+      <div class="device-status missing" id="devStatus" style="border:none;padding:0;background:none">
+        <div class="ds-icon">🧩</div>
+        <div><div class="ds-title" id="devTitle">Checking…</div><div class="ds-sub" id="devSub"></div></div>
+      </div>
+      <div class="app-btn-row" id="devBtns"></div>
+    </section>
+
+    <!-- Marketplaces -->
+    <section class="app-card span-2">
+      <div class="card-kicker">Marketplaces</div>
+      <h3 style="margin-bottom:12px">Connected accounts <span id="mkSummary" style="font-weight:400;color:var(--text-muted);font-size:12px"></span></h3>
+      <div class="mk-grid" id="mkGrid"></div>
+    </section>
+
+    <!-- Risk audit -->
+    <section class="app-card span-2">
+      <div class="card-kicker">Account safety audit</div>
+      <div id="auditBox"></div>
+    </section>
+
+    <!-- Power tools -->
+    <section class="app-card span-2">
+      <div class="card-kicker">Power tools</div>
+      <h3>Open the full Syndrax dashboard</h3>
+      <p class="muted">Bulk listing, repricing, inventory sync, multi-device jobs and live screens run in the Syndrax extension on your device.</p>
+      <div class="app-btn-row">
+        <button class="app-btn" id="openExt">Open Syndrax extension</button>
+        <a class="app-btn ghost" href="/pricing">Compare plans</a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script src="/extension-check.js"></script>
+<script type="module" src="/dashboard.js"></script>
+</body>
+</html>

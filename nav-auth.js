@@ -2,7 +2,7 @@
 import { getSession } from '/auth-cognito.js';
 if (getSession()) {
   document.querySelectorAll('.nav-login, .mobile-menu-login').forEach((a) => {
-    a.textContent = 'Account';
-    a.setAttribute('href', '/account');
+    a.textContent = 'Dashboard';
+    a.setAttribute('href', '/app');
   });
 }

@@ -65,7 +65,7 @@
     from '/auth-cognito.js';
 
   // Already signed in → straight to the app.
-  if (getSession()) window.location.replace('/');
+  if (getSession()) window.location.replace('/app');
 
   const alertEl = document.getElementById('authAlert');
   const loginBtn = document.getElementById('loginBtn');
@@ -95,7 +95,7 @@
     setLoading(true);
     try {
       await login(email, password);
-      window.location.href = '/';
+      window.location.href = '/app';
     } catch (err) {
       showAlert(err.message);
     } finally {

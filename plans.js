@@ -1,0 +1,164 @@
+// Syndrax plan + marketplace model — SINGLE SOURCE OF TRUTH for the website.
+// Keep this in sync with the cloud (src/config/plans.ts + marketplaces.ts) and
+// the extension (src/services/plans.ts). The shape is intentionally identical so
+// the same risk-audit logic runs on web, API, and extension.
+//
+// Core thesis encoded here: multiple marketplace accounts sharing ONE device/IP
+// is what gets sellers restricted. Plan limits are framed as SAFETY, and the
+// upgrade pitch is "scale without bans" via device/IP isolation (relay/fleet).
+
+// Plan enum (standardized): none | trial | business | growth | enterprise
+export const PLAN_ORDER = ['none', 'trial', 'business', 'growth', 'enterprise'];
+
+export const PLAN_LABEL = {
+  none: 'No plan yet',
+  trial: 'Free trial',
+  business: 'Business',
+  growth: 'Growth',
+  enterprise: 'Enterprise',
+};
+
+export const PLAN_PRICE = {
+  none: '',
+  trial: 'Free for 7 days',
+  business: '$50/mo',
+  growth: '$99/mo',
+  enterprise: '$200/mo',
+};
+
+// Infinity is JSON-unsafe; we use null to mean "unlimited" and treat it as ∞.
+export const UNLIMITED = null;
+
+export const PLAN_LIMITS = {
+  none:       { maxDevices: 0, maxAccountsPerMarketplace: 0, remote: false, teamSeats: 1 },
+  trial:      { maxDevices: 1, maxAccountsPerMarketplace: 1, remote: false, teamSeats: 1 },
+  business:   { maxDevices: 1, maxAccountsPerMarketplace: 1, remote: false, teamSeats: 1 },
+  growth:     { maxDevices: 3, maxAccountsPerMarketplace: 3, remote: true,  teamSeats: 3 },
+  enterprise: { maxDevices: UNLIMITED, maxAccountsPerMarketplace: UNLIMITED, remote: true, teamSeats: UNLIMITED },
+};
+
+// Human one-liners used on the plan cards / upgrade nudges.
+export const PLAN_TAGLINE = {
+  trial: 'Experience the dashboard — one account on this device.',
+  business: 'One marketplace account, this device only. Safe and simple.',
+  growth: 'Up to 3 devices and 3 accounts per marketplace — stack marketplaces freely, with remote dispatch.',
+  enterprise: 'Unlimited devices and accounts, full remote fleet with screen control, team, white-label.',
+};
+
+// What the next paid tier unlocks (used by the upgrade CTA copy).
+export function nextPlan(plan) {
+  if (plan === 'trial' || plan === 'business' || plan === 'none') return 'growth';
+  if (plan === 'growth') return 'enterprise';
+  return null;
+}
+
+export function isUnlimited(v) { return v === UNLIMITED || v === Infinity; }
+
+// ── Marketplaces ─────────────────────────────────────────────────────────────
+// status: 'live'   → fully wired automations (eBay today)
+//         'beta'   → connectable on this device, partial support
+//         'soon'   → selectable, "coming soon"
+// access: 'open'   → anyone can connect
+//         'gated'  → requires eligibility (EIN + sales history + application),
+//                    e.g. Walmart. Syndrax guides + helps apply.
+//         'source' → a sourcing platform (buy side), not a sell channel
+export const MARKETPLACES = [
+  { id: 'ebay',     name: 'eBay',                status: 'live', access: 'open',   color: '#e53238' },
+  { id: 'etsy',     name: 'Etsy',                status: 'soon', access: 'open',   color: '#f1641e' },
+  { id: 'poshmark', name: 'Poshmark',            status: 'soon', access: 'open',   color: '#a01441' },
+  { id: 'mercari',  name: 'Mercari',             status: 'soon', access: 'open',   color: '#5454d4' },
+  { id: 'depop',    name: 'Depop',               status: 'soon', access: 'open',   color: '#ff2300' },
+  { id: 'grailed',  name: 'Grailed',             status: 'soon', access: 'open',   color: '#000000' },
+  { id: 'vinted',   name: 'Vinted',              status: 'soon', access: 'open',   color: '#09b1ba' },
+  { id: 'whatnot',  name: 'Whatnot',             status: 'soon', access: 'open',   color: '#fbe04b' },
+  { id: 'shopify',  name: 'Shopify',             status: 'soon', access: 'open',   color: '#95bf47' },
+  { id: 'facebook', name: 'Facebook Marketplace',status: 'soon', access: 'open',   color: '#1877f2' },
+  { id: 'walmart',  name: 'Walmart Marketplace', status: 'soon', access: 'gated',  color: '#0071dc' },
+  { id: 'amazon',   name: 'Amazon',              status: 'beta', access: 'source', color: '#ff9900' },
+];
+
+export function marketplace(id) { return MARKETPLACES.find((m) => m.id === id) || null; }
+
+// Eligibility guidance for gated marketplaces. `profile` carries { ein, salesProof }.
+export function eligibility(marketplaceId, profile = {}) {
+  const mk = marketplace(marketplaceId);
+  if (!mk || mk.access !== 'gated') return { status: 'open', message: '' };
+  if (marketplaceId === 'walmart') {
+    const hasEin = !!(profile.ein && String(profile.ein).trim());
+    const hasSales = !!profile.salesProof;
+    if (hasEin && hasSales) {
+      return { status: 'eligible', message: 'You meet the basics for Walmart. We can help you apply and get approved.' };
+    }
+    if (hasEin) {
+      return { status: 'building', message: 'Walmart requires proof of sales. Keep selling on eBay — your sales history can seed the application. We’ll help you apply once you qualify.' };
+    }
+    return { status: 'not_eligible', message: 'Walmart requires a registered business (EIN) and proof of sales. Add your EIN and grow your eBay sales — Syndrax guides you through the whole approval.' };
+  }
+  return { status: 'not_eligible', message: 'This marketplace requires approval. Syndrax will guide you through eligibility.' };
+}
+
+// ── Risk audit (the upgrade engine) ──────────────────────────────────────────
+// Shared logic — also implemented identically on the API (source of truth) and
+// the extension. Given the plan and the user's current footprint, return findings.
+//
+//   plan:               'business' | 'growth' | ...
+//   accountsByMarketplace: { ebay: 2, poshmark: 1, ... }  (account counts)
+//   devices:            [{ id, name }]                      (connected devices)
+//   accountsPerDevice:  { 'dev-abc': 2, ... }   (optional — same-IP detection)
+//
+// Returns: { level: 'ok'|'warn'|'block', findings: [{level, title, detail, upgradeTo}] }
+export function runAudit({ plan = 'none', accountsByMarketplace = {}, devices = [], accountsPerDevice = {} } = {}) {
+  const limits = PLAN_LIMITS[plan] || PLAN_LIMITS.none;
+  const findings = [];
+
+  // 1) Accounts per marketplace vs limit
+  if (!isUnlimited(limits.maxAccountsPerMarketplace)) {
+    for (const [mk, count] of Object.entries(accountsByMarketplace)) {
+      if (count > limits.maxAccountsPerMarketplace) {
+        findings.push({
+          level: 'warn',
+          title: `${marketplace(mk)?.name || mk}: ${count} accounts on ${PLAN_LABEL[plan]}`,
+          detail: `Your plan allows ${limits.maxAccountsPerMarketplace} ${marketplace(mk)?.name || mk} account${limits.maxAccountsPerMarketplace === 1 ? '' : 's'}. Marketplaces flag linked accounts on one device/IP — this raises restriction risk. ${PLAN_LABEL[nextPlan(plan)]} isolates each account on its own device/IP.`,
+          upgradeTo: nextPlan(plan),
+        });
+      }
+    }
+  }
+
+  // 2) Devices vs limit
+  if (!isUnlimited(limits.maxDevices) && devices.length > limits.maxDevices) {
+    findings.push({
+      level: 'warn',
+      title: `${devices.length} devices on ${PLAN_LABEL[plan]}`,
+      detail: `Your plan covers ${limits.maxDevices} device${limits.maxDevices === 1 ? '' : 's'}. Add more on ${PLAN_LABEL[nextPlan(plan)]} to spread accounts across separate IPs.`,
+      upgradeTo: nextPlan(plan),
+    });
+  }
+
+  // 3) Same-device/IP stacking (the real ban driver)
+  for (const [dev, count] of Object.entries(accountsPerDevice)) {
+    if (count > 1) {
+      const dname = devices.find((d) => d.id === dev)?.name || 'this device';
+      findings.push({
+        level: 'warn',
+        title: `${count} accounts on ${dname}`,
+        detail: `Running ${count} marketplace accounts from the same device/IP is the #1 cause of linked-account restrictions. Syndrax isolates accounts across devices on ${PLAN_LABEL[nextPlan(plan) || 'growth']} — that’s how we keep you un-restricted.`,
+        upgradeTo: nextPlan(plan) || 'growth',
+      });
+    }
+  }
+
+  // 4) Remote attempted on a local-only plan (soft block, surfaced by caller)
+  // handled where remote is requested; included for completeness.
+
+  const level = findings.length === 0 ? 'ok' : 'warn';
+  return { level, findings };
+}
+
+// Expose globally for non-module scripts/inline use.
+if (typeof window !== 'undefined') {
+  window.SyndraxPlans = {
+    PLAN_ORDER, PLAN_LABEL, PLAN_PRICE, PLAN_LIMITS, PLAN_TAGLINE, UNLIMITED,
+    MARKETPLACES, marketplace, eligibility, runAudit, nextPlan, isUnlimited,
+  };
+}

@@ -68,7 +68,7 @@
   import { signUp, confirmSignUp, googleRedirect, getSession, MIN_PASSWORD }
     from '/auth-cognito.js';
 
-  if (getSession()) window.location.replace('/');
+  if (getSession()) window.location.replace('/app');
 
   const alertEl = document.getElementById('authAlert');
   const signupBtn = document.getElementById('signupBtn');

@@ -6,82 +6,11 @@
   <title>Account — Syndrax</title>
   <meta name="robots" content="noindex">
   <link rel="icon" type="image/png" href="assets/images/synball.png">
-  <link rel="stylesheet" href="style.css?v=26">
-  <script>if(localStorage.getItem("theme")==="light"){document.documentElement.classList.remove("dark");}</script>
+  <!-- account.html is now the app dashboard at /app. Redirect, preserving the
+       Stripe post-checkout ?status=success param so the success banner shows. -->
+  <script>
+    location.replace('/app' + (location.search || ''));
+  </script>
 </head>
-<body class="auth-page">
-<div class="auth-grid-bg"></div>
-
-<div class="auth-card" style="max-width:460px">
-  <div class="auth-logo">
-    <a href="/"><img src="assets/TOPLOGO/BANNEREFFECT.png" alt="Syndrax"></a>
-  </div>
-
-  <h1 class="auth-title">Your account</h1>
-  <p class="auth-sub" id="acctEmail">Loading…</p>
-
-  <div class="auth-alert" id="acctAlert"></div>
-
-  <div id="planBox" style="background:rgba(2,5,15,0.5);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:18px;margin:8px 0 18px">
-    <div style="font-size:12px;color:#64748b;letter-spacing:.08em;text-transform:uppercase">Current plan</div>
-    <div id="planName" style="font-size:22px;font-weight:800;color:#e6f3ff;margin-top:4px">…</div>
-    <div id="planMeta" style="font-size:13px;color:#8aa0b4;margin-top:6px"></div>
-  </div>
-
-  <button class="auth-submit" id="upgradeBtn" style="display:none;background:linear-gradient(135deg,#06b6d4,#3b82f6);margin-bottom:10px">
-    Upgrade to Enterprise — $200/mo
-  </button>
-  <button class="auth-submit" id="manageBtn" style="background:#0e2230;color:#9fe6ff">Manage billing</button>
-  <button class="auth-submit js-checkout" data-plan="business" id="startBtn" style="display:none">Start Free Trial</button>
-
-  <p class="auth-switch" style="margin-top:18px"><a href="#" id="signOutLink">Sign out</a></p>
-</div>
-
-<script type="module">
-  import { getSession, signOut } from '/auth-cognito.js';
-  import { getStatus, openPortal, startCheckout } from '/billing.js';
-
-  const session = getSession();
-  if (!session) location.replace('/login');
-
-  const alertEl = document.getElementById('acctAlert');
-  function showAlert(msg, type = 'success') { alertEl.textContent = msg; alertEl.className = 'auth-alert ' + type; }
-
-  // Email from the ID token
-  try {
-    const payload = JSON.parse(atob(session.idToken.split('.')[1]));
-    document.getElementById('acctEmail').textContent = payload.email || '';
-  } catch { /* ignore */ }
-
-  // Post-checkout banner
-  const status = new URLSearchParams(location.search).get('status');
-  if (status === 'success') showAlert('Payment received — welcome aboard! Your plan is active.', 'success');
-
-  const PLAN_LABEL = { none: 'No plan yet', trial: 'Trial', business: 'Business — $50/mo', enterprise: 'Enterprise — $200/mo' };
-
-  async function load() {
-    try {
-      const s = await getStatus();
-      document.getElementById('planName').textContent = PLAN_LABEL[s.plan] || s.plan;
-      const bits = [];
-      if (s.status && s.status !== 'none') bits.push('Status: ' + s.status);
-      if (s.trial_ends_at) bits.push('Trial ends ' + new Date(s.trial_ends_at).toLocaleDateString());
-      else if (s.current_period_end) bits.push('Renews ' + new Date(s.current_period_end).toLocaleDateString());
-      document.getElementById('planMeta').textContent = bits.join(' · ');
-
-      const has = s.plan && s.plan !== 'none';
-      document.getElementById('manageBtn').style.display = has ? '' : 'none';
-      document.getElementById('startBtn').style.display = has ? 'none' : '';
-      document.getElementById('upgradeBtn').style.display = (s.plan === 'business' || s.plan === 'trial') ? '' : 'none';
-    } catch (e) {
-      showAlert(e.message || 'Could not load your plan.', 'error');
-    }
-  }
-  load();
-
-  document.getElementById('manageBtn').addEventListener('click', () => openPortal().catch(e => showAlert(e.message, 'error')));
-  document.getElementById('upgradeBtn').addEventListener('click', () => openPortal().catch(e => showAlert(e.message, 'error')));
-  document.getElementById('signOutLink').addEventListener('click', (e) => { e.preventDefault(); signOut(); location.href = '/login'; });
-</script>
-</body>
+<body></body>
 </html>
